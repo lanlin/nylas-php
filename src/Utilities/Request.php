@@ -47,9 +47,19 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    public function get(string $api, array $params)
+    /**
+     * get request
+     *
+     * @param string $api
+     * @param array  $params
+     * @return mixed
+     * @throws \Exception
+     */
+    public function get(string $api, array $params = [])
     {
-        $response = $this->guzzle->get($api);
+        $query = ['query' => $params];
+
+        $response = $this->guzzle->get($api, $query);
 
         $this->checkStatusCode($response->getStatusCode());
 
@@ -58,7 +68,7 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    public function put(string $api)
+    public function put(string $api, array $params = [])
     {
         $response = $this->guzzle->put($api);
 
@@ -69,9 +79,19 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    public function post(string $api)
+    /**
+     * post request
+     *
+     * @param string $api
+     * @param array  $params
+     * @return mixed
+     * @throws \Exception
+     */
+    public function post(string $api, array $params = [])
     {
-        $response = $this->guzzle->post($api);
+        $options = ['form_params' => $params];
+
+        $response = $this->guzzle->post($api, $options);
 
         $this->checkStatusCode($response->getStatusCode());
 
@@ -80,7 +100,7 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    public function delete(string $api)
+    public function delete(string $api, array $params = [])
     {
         $response = $this->guzzle->delete($api);
 
@@ -141,18 +161,25 @@ class Request
      * Parse the JSON response body and return an array
      *
      * @param ResponseInterface $response
-     * @return array|string|int|bool|float
+     * @return mixed
      * @throws \Exception if the response body is not in JSON format
      */
     private function parseResponse(ResponseInterface $response)
     {
+        $expc = 'application/json';
+        $type = $response->getHeader('Content-Type');
+
+        if (strpos(strtolower($type), $expc) === false)
+        {
+            throw new NylasException("Invalid content type responsed: {$type}");
+        }
+
         $data = $response->getBody()->getContents();
         $data = json_decode($data, true);
 
         if (JSON_ERROR_NONE !== json_last_error())
         {
             $msg = 'Unable to parse response body into JSON: ';
-
             throw new NylasException($msg . json_last_error());
         }
 
