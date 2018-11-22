@@ -1,4 +1,4 @@
-<?php namespace Nylas\Threads;
+<?php namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Request;
@@ -7,13 +7,13 @@ use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas Thread
+ * Nylas Message
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
  * @change 2018/11/22
  */
-class Thread
+class Message
 {
 
     // ------------------------------------------------------------------------------
@@ -36,15 +36,15 @@ class Thread
     // ------------------------------------------------------------------------------
 
     /**
-     * get threads list
+     * get messages list
      *
      * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getThreadsList(array $params)
+    public function getMessagesList(array $params)
     {
-        if (!$this->getThreadsRules()->validate($params))
+        if (!$this->getMessagesRules()->validate($params))
         {
             throw new NylasException('invalid params');
         }
@@ -60,19 +60,19 @@ class Thread
         unset($params['access_token']);
         $query = array_merge($params, $query);
 
-        return $this->request->setQuery($query)->setHeaderParams($header)->get(API::LIST['threads']);
+        return $this->request->setQuery($query)->setHeaderParams($header)->get(API::LIST['messages']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * get thread info
+     * get message info
      *
      * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getThread(array $params)
+    public function getMessage(array $params)
     {
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
@@ -87,19 +87,51 @@ class Thread
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneThread']);
+        return $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * add thread
+     * get message info
      *
      * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function addThread(array $params)
+    public function getRawMessage(array $params)
+    {
+        $rules = V::keySet(
+            V::key('id', V::stringType()::notEmpty()),
+            V::key('access_token', V::stringType()::notEmpty())
+        );
+
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
+        $path = [$params['id']];
+
+        $header =
+        [
+            'Accept'        => 'message/rfc822',        // RFC-2822 message object
+            'Authorization' => $params['access_token']
+        ];
+
+        return $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get accounts list
+     *
+     * @param array $params
+     * @return mixed
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function addMessage(array $params)
     {
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
@@ -125,18 +157,18 @@ class Thread
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
-        ->put(API::LIST['oneThread']);
+        ->put(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * get threads list filter rules
+     * get messages list filter rules
      *
-     * @link https://docs.nylas.com/reference#get-threads
+     * @link https://docs.nylas.com/reference#messages-1
      * @return \Respect\Validation\Validator
      */
-    private function getThreadsRules()
+    private function getMessagesRules()
     {
         return V::keySet(
             V::key('in', V::stringType()::notEmpty(), false),
@@ -146,11 +178,11 @@ class Thread
             V::key('bcc', V::email(), false),
             V::key('subject', V::stringType()::notEmpty(), false),
             V::key('any_email', V::stringType()::notEmpty(), false),
+            V::key('thread_id', V::stringType()::notEmpty(), false),
 
-            V::key('started_after', V::timestampType(), false),
-            V::key('started_before', V::timestampType(), false),
-            V::key('last_message_after', V::timestampType(), false),
-            V::key('last_message_before', V::timestampType(), false),
+            V::key('received_after', V::timestampType(), false),
+            V::key('received_before', V::timestampType(), false),
+            V::key('has_attachment', V::boolType(), false),
 
             V::key('limit', V::intType()::min(1), false),
             V::key('offset', V::intType()::min(0), false),

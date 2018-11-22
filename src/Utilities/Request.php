@@ -284,7 +284,7 @@ class Request
 
         if (strpos(strtolower($type), $expc) === false)
         {
-            throw new NylasException("Invalid content type responsed: {$type}");
+            return $response->getBody()->getContents();
         }
 
         $data = $response->getBody()->getContents();
