@@ -123,6 +123,7 @@ class Message
         $rawStream = $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
 
         // parse mime data
+        // @link https://github.com/zbateson/mail-mime-parser
         return (new MailMimeParser())->parse($rawStream);
     }
 
