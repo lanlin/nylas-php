@@ -32,7 +32,7 @@ class API
         'listAnAccount'      => '/a/%s/accounts/%s',
         'listAllAccounts'    => '/a/%s/accounts',
         'cancelAnAccount'    => '/a/%s/accounts/%s/downgrade',
-        'ReactiveAnAccount'  => '/a/%s/accounts/%s/upgrade',
+        'reactiveAnAccount'  => '/a/%s/accounts/%s/upgrade',
 
         // Threads
         'threads'    => '/threads',
