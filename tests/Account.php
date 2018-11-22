@@ -11,10 +11,26 @@ use PHPUnit\Framework\TestCase;
  * @update lanlin
  * @change 2018/11/22
  */
-class TestUtil extends TestCase
+class Account extends TestCase
 {
 
     // ------------------------------------------------------------------------------
+
+    public function testGetAccountInfo()
+    {
+        $data =
+        [
+            "id"=> "awa6ltos76vz5hvphkp8k17nt",
+            "account_id"=> "awa6ltos76vz5hvphkp8k17nt",
+            "object"=> "account",
+            "name"=> "Ben Bitdiddle",
+            "email_address"=> "benbitdiddle@gmail.com",
+            "provider"=> "gmail",
+            "organization_unit"=> "label",
+            "sync_state"=> "running",
+            "linked_at"=> 1470231381,
+        ];
+    }
 
     // ------------------------------------------------------------------------------
 
