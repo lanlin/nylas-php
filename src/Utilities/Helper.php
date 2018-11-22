@@ -1,6 +1,5 @@
 <?php namespace Nylas\Utilities;
 
-
 /**
  * ----------------------------------------------------------------------------------
  * Nylas RESTFul Request Errors
