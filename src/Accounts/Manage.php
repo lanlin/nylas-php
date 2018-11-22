@@ -7,13 +7,13 @@ use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas Account
+ * Nylas Account Manage
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
  * @change 2018/11/22
  */
-class Account
+class Manage
 {
 
     // ------------------------------------------------------------------------------
@@ -36,22 +36,40 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * get account info
+     * get accounts list
      *
-     * @param string $accessToken
+     * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getAccountInfo(string $accessToken)
+    public function getAccountsList(array $params)
     {
-        if (!V::stringType()::notEmpty()->validate($accessToken))
+        $rules = V::keySet(
+            V::key('limit', V::intType()::min(1), false),
+            V::key('offset', V::intType()::min(0), false),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty())
+        );
+
+        if (!$rules->validate($params))
         {
             throw new NylasException('invalid params');
         }
 
-        $header = ['Authorization' => $accessToken];
+        $path   = [$params['client_id']];
+        $header = ['Authorization' => $params['client_secret']];
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['account']);
+        $pagination =
+        [
+            'limit'  => $params['limit'] ?? 100,
+            'offset' => $params['offset'] ?? 0,
+        ];
+
+        return $this->request
+        ->setPath($path)
+        ->setQuery($pagination)
+        ->setHeaderParams($header)
+        ->get(API::LIST['listAllAccounts']);
     }
 
     // ------------------------------------------------------------------------------

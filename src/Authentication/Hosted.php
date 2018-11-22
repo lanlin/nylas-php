@@ -111,10 +111,7 @@ class Hosted
             throw new NylasException('invalid params');
         }
 
-        $header =
-        [
-            'access_token' => $accessToken,
-        ];
+        $header = ['Authorization' => $accessToken];
 
         return $this->request->setHeaderParams($header)->post(API::LIST['oAuthRevoke']);
     }
