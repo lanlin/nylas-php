@@ -33,15 +33,6 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    /**
-     * nylas api server
-     *
-     * @var string
-     */
-    private $server = 'https://api.nylas.com';
-
-    // ------------------------------------------------------------------------------
-
     private $formFiles    = [];
     private $pathParams   = [];
     private $formParams   = [];
@@ -58,7 +49,7 @@ class Request
      */
     public function __construct(string $server = null, bool $debug = false)
     {
-        $option = ['base_uri' => $server ?? $this->server];
+        $option = ['base_uri' => $server ?? API::LIST['server']];
 
         $this->debug  = $debug;
         $this->guzzle = new Client($option);
