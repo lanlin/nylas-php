@@ -2,6 +2,8 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Request;
+use Nylas\Utilities\Validate as V;
+use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -36,24 +38,31 @@ class Hosted
     /**
      * get oauth authorize
      *
-     * @param string      $clientId
-     * @param string      $redirect
-     * @param string|NULL $email
-     * @param string|NULL $state
+     * @param array $params
      * @return mixed
      * @throws \Exception
      */
-    public function getOAuthAuthorize(string $clientId, string $redirect, string $email = null, string $state = null)
+    public function getOAuthAuthorize(array $params)
     {
+        $rules = V::keySet(
+            V::key('state', V::stringType()::length(1, 255), false),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('login_hint', V::email(), false),
+            V::key('redirect_uri', V::url())
+        );
+
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
         $query =
         [
             'scope'         => 'email',
-            'state'         => $state,     // maximum length of this string is 255 characters
-            'client_id'     => $clientId,
-            'login_hint'    => $email,
-            'redirect_uri'  => $redirect,
             'response_type' => 'code',     // code for server side, token for client side
         ];
+
+        $query = array_merge($query, $params);
 
         return $this->request->setQuery($query)->get(API::LIST['oAuthAuthorize']);
     }
@@ -63,21 +72,25 @@ class Hosted
     /**
      * post oauth token
      *
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param string $code
+     * @param array $params
      * @return mixed
      * @throws \Exception
      */
-    public function postOAuthToken(string $clientId, string $clientSecret, string $code)
+    public function postOAuthToken(array $params)
     {
-        $query =
-        [
-            'client_id'     => $clientId,
-            'client_secret' => $clientSecret,
-            'grant_type'    => 'authorization_code',
-            'code'          => $code,
-        ];
+        $rules = V::keySet(
+            V::key('code', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty())
+        );
+
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
+        $query = ['grant_type' => 'authorization_code'];
+        $query = array_merge($query, $params);
 
         return $this->request->setQuery($query)->post(API::LIST['oAuthToken']);
     }
@@ -93,6 +106,11 @@ class Hosted
      */
     public function postOAuthRevoke(string $accessToken)
     {
+        if (!V::stringType()::notEmpty()->validate($accessToken))
+        {
+            throw new NylasException('invalid params');
+        }
+
         $header =
         [
             'access_token' => $accessToken,
