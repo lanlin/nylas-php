@@ -45,9 +45,27 @@ class Native
 
     // ------------------------------------------------------------------------------
 
-    public function connectToken()
+    /**
+     * connect token
+     *
+     * @param array $params
+     * @return mixed
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function postConnectToken(array $params)
     {
+        $rules = V::keySet(
+            V::key('code', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty())
+        );
 
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
+        return $this->request->setFormParams($params)->post(API::LIST['connectToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -59,7 +77,7 @@ class Native
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function connectAuthorize(array $params)
+    public function postConnectAuthorize(array $params)
     {
         $setting = $this->settingsRules($params);
 
