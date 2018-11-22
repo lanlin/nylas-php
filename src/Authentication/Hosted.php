@@ -45,10 +45,10 @@ class Hosted
     public function getOAuthAuthorize(array $params)
     {
         $rules = V::keySet(
-            V::key('state', V::stringType()::length(1, 255), false),
             V::key('client_id', V::stringType()::notEmpty()),
-            V::key('login_hint', V::email(), false),
-            V::key('redirect_uri', V::url())
+            V::key('login_hint', V::email()),
+            V::key('redirect_uri', V::url()),
+            V::key('state', V::stringType()::length(1, 255), false)
         );
 
         if (!$rules->validate($params))

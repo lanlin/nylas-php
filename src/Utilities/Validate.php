@@ -15,5 +15,19 @@ use Respect\Validation\Validatable;
  */
 class Validate extends Validator
 {
-    // just change comment
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * timestamp
+     *
+     * @return \Respect\Validation\Validator
+     */
+    public static function timestampType()
+    {
+        return static::intType()->min(strtotime('1971-1-1'));
+    }
+
+    // ------------------------------------------------------------------------------
+
 }
