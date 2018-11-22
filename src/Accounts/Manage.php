@@ -74,4 +74,97 @@ class Manage
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * get account info with client_secret
+     *
+     * @param array $params
+     * @return mixed
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function getAccountInfo(array $params)
+    {
+        $rules = V::keySet(
+            V::key('id', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty())
+        );
+
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
+        $path   = [$params['client_id'], $params['id']];
+        $header = ['Authorization' => $params['client_secret']];
+
+        return $this->request
+        ->setPath($path)
+        ->setHeaderParams($header)
+        ->get(API::LIST['listAnAccount']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * re-active account with client_secret
+     *
+     * @param array $params
+     * @return mixed
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function reactiveAccount(array $params)
+    {
+        $rules = V::keySet(
+            V::key('id', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty())
+        );
+
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
+        $path   = [$params['client_id'], $params['id']];
+        $header = ['Authorization' => $params['client_secret']];
+
+        return $this->request
+        ->setPath($path)
+        ->setHeaderParams($header)
+        ->post(API::LIST['reactiveAnAccount']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * cancel account with client_secret
+     *
+     * @param array $params
+     * @return mixed
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function cancelAccount(array $params)
+    {
+        $rules = V::keySet(
+            V::key('id', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty())
+        );
+
+        if (!$rules->validate($params))
+        {
+            throw new NylasException('invalid params');
+        }
+
+        $path   = [$params['client_id'], $params['id']];
+        $header = ['Authorization' => $params['client_secret']];
+
+        return $this->request
+        ->setPath($path)
+        ->setHeaderParams($header)
+        ->post(API::LIST['cancelAnAccount']);
+    }
+
+    // ------------------------------------------------------------------------------
+
 }
