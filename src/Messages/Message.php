@@ -4,6 +4,7 @@ use Nylas\Utilities\API;
 use Nylas\Utilities\Request;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
+use ZBateson\MailMimeParser\MailMimeParser;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -93,10 +94,10 @@ class Message
     // ------------------------------------------------------------------------------
 
     /**
-     * get message info
+     * get raw message info
      *
      * @param array $params
-     * @return mixed
+     * @return \ZBateson\MailMimeParser\Message
      * @throws \Nylas\Exceptions\NylasException
      */
     public function getRawMessage(array $params)
@@ -119,7 +120,10 @@ class Message
             'Authorization' => $params['access_token']
         ];
 
-        return $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+        $rawStream = $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+
+        // parse mime data
+        return (new MailMimeParser())->parse($rawStream);
     }
 
     // ------------------------------------------------------------------------------

@@ -284,7 +284,7 @@ class Request
 
         if (strpos(strtolower($type), $expc) === false)
         {
-            return $response->getBody()->getContents();
+            return $response->getBody();
         }
 
         $data = $response->getBody()->getContents();

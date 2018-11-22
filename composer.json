@@ -11,7 +11,8 @@
     "require": {
         "php": ">=7.0",
         "guzzlehttp/guzzle": ">=6.0",
-        "respect/validation": "^1.1"
+        "respect/validation": "^1.1",
+        "zbateson/mail-mime-parser": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.2"
