@@ -25,6 +25,15 @@ class Request
     // ------------------------------------------------------------------------------
 
     /**
+     * enable or disable debug mode
+     *
+     * @var string
+     */
+    private $debug = false;
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * nylas api server
      *
      * @var string
@@ -33,16 +42,101 @@ class Request
 
     // ------------------------------------------------------------------------------
 
+    private $formFiles    = [];
+    private $pathParams   = [];
+    private $formParams   = [];
+    private $queryParams  = [];
+    private $headerParams = [];
+
+    // ------------------------------------------------------------------------------
+
     /**
      * Request constructor.
      *
      * @param string|NULL $server
+     * @param bool $debug
      */
-    public function __construct(string $server = null)
+    public function __construct(string $server = null, bool $debug = false)
     {
         $option = ['base_uri' => $server ?? $this->server];
 
+        $this->debug  = $debug;
         $this->guzzle = new Client($option);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set path params
+     *
+     * @param string ...$path
+     * @return $this
+     */
+    public function setPath(string ...$path)
+    {
+        $this->pathParams = $path;
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set query params
+     *
+     * @param array $query
+     * @return $this
+     */
+    public function setQuery(array $query)
+    {
+        $this->queryParams = ['query' => $query];
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set form params
+     *
+     * @param array $params
+     * @return $this
+     */
+    public function setFormParams(array $params)
+    {
+        $this->formParams = ['form_params' => $params];
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set form files
+     *
+     * @param array $files
+     * @return $this
+     */
+    public function setFormFiles(array $files)
+    {
+        $this->formFiles = ['multipart' => Helper::arrayToMulti($files)];
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set header params
+     *
+     * @param array $headers
+     * @return $this
+     */
+    public function setHeaderParams(array $headers)
+    {
+        $this->headerParams = ['headers' => $headers];
+
+        return $this;
     }
 
     // ------------------------------------------------------------------------------
@@ -51,15 +145,14 @@ class Request
      * get request
      *
      * @param string $api
-     * @param array  $params
      * @return mixed
      * @throws \Exception
      */
-    public function get(string $api, array $params = [])
+    public function get(string $api)
     {
-        $query = ['query' => $params];
-
-        $response = $this->guzzle->get($api, $query);
+        $apiPath  = $this->concatApiPath($api);
+        $options  = $this->concatOptions();
+        $response = $this->guzzle->get($apiPath, $options);
 
         $this->checkStatusCode($response->getStatusCode());
 
@@ -68,9 +161,18 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    public function put(string $api, array $params = [])
+    /**
+     * put request
+     *
+     * @param string $api
+     * @return mixed
+     * @throws \Exception
+     */
+    public function put(string $api)
     {
-        $response = $this->guzzle->put($api);
+        $apiPath  = $this->concatApiPath($api);
+        $options  = $this->concatOptions();
+        $response = $this->guzzle->put($apiPath, $options);
 
         $this->checkStatusCode($response->getStatusCode());
 
@@ -83,15 +185,14 @@ class Request
      * post request
      *
      * @param string $api
-     * @param array  $params
      * @return mixed
      * @throws \Exception
      */
-    public function post(string $api, array $params = [])
+    public function post(string $api)
     {
-        $options = ['form_params' => $params];
-
-        $response = $this->guzzle->post($api, $options);
+        $apiPath  = $this->concatApiPath($api);
+        $options  = $this->concatOptions();
+        $response = $this->guzzle->post($apiPath, $options);
 
         $this->checkStatusCode($response->getStatusCode());
 
@@ -100,9 +201,18 @@ class Request
 
     // ------------------------------------------------------------------------------
 
-    public function delete(string $api, array $params = [])
+    /**
+     * delete request
+     *
+     * @param string $api
+     * @return mixed
+     * @throws \Exception
+     */
+    public function delete(string $api)
     {
-        $response = $this->guzzle->delete($api);
+        $apiPath  = $this->concatApiPath($api);
+        $options  = $this->concatOptions();
+        $response = $this->guzzle->delete($apiPath, $options);
 
         $this->checkStatusCode($response->getStatusCode());
 
@@ -133,26 +243,38 @@ class Request
     // ------------------------------------------------------------------------------
 
     /**
-     * create request headers
+     * concat api path for request
+     *
+     * @param string $api
+     * @return string
+     */
+    private function concatApiPath(string $api)
+    {
+        return sprintf($api, $this->pathParams);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * concat options for request
      *
      * @return array
      */
-    protected function createHeaders()
+    private function concatOptions()
     {
-        $token = 'Basic ' . base64_encode($this->apiToken . ':');
-
-        $headers =
+        $temp =
         [
-            'debug'   => $this->apiDebug,
-            'expect'  => false,
-            'headers' =>
-            [
-                'Authorization'       => $token,
-                'X-Nylas-API-Wrapper' => 'php'
-            ]
+            'debug'       => $this->debug,
+            'http_errors' => false
         ];
 
-        return $headers;
+        return array_merge(
+            $temp,
+            $this->formFiles,
+            $this->formParams,
+            $this->queryParams,
+            $this->headerParams
+        );
     }
 
     // ------------------------------------------------------------------------------
