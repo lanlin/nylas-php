@@ -1,5 +1,8 @@
 <?php namespace Nylas\Authentication;
 
+use Nylas\Utilities\API;
+use Nylas\Utilities\Request;
+
 /**
  * ----------------------------------------------------------------------------------
  * Nylas Native Authentication
@@ -13,21 +16,36 @@ class Native
 
     // ------------------------------------------------------------------------------
 
-    public function getAuthorize()
-    {
+    /**
+     * @var Request
+     */
+    private $request;
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Hosted constructor.
+     */
+    public function __construct()
+    {
+        $this->request = new Request();
     }
 
     // ------------------------------------------------------------------------------
 
-    public function postOAuthToken()
+    public function connectAuthorize()
     {
+        $params =
+        [
 
+        ];
+
+        return $this->request->setFormParams($params)->post(API::LIST['connectAuthorize']);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function postOAuthRevoke()
+    public function connectToken()
     {
 
     }
