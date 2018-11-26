@@ -1,7 +1,7 @@
 <?php namespace Nylas\Threads;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Thread
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Thread constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ class Thread
         unset($params['access_token']);
         $query = array_merge($params, $query);
 
-        return $this->request->setQuery($query)->setHeaderParams($header)->get(API::LIST['threads']);
+        return $this->options->getRequest()->setQuery($query)->setHeaderParams($header)->get(API::LIST['threads']);
     }
 
     // ------------------------------------------------------------------------------
@@ -87,7 +89,7 @@ class Thread
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneThread']);
+        return $this->options->getRequest()->setPath($path)->setHeaderParams($header)->get(API::LIST['oneThread']);
     }
 
     // ------------------------------------------------------------------------------
@@ -121,7 +123,7 @@ class Thread
 
         unset($params['access_token'], $params['id']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

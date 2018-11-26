@@ -1,7 +1,7 @@
 <?php namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 use ZBateson\MailMimeParser\MailMimeParser;
@@ -20,18 +20,20 @@ class Message
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Message constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -61,7 +63,7 @@ class Message
         unset($params['access_token']);
         $query = array_merge($params, $query);
 
-        return $this->request->setQuery($query)->setHeaderParams($header)->get(API::LIST['messages']);
+        return $this->options->getRequest()->setQuery($query)->setHeaderParams($header)->get(API::LIST['messages']);
     }
 
     // ------------------------------------------------------------------------------
@@ -88,7 +90,7 @@ class Message
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+        return $this->options->getRequest()->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
@@ -120,7 +122,7 @@ class Message
             'Authorization' => $params['access_token']
         ];
 
-        $rawStream = $this->request->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+        $rawStream = $this->options->getRequest()->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
 
         // parse mime data
         // @link https://github.com/zbateson/mail-mime-parser
@@ -158,7 +160,7 @@ class Message
 
         unset($params['access_token'], $params['id']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

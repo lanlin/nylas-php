@@ -86,9 +86,10 @@ class API
         'oneWebhook'  => '/webhooks/%s',
 
         // Deltas
-        'delta'            => '/delta',
-        'deltaLongpoll'    => '/delta/longpoll',
-        'deltaStreaming'   => '/delta/streaming',
+        'delta'              => '/delta',
+        'deltaLongpoll'      => '/delta/longpoll',
+        'deltaStreaming'     => '/delta/streaming',
+        'deltaLatestCursor'  => '/delta/lastest_cursor',
     ];
 
 

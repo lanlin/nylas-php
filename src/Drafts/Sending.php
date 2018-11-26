@@ -1,4 +1,4 @@
-<?php namespace Nylas\Messages;
+<?php namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
@@ -7,13 +7,13 @@ use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas Message Search
+ * Nylas Draft Sending
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/11/26
  */
-class Search
+class Sending
 {
 
     // ------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ class Search
     // ------------------------------------------------------------------------------
 
     /**
-     * Search constructor.
+     * Sending constructor.
      *
      * @param \Nylas\Utilities\Options $options
      */
@@ -38,17 +38,17 @@ class Search
     // ------------------------------------------------------------------------------
 
     /**
-     * search messages list
+     * send draft
      *
      * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function messages(array $params)
+    public function sendDraft(array $params)
     {
         $rules = V::keySet(
-            V::key('q', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('draft', V::stringType()->notEmpty()),
+            V::key('version', V::intType()->min(0))
         );
 
         if (!$rules->validate($params))
@@ -56,13 +56,14 @@ class Search
             throw new NylasException('invalid params');
         }
 
-        $query  = ['q' => $params['q']];
         $header = ['Authorization' => $params['access_token']];
 
+        unset($params['access_token']);
+
         return $this->options->getRequest()
-        ->setQuery($query)
+        ->setFormParams($params)
         ->setHeaderParams($header)
-        ->get(API::LIST['searchMessages']);
+        ->post(API::LIST['sending']);
     }
 
     // ------------------------------------------------------------------------------

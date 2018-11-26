@@ -1,7 +1,7 @@
 <?php namespace Nylas\Webhooks;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Webhook
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Webhook constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -57,7 +59,7 @@ class Webhook
         $path   = [$params['client_id']];
         $header = ['Authorization' => $params['client_secret']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['webhooks']);
@@ -88,7 +90,7 @@ class Webhook
         $path   = [$params['client_id'], $params['id']];
         $header = ['Authorization' => $params['client_secret']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneWebhook']);

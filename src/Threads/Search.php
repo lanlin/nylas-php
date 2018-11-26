@@ -1,7 +1,7 @@
 <?php namespace Nylas\Threads;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Search
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Search constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -57,7 +59,7 @@ class Search
         $query  = ['q' => $params['q']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['searchThreads']);

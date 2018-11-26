@@ -1,7 +1,7 @@
 <?php namespace Nylas\Events;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Event constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -46,6 +48,9 @@ class Event
     {
         $rules = $this->getBaseRules();
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!V::keySet(...$rules)->validate($params))
         {
             throw new NylasException('invalid params');
@@ -55,7 +60,7 @@ class Event
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['events']);
@@ -75,6 +80,9 @@ class Event
         $temps = [V::key('id', V::stringType()::notEmpty())];
         $rules = array_merge($temps, $this->getBaseRules());
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!V::keySet(...$rules)->validate($params))
         {
             throw new NylasException('invalid params');
@@ -85,7 +93,7 @@ class Event
 
         unset($params['id'], $params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -103,6 +111,9 @@ class Event
      */
     public function addEvent(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$this->addEventRules()->validate($params))
         {
             throw new NylasException('invalid params');
@@ -113,7 +124,7 @@ class Event
 
         unset($params['access_token'], $params['notify_participants']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -131,6 +142,9 @@ class Event
      */
     public function updateEvent(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$this->updateEventRules()->validate($params))
         {
             throw new NylasException('invalid params');
@@ -142,7 +156,7 @@ class Event
 
         unset($params['id'], $params['access_token'], $params['notify_participants']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setQuery($query)
         ->setFormParams($params)
@@ -159,8 +173,15 @@ class Event
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteEvent(array $params)
+    public function deleteEvent(string $eventId, bool $notifyParticipants = false, string $accessToken = null)
     {
+        $params =
+        [
+            'id'                  => $eventId,
+            'access_token'        => $accessToken ?? $this->options->getAccessToken(),
+            'notify_participants' => $notifyParticipants
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
@@ -176,7 +197,7 @@ class Event
         $header = ['Authorization' => $params['access_token']];
         $query  = empty($params['notify_participants']) ? [] : ['notify_participants' => $params['notify_participants']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setQuery($query)
         ->setHeaderParams($header)
@@ -192,6 +213,12 @@ class Event
      */
     public function rsvping(array $params)
     {
+        $params['account_id'] =
+        $params['account_id'] ?? $this->options->getClientApps();
+
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rules = V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
             V::key('event_id', V::stringType()::notEmpty()),
@@ -210,7 +237,7 @@ class Event
 
         unset($params['access_token'], $params['notify_participants']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)

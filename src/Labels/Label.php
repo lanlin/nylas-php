@@ -1,7 +1,7 @@
 <?php namespace Nylas\Labels;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Label
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Label constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -53,7 +55,7 @@ class Label
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['labels']);
+        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['labels']);
     }
 
     // ------------------------------------------------------------------------------
@@ -80,7 +82,7 @@ class Label
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneLabel']);
@@ -111,7 +113,7 @@ class Label
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['labels']);
@@ -144,7 +146,7 @@ class Label
 
         unset($params['id'], $params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -178,7 +180,7 @@ class Label
 
         unset($params['id'], $params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

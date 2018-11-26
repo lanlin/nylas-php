@@ -1,7 +1,7 @@
 <?php namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Draft constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -38,12 +40,17 @@ class Draft
     /**
      * get drafts list
      *
-     * @param array $params
+     * @param string $anyEmail
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getDraftsList(array $params)
+    public function getDraftsList(string $anyEmail = null, string $accessToken = null)
     {
+        $params = ['access_token' => $accessToken ?? $this->options->getAccessToken()];
+
+        if ($anyEmail) { $params['any_email'] = $anyEmail; }
+
         $rule = V::keySet(
             V::key('access_token', V::stringType()::notEmpty()),
             V::key('any_email', V::arrayVal()->each(V::email(), V::intType()), false)
@@ -58,7 +65,7 @@ class Draft
         $header = ['Authorization' => $params['access_token']];
         $query  = empty($emails) ? [] : ['any_email' => $emails];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['drafts']);
@@ -69,12 +76,19 @@ class Draft
     /**
      * get draft
      *
-     * @param array $params
+     * @param string $draftId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getDraft(array $params)
+    public function getDraft(string $draftId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $draftId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -88,7 +102,7 @@ class Draft
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneDraft']);
@@ -107,6 +121,9 @@ class Draft
     {
         $rules = $this->getBaseRules();
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!V::keySet(...$rules)->validate($params))
         {
             throw new NylasException('invalid params');
@@ -116,7 +133,7 @@ class Draft
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['drafts']);
@@ -135,6 +152,9 @@ class Draft
     {
         $rules = $this->getUpdateRules();
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!V::keySet(...$rules)->validate($params))
         {
             throw new NylasException('invalid params');
@@ -145,7 +165,7 @@ class Draft
 
         unset($params['id'], $params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -157,12 +177,21 @@ class Draft
     /**
      * delete draft
      *
-     * @param array $params
+     * @param string $draftId
+     * @param string $version
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteDraft(array $params)
+    public function deleteDraft(string $draftId, string $version, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $draftId,
+            'version'      => $version,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('version', V::stringType()::notEmpty()),
@@ -179,7 +208,7 @@ class Draft
 
         unset($params['id'], $params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

@@ -1,7 +1,7 @@
 <?php namespace Nylas\Accounts;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Authentication\Hosted;
 use Nylas\Exceptions\NylasException;
@@ -20,18 +20,20 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Account constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -43,8 +45,10 @@ class Account
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getAccount(string $accessToken)
+    public function getAccount(string $accessToken = null)
     {
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
         if (!V::stringType()::notEmpty()->validate($accessToken))
         {
             throw new NylasException('invalid params');
@@ -52,7 +56,7 @@ class Account
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['account']);
+        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['account']);
     }
 
     // ------------------------------------------------------------------------------
@@ -64,14 +68,16 @@ class Account
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function cancelAccount(string $accessToken)
+    public function cancelAccount(string $accessToken = null)
     {
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
         if (!V::stringType()::notEmpty()->validate($accessToken))
         {
             throw new NylasException('invalid params');
         }
 
-        return (new Hosted())->postOAuthRevoke($accessToken);
+        return (new Hosted($this->options))->postOAuthRevoke($accessToken);
     }
 
     // ------------------------------------------------------------------------------

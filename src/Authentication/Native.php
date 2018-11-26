@@ -1,7 +1,7 @@
 <?php namespace Nylas\Authentication;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,13 +19,6 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * @var array
      */
     private $providers =
@@ -36,11 +29,20 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * @var \Nylas\Utilities\Options
      */
-    public function __construct()
+    private $options;
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Native constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
+     */
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -48,24 +50,22 @@ class Native
     /**
      * connect token
      *
-     * @param array $params
+     * @param string $code
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function postConnectToken(array $params)
+    public function postConnectToken(string $code)
     {
-        $rules = V::keySet(
-            V::key('code', V::stringType()::notEmpty()),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
-        );
-
-        if (!$rules->validate($params))
+        if (!V::stringType()::notEmpty()->validate($code))
         {
             throw new NylasException('invalid params');
         }
 
-        return $this->request->setFormParams($params)->post(API::LIST['connectToken']);
+        $params = $this->options->getClientApps();
+
+        $params['code'] = $code;
+
+        return $this->options->getRequest()->setFormParams($params)->post(API::LIST['connectToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -85,7 +85,6 @@ class Native
             V::key('name', V::stringType()::notEmpty()),
             V::key('settings', $setting),
             V::key('provider', V::in($this->providers)),
-            V::key('client_id', V::stringType()::notEmpty()),
             V::key('email_address', V::email()),
             V::key('reauth_account_id', V::stringType()::notEmpty(), false)
         );
@@ -95,7 +94,9 @@ class Native
             throw new NylasException('invalid params');
         }
 
-        return $this->request->setFormParams($params)->post(API::LIST['connectAuthorize']);
+        $params['client_id'] = $this->options->getClientApps()['client_id'];
+
+        return $this->options->getRequest()->setFormParams($params)->post(API::LIST['connectAuthorize']);
     }
 
     // ------------------------------------------------------------------------------
@@ -170,7 +171,7 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     *
+     * unknown imap provider
      *
      * @return \Respect\Validation\Validator
      */

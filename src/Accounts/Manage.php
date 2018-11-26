@@ -1,7 +1,7 @@
 <?php namespace Nylas\Accounts;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Manage
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Manage constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -46,9 +48,7 @@ class Manage
     {
         $rules = V::keySet(
             V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
+            V::key('offset', V::intType()::min(0), false)
         );
 
         if (!$rules->validate($params))
@@ -56,8 +56,9 @@ class Manage
             throw new NylasException('invalid params');
         }
 
-        $path   = [$params['client_id']];
-        $header = ['Authorization' => $params['client_secret']];
+        $client = $this->options->getClientApps();
+        $path   = [$client['client_id']];
+        $header = ['Authorization' => $client['client_secret']];
 
         $pagination =
         [
@@ -65,7 +66,8 @@ class Manage
             'offset' => $params['offset'] ?? 0,
         ];
 
-        return $this->request
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setQuery($pagination)
         ->setHeaderParams($header)
@@ -75,29 +77,22 @@ class Manage
     // ------------------------------------------------------------------------------
 
     /**
-     * get account info with client_secret
+     * get account info
      *
-     * @param array $params
+     * @param string $accountId
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getAccountInfo(array $params)
+    public function getAccountInfo(string $accountId = null)
     {
-        $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
-        );
+        $client    = $this->options->getClientApps();
+        $accountId = $accountId ?? $this->options->getAccountId();
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $path   = [$client['client_id'], $accountId];
+        $header = ['Authorization' => $client['client_secret']];
 
-        $path   = [$params['client_id'], $params['id']];
-        $header = ['Authorization' => $params['client_secret']];
-
-        return $this->request
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['listAnAccount']);
@@ -106,29 +101,22 @@ class Manage
     // ------------------------------------------------------------------------------
 
     /**
-     * re-active account with client_secret
+     * re-active account
      *
-     * @param array $params
+     * @param string $accountId
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function reactiveAccount(array $params)
+    public function reactiveAccount(string $accountId = null)
     {
-        $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
-        );
+        $client    = $this->options->getClientApps();
+        $accountId = $accountId ?? $this->options->getAccountId();
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $path   = [$client['client_id'], $accountId];
+        $header = ['Authorization' => $client['client_secret']];
 
-        $path   = [$params['client_id'], $params['id']];
-        $header = ['Authorization' => $params['client_secret']];
-
-        return $this->request
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->post(API::LIST['reactiveAnAccount']);
@@ -137,29 +125,22 @@ class Manage
     // ------------------------------------------------------------------------------
 
     /**
-     * cancel account with client_secret
+     * cancel account
      *
-     * @param array $params
+     * @param string $accountId
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function cancelAccount(array $params)
+    public function cancelAccount(string $accountId = null)
     {
-        $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
-        );
+        $client    = $this->options->getClientApps();
+        $accountId = $accountId ?? $this->options->getAccountId();
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $path   = [$client['client_id'], $accountId];
+        $header = ['Authorization' => $client['client_secret']];
 
-        $path   = [$params['client_id'], $params['id']];
-        $header = ['Authorization' => $params['client_secret']];
-
-        return $this->request
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->post(API::LIST['cancelAnAccount']);

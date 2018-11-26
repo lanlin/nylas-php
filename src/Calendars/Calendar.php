@@ -1,7 +1,7 @@
 <?php namespace Nylas\Calendars;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Calendar
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Calendar constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -51,6 +53,9 @@ class Calendar
             V::key('access_token', V::stringType()::notEmpty())
         );
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$rule->validate($params))
         {
             throw new NylasException('invalid params');
@@ -60,7 +65,7 @@ class Calendar
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['calendars']);
@@ -71,12 +76,19 @@ class Calendar
     /**
      * get calendar
      *
-     * @param array $params
+     * @param string $calendarId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getCalendar(array $params)
+    public function getCalendar(string $calendarId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $calendarId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -90,7 +102,7 @@ class Calendar
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneCalendar']);

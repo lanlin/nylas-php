@@ -1,7 +1,7 @@
 <?php namespace Nylas\Files;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * File constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -44,6 +46,9 @@ class File
      */
     public function getFilesList(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rule = V::keySet(
             V::key('view', V::in(['count', 'ids']), false),
             V::key('filename', V::stringType()::notEmpty(), false),
@@ -61,7 +66,7 @@ class File
 
         unset($params['access_token']);
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['files']);
+        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['files']);
     }
 
     // ------------------------------------------------------------------------------
@@ -69,12 +74,19 @@ class File
     /**
      * get file
      *
-     * @param array $params
+     * @param string $fileId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getFile(array $params)
+    public function getFile(string $fileId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $fileId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -88,7 +100,7 @@ class File
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneFile']);
@@ -99,12 +111,19 @@ class File
     /**
      * delete file
      *
-     * @param array $params
+     * @param string $fileId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteFile(array $params)
+    public function deleteFile(string $fileId, string $accessToken = null)
     {
+        $params =
+        [
+            'file_id'      => $fileId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('file_id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -118,7 +137,7 @@ class File
         $path   = [$params['file_id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->delete(API::LIST['oneFile']);
@@ -129,12 +148,19 @@ class File
     /**
      * add file
      *
-     * @param array $params
+     * @param array $file
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function uploadFile(array $params)
+    public function uploadFile(array $file, string $accessToken = null)
     {
+        $params =
+        [
+            'file'         => $file,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('file', V::arrayType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -149,7 +175,7 @@ class File
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setFormFiles($params)
         ->setHeaderParams($header)
         ->post(API::LIST['files']);
@@ -160,12 +186,19 @@ class File
     /**
      * download file
      *
-     * @param array $params
+     * @param string $fileId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function downloadFile(array $params)
+    public function downloadFile(string $fileId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $fileId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty(), false)
@@ -180,7 +213,7 @@ class File
 
         unset($params['access_token']);
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['downloadFile']);
+        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['downloadFile']);
     }
 
     // ------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 <?php namespace Nylas\Contacts;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Contact
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Contact constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -44,6 +46,9 @@ class Contact
      */
     public function getContactsList(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$this->getBaseRules()->validate($params))
         {
             throw new NylasException('invalid params');
@@ -53,7 +58,7 @@ class Contact
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['contacts']);
@@ -64,12 +69,19 @@ class Contact
     /**
      * get contact
      *
-     * @param array $params
+     * @param string $contactId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getContact(array $params)
+    public function getContact(string $contactId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $contactId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -83,7 +95,7 @@ class Contact
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneContact']);
@@ -102,6 +114,9 @@ class Contact
     {
         $rules = $this->addContactRules();
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!V::keySet(...$rules)->validate($params))
         {
             throw new NylasException('invalid params');
@@ -111,7 +126,7 @@ class Contact
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['contacts']);
@@ -132,6 +147,9 @@ class Contact
 
         array_push($rules,  V::key('id', V::stringType()::notEmpty()));
 
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!V::keySet(...$rules)->validate($params))
         {
             throw new NylasException('invalid params');
@@ -142,7 +160,7 @@ class Contact
 
         unset($params['id'], $params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -154,12 +172,19 @@ class Contact
     /**
      * delete contact
      *
-     * @param array $params
+     * @param string $contactId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteContact(array $params)
+    public function deleteContact(string $contactId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $contactId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -173,7 +198,7 @@ class Contact
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->delete(API::LIST['oneContact']);
@@ -188,8 +213,10 @@ class Contact
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getContactGroups(string $accessToken)
+    public function getContactGroups(string $accessToken = null)
     {
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
         if (!V::stringType()::notEmpty()->validate($accessToken))
         {
             throw new NylasException('invalid params');
@@ -197,7 +224,7 @@ class Contact
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['contactsGroups']);
+        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['contactsGroups']);
     }
 
     // ------------------------------------------------------------------------------
@@ -205,12 +232,19 @@ class Contact
     /**
      * get contact picture
      *
-     * @param array $params
+     * @param string $contactId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getContactPicture(array $params)
+    public function getContactPicture(string $contactId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $contactId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -224,7 +258,7 @@ class Contact
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['contactPic']);

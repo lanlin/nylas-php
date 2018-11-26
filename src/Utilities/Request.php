@@ -38,6 +38,7 @@ class Request
     private $formParams   = [];
     private $queryParams  = [];
     private $headerParams = [];
+    private $bodyContents = [];
 
     // ------------------------------------------------------------------------------
 
@@ -66,6 +67,21 @@ class Request
     public function setPath(string ...$path)
     {
         $this->pathParams = $path;
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set body value
+     *
+     * @param string|resource|\Psr\Http\Message\StreamInterface $body
+     * @return $this
+     */
+    public function setBody($body)
+    {
+        $this->bodyContents = ['body' => $body];
 
         return $this;
     }
@@ -261,10 +277,11 @@ class Request
 
         return array_merge(
             $temp,
-            $this->formFiles,
-            $this->formParams,
-            $this->queryParams,
-            $this->headerParams
+            empty($this->formFiles) ? [] : $this->formFiles,
+            empty($this->formParams) ? [] : $this->formParams,
+            empty($this->queryParams) ? [] : $this->queryParams,
+            empty($this->headerParams) ? [] : $this->headerParams,
+            empty($this->bodyContents) ? [] : $this->bodyContents
         );
     }
 

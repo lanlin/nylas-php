@@ -1,7 +1,7 @@
 <?php namespace Nylas\Folders;
 
 use Nylas\Utilities\API;
-use Nylas\Utilities\Request;
+use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 
@@ -19,18 +19,20 @@ class Folder
     // ------------------------------------------------------------------------------
 
     /**
-     * @var Request
+     * @var \Nylas\Utilities\Options
      */
-    private $request;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Hosted constructor.
+     * Folder constructor.
+     *
+     * @param \Nylas\Utilities\Options $options
      */
-    public function __construct()
+    public function __construct(Options $options)
     {
-        $this->request = new Request();
+        $this->options = $options;
     }
 
     // ------------------------------------------------------------------------------
@@ -42,9 +44,11 @@ class Folder
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getFoldersList(string $accessToken)
+    public function getFoldersList(string $accessToken = null)
     {
         $rule = V::stringType()::notEmpty();
+
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         if (!$rule->validate($accessToken))
         {
@@ -53,7 +57,7 @@ class Folder
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->request->setHeaderParams($header)->get(API::LIST['folders']);
+        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['folders']);
     }
 
     // ------------------------------------------------------------------------------
@@ -61,12 +65,19 @@ class Folder
     /**
      * get folder
      *
-     * @param array $params
+     * @param string $folderId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getFolder(array $params)
+    public function getFolder(string $folderId, string $accessToken = null)
     {
+        $params =
+        [
+            'folder_id'    => $folderId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('folder_id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -80,7 +91,7 @@ class Folder
         $path   = [$params['folder_id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneFolder']);
@@ -91,12 +102,19 @@ class Folder
     /**
      * add folder
      *
-     * @param array $params
+     * @param string $displayName
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function addFolder(array $params)
+    public function addFolder(string $displayName = null, string $accessToken = null)
     {
+        $params =
+        [
+            'dispaly_name' => $displayName,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('access_token', V::stringType()::notEmpty()),
             V::key('display_name', V::stringType()::notEmpty(), false)
@@ -111,7 +129,7 @@ class Folder
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['folders']);
@@ -122,12 +140,21 @@ class Folder
     /**
      * update folder
      *
-     * @param array $params
+     * @param string $folderId
+     * @param string $displayName
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function updateFolder(array $params)
+    public function updateFolder(string $folderId, string $displayName = null, string $accessToken = null)
     {
+        $params =
+        [
+            'folder_id'    => $folderId,
+            'display_name' => $displayName,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('folder_id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
@@ -144,7 +171,7 @@ class Folder
 
         unset($params['access_token']);
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -156,12 +183,19 @@ class Folder
     /**
      * delete folder
      *
-     * @param array $params
+     * @param string $folderId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteFolder(array $params)
+    public function deleteFolder(string $folderId, string $accessToken = null)
     {
+        $params =
+        [
+            'folder_id'    => $folderId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('folder_id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -175,7 +209,7 @@ class Folder
         $path   = [$params['folder_id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->request
+        return $this->options->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->delete(API::LIST['oneFolder']);
