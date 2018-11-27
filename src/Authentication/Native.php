@@ -65,7 +65,10 @@ class Native
 
         $params['code'] = $code;
 
-        return $this->options->getRequest()->setFormParams($params)->post(API::LIST['connectToken']);
+        return $this->options
+        ->getRequest()
+        ->setFormParams($params)
+        ->post(API::LIST['connectToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -81,10 +84,13 @@ class Native
     {
         $setting = $this->settingsRules($params);
 
+        $params['client_id'] = $this->options->getClientApps()['client_id'];
+
         $rules = V::keySet(
             V::key('name', V::stringType()::notEmpty()),
             V::key('settings', $setting),
             V::key('provider', V::in($this->providers)),
+            V::key('client_id', V::stringType()::notEmpty()),
             V::key('email_address', V::email()),
             V::key('reauth_account_id', V::stringType()::notEmpty(), false)
         );
@@ -94,9 +100,10 @@ class Native
             throw new NylasException('invalid params');
         }
 
-        $params['client_id'] = $this->options->getClientApps()['client_id'];
-
-        return $this->options->getRequest()->setFormParams($params)->post(API::LIST['connectAuthorize']);
+        return $this->options
+        ->getRequest()
+        ->setFormParams($params)
+        ->post(API::LIST['connectAuthorize']);
     }
 
     // ------------------------------------------------------------------------------

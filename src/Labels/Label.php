@@ -44,8 +44,10 @@ class Label
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getLabelsList(string $accessToken)
+    public function getLabelsList(string $accessToken = null)
     {
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
         $rule = V::stringType()::notEmpty();
 
         if (!$rule->validate($accessToken))
@@ -55,7 +57,10 @@ class Label
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['labels']);
+        return $this->options
+        ->getRequest()
+        ->setHeaderParams($header)
+        ->get(API::LIST['labels']);
     }
 
     // ------------------------------------------------------------------------------
@@ -63,12 +68,19 @@ class Label
     /**
      * get label
      *
-     * @param array $params
+     * @param string $labelId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getLabel(array $params)
+    public function getLabel(string $labelId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $labelId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -82,7 +94,8 @@ class Label
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneLabel']);
@@ -93,12 +106,19 @@ class Label
     /**
      * add label
      *
-     * @param array $params
+     * @param string $displayName
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function addLabel(array $params)
+    public function addLabel(string $displayName, string $accessToken = null)
     {
+        $params =
+        [
+            'display_name' => $displayName,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rule = V::keySet(
             V::key('access_token', V::stringType()::notEmpty()),
             V::key('display_name', V::stringType()::notEmpty())
@@ -113,7 +133,8 @@ class Label
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['labels']);
@@ -130,6 +151,9 @@ class Label
      */
     public function updateLabel(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
@@ -146,7 +170,8 @@ class Label
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -164,6 +189,9 @@ class Label
      */
     public function deleteLabel(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
@@ -180,7 +208,8 @@ class Label
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

@@ -50,6 +50,9 @@ class Sending
      */
     public function sendDirectly(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$this->getMessageRules()->validate($params))
         {
             throw new NylasException('invalid params');
@@ -59,7 +62,8 @@ class Sending
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['sending']);
@@ -77,6 +81,9 @@ class Sending
      */
     public function sendRawMIME(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $html = new MimePart($htmlMarkup);
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
@@ -104,7 +111,8 @@ class Sending
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setBody($body)
         ->setFormParams($params)
         ->setHeaderParams($header)

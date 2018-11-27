@@ -60,7 +60,8 @@ class Event
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['events']);
@@ -93,7 +94,8 @@ class Event
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -124,7 +126,8 @@ class Event
 
         unset($params['access_token'], $params['notify_participants']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -156,7 +159,8 @@ class Event
 
         unset($params['id'], $params['access_token'], $params['notify_participants']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setQuery($query)
         ->setFormParams($params)
@@ -173,14 +177,10 @@ class Event
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteEvent(string $eventId, bool $notifyParticipants = false, string $accessToken = null)
+    public function deleteEvent(array $params)
     {
-        $params =
-        [
-            'id'                  => $eventId,
-            'access_token'        => $accessToken ?? $this->options->getAccessToken(),
-            'notify_participants' => $notifyParticipants
-        ];
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
@@ -195,9 +195,12 @@ class Event
 
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
-        $query  = empty($params['notify_participants']) ? [] : ['notify_participants' => $params['notify_participants']];
 
-        return $this->options->getRequest()
+        $temps = empty($params['notify_participants']);
+        $query = $temps ? [] : ['notify_participants' => $params['notify_participants']];
+
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setQuery($query)
         ->setHeaderParams($header)
@@ -214,7 +217,7 @@ class Event
     public function rsvping(array $params)
     {
         $params['account_id'] =
-        $params['account_id'] ?? $this->options->getClientApps();
+        $params['account_id'] ?? $this->options->getAccountId();
 
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
@@ -232,12 +235,14 @@ class Event
             throw new NylasException('invalid params');
         }
 
-        $header = ['Authorization' => $params['access_token']];
-        $query  = empty($params['notify_participants']) ? [] : ['notify_participants' => $params['notify_participants']];
+        $temps = empty($params['notify_participants']);
+        $query = $temps ? [] : ['notify_participants' => $params['notify_participants']];
 
+        $header = ['Authorization' => $params['access_token']];
         unset($params['access_token'], $params['notify_participants']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)

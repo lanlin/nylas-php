@@ -46,15 +46,15 @@ class Calendar
      */
     public function getCalendarsList(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rule = V::keySet(
             V::key('view', V::in(['count', 'ids']), false),
             V::key('limit', V::intType()::min(1), false),
             V::key('offset', V::intType()::min(0), false),
             V::key('access_token', V::stringType()::notEmpty())
         );
-
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
 
         if (!$rule->validate($params))
         {
@@ -65,7 +65,8 @@ class Calendar
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['calendars']);
@@ -102,7 +103,8 @@ class Calendar
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneCalendar']);

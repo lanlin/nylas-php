@@ -46,9 +46,13 @@ class Sending
      */
     public function sendDraft(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rules = V::keySet(
             V::key('draft', V::stringType()->notEmpty()),
-            V::key('version', V::intType()->min(0))
+            V::key('version', V::intType()->min(0)),
+            V::key('access_token', V::stringType()::notEmpty())
         );
 
         if (!$rules->validate($params))
@@ -60,7 +64,8 @@ class Sending
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['sending']);

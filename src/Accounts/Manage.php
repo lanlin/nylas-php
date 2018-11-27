@@ -44,7 +44,7 @@ class Manage
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getAccountsList(array $params)
+    public function getAccountsList(array $params = [])
     {
         $rules = V::keySet(
             V::key('limit', V::intType()::min(1), false),
@@ -81,7 +81,6 @@ class Manage
      *
      * @param string $accountId
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getAccountInfo(string $accountId = null)
     {
@@ -105,7 +104,6 @@ class Manage
      *
      * @param string $accountId
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function reactiveAccount(string $accountId = null)
     {
@@ -129,7 +127,6 @@ class Manage
      *
      * @param string $accountId
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function cancelAccount(string $accountId = null)
     {

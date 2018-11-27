@@ -40,12 +40,19 @@ class Search
     /**
      * search messages list
      *
-     * @param array $params
+     * @param string $q
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function messages(array $params)
+    public function messages(string $q, string $accessToken = null)
     {
+        $params =
+        [
+            'q'            => $q,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rules = V::keySet(
             V::key('q', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -59,7 +66,8 @@ class Search
         $query  = ['q' => $params['q']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['searchMessages']);

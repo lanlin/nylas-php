@@ -47,6 +47,9 @@ class Message
      */
     public function getMessagesList(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$this->getMessagesRules()->validate($params))
         {
             throw new NylasException('invalid params');
@@ -63,7 +66,11 @@ class Message
         unset($params['access_token']);
         $query = array_merge($params, $query);
 
-        return $this->options->getRequest()->setQuery($query)->setHeaderParams($header)->get(API::LIST['messages']);
+        return $this->options
+        ->getRequest()
+        ->setQuery($query)
+        ->setHeaderParams($header)
+        ->get(API::LIST['messages']);
     }
 
     // ------------------------------------------------------------------------------
@@ -71,12 +78,19 @@ class Message
     /**
      * get message info
      *
-     * @param array $params
+     * @param string $messageId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getMessage(array $params)
+    public function getMessage(string $messageId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $messageId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -90,7 +104,11 @@ class Message
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+        return $this->options
+        ->getRequest()
+        ->setPath($path)
+        ->setHeaderParams($header)
+        ->get(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
@@ -98,12 +116,19 @@ class Message
     /**
      * get raw message info
      *
-     * @param array $params
+     * @param string $messageId
+     * @param string $accessToken
      * @return \ZBateson\MailMimeParser\Message
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getRawMessage(array $params)
+    public function getRawMessage(string $messageId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $messageId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -122,7 +147,11 @@ class Message
             'Authorization' => $params['access_token']
         ];
 
-        $rawStream = $this->options->getRequest()->setPath($path)->setHeaderParams($header)->get(API::LIST['oneMessage']);
+        $rawStream = $this->options
+        ->getRequest()
+        ->setPath($path)
+        ->setHeaderParams($header)
+        ->get(API::LIST['oneMessage']);
 
         // parse mime data
         // @link https://github.com/zbateson/mail-mime-parser
@@ -132,14 +161,17 @@ class Message
     // ------------------------------------------------------------------------------
 
     /**
-     * get accounts list
+     * update message status & flags
      *
      * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function addMessage(array $params)
+    public function updateMessage(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
@@ -160,7 +192,8 @@ class Message
 
         unset($params['access_token'], $params['id']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

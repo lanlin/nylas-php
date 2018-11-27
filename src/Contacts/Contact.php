@@ -58,7 +58,8 @@ class Contact
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['contacts']);
@@ -95,7 +96,8 @@ class Contact
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneContact']);
@@ -126,7 +128,8 @@ class Contact
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['contacts']);
@@ -160,7 +163,8 @@ class Contact
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -198,7 +202,8 @@ class Contact
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->delete(API::LIST['oneContact']);
@@ -224,7 +229,10 @@ class Contact
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['contactsGroups']);
+        return $this->options
+        ->getRequest()
+        ->setHeaderParams($header)
+        ->get(API::LIST['contactsGroups']);
     }
 
     // ------------------------------------------------------------------------------
@@ -258,7 +266,8 @@ class Contact
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['contactPic']);

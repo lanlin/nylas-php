@@ -40,12 +40,13 @@ class Webhook
     /**
      * get webhook list
      *
-     * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getWebhookList(array $params)
+    public function getWebhookList()
     {
+        $params = $this->options->getClientApps();
+
         $rules = V::keySet(
             V::key('client_id', V::stringType()::notEmpty()),
             V::key('client_secret', V::stringType()::notEmpty())
@@ -59,7 +60,8 @@ class Webhook
         $path   = [$params['client_id']];
         $header = ['Authorization' => $params['client_secret']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['webhooks']);
@@ -70,12 +72,16 @@ class Webhook
     /**
      * get webhook list
      *
-     * @param array $params
+     * @param string $webhookId
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getWebhook(array $params)
+    public function getWebhook(string $webhookId)
     {
+        $params = $this->options->getClientApps();
+
+        $params['id'] = $webhookId;
+
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('client_id', V::stringType()::notEmpty()),
@@ -90,7 +96,8 @@ class Webhook
         $path   = [$params['client_id'], $params['id']];
         $header = ['Authorization' => $params['client_secret']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneWebhook']);

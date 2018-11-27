@@ -46,6 +46,9 @@ class Thread
      */
     public function getThreadsList(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         if (!$this->getThreadsRules()->validate($params))
         {
             throw new NylasException('invalid params');
@@ -62,7 +65,11 @@ class Thread
         unset($params['access_token']);
         $query = array_merge($params, $query);
 
-        return $this->options->getRequest()->setQuery($query)->setHeaderParams($header)->get(API::LIST['threads']);
+        return $this->options
+        ->getRequest()
+        ->setQuery($query)
+        ->setHeaderParams($header)
+        ->get(API::LIST['threads']);
     }
 
     // ------------------------------------------------------------------------------
@@ -70,12 +77,19 @@ class Thread
     /**
      * get thread info
      *
-     * @param array $params
+     * @param string $threadId
+     * @param string $accessToken
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function getThread(array $params)
+    public function getThread(string $threadId, string $accessToken = null)
     {
+        $params =
+        [
+            'id'           => $threadId,
+            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+        ];
+
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
@@ -89,7 +103,11 @@ class Thread
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()->setPath($path)->setHeaderParams($header)->get(API::LIST['oneThread']);
+        return $this->options
+        ->getRequest()
+        ->setPath($path)
+        ->setHeaderParams($header)
+        ->get(API::LIST['oneThread']);
     }
 
     // ------------------------------------------------------------------------------
@@ -103,6 +121,9 @@ class Thread
      */
     public function addThread(array $params)
     {
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
         $rules = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
@@ -123,7 +144,8 @@ class Thread
 
         unset($params['access_token'], $params['id']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

@@ -49,7 +49,7 @@ class Draft
     {
         $params = ['access_token' => $accessToken ?? $this->options->getAccessToken()];
 
-        if ($anyEmail) { $params['any_email'] = $anyEmail; }
+        !empty($anyEmail) AND $params['any_email'] = $anyEmail;
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()::notEmpty()),
@@ -65,7 +65,8 @@ class Draft
         $header = ['Authorization' => $params['access_token']];
         $query  = empty($emails) ? [] : ['any_email' => $emails];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['drafts']);
@@ -102,7 +103,8 @@ class Draft
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneDraft']);
@@ -133,7 +135,8 @@ class Draft
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['drafts']);
@@ -165,7 +168,8 @@ class Draft
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -177,20 +181,13 @@ class Draft
     /**
      * delete draft
      *
-     * @param string $draftId
-     * @param string $version
-     * @param string $accessToken
+     * @param array $params
      * @return mixed
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteDraft(string $draftId, string $version, string $accessToken = null)
+    public function deleteDraft(array $params)
     {
-        $params =
-        [
-            'id'           => $draftId,
-            'version'      => $version,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $params['access_token'] = $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
@@ -208,7 +205,8 @@ class Draft
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

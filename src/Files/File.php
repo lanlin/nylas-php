@@ -66,7 +66,10 @@ class File
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['files']);
+        return $this->options
+        ->getRequest()
+        ->setHeaderParams($header)
+        ->get(API::LIST['files']);
     }
 
     // ------------------------------------------------------------------------------
@@ -100,7 +103,8 @@ class File
         $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->get(API::LIST['oneFile']);
@@ -120,12 +124,12 @@ class File
     {
         $params =
         [
-            'file_id'      => $fileId,
+            'id'           => $fileId,
             'access_token' => $accessToken ?? $this->options->getAccessToken(),
         ];
 
         $rule = V::keySet(
-            V::key('file_id', V::stringType()::notEmpty()),
+            V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty())
         );
 
@@ -134,10 +138,11 @@ class File
             throw new NylasException('invalid params');
         }
 
-        $path   = [$params['file_id']];
+        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setPath($path)
         ->setHeaderParams($header)
         ->delete(API::LIST['oneFile']);
@@ -175,7 +180,8 @@ class File
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()
+        return $this->options
+        ->getRequest()
         ->setFormFiles($params)
         ->setHeaderParams($header)
         ->post(API::LIST['files']);
@@ -213,7 +219,10 @@ class File
 
         unset($params['access_token']);
 
-        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['downloadFile']);
+        return $this->options
+        ->getRequest()
+        ->setHeaderParams($header)
+        ->get(API::LIST['downloadFile']);
     }
 
     // ------------------------------------------------------------------------------

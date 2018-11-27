@@ -46,9 +46,12 @@ class Hosted
      */
     public function getOAuthAuthorize(array $params)
     {
+        $params['client_id'] = $this->options->getClientApps()['client_id'];
+
         $rules = V::keySet(
             V::key('login_hint', V::email()),
             V::key('redirect_uri', V::url()),
+            V::key('client_id', V::stringType()::notEmpty()),
             V::key('state', V::stringType()::length(1, 255), false)
         );
 
@@ -56,8 +59,6 @@ class Hosted
         {
             throw new NylasException('invalid params');
         }
-
-        $params['client_id'] = $this->options->getClientApps()['client_id'];
 
         $query =
         [
@@ -67,7 +68,10 @@ class Hosted
 
         $query = array_merge($query, $params);
 
-        return $this->options->getRequest()->setQuery($query)->get(API::LIST['oAuthAuthorize']);
+        return $this->options
+        ->getRequest()
+        ->setQuery($query)
+        ->get(API::LIST['oAuthAuthorize']);
     }
 
     // ------------------------------------------------------------------------------
@@ -93,7 +97,10 @@ class Hosted
         $query = ['grant_type' => 'authorization_code'];
         $query = array_merge($query, $params);
 
-        return $this->options->getRequest()->setQuery($query)->post(API::LIST['oAuthToken']);
+        return $this->options
+        ->getRequest()
+        ->setQuery($query)
+        ->post(API::LIST['oAuthToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -116,7 +123,10 @@ class Hosted
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->options->getRequest()->setHeaderParams($header)->post(API::LIST['oAuthRevoke']);
+        return $this->options
+        ->getRequest()
+        ->setHeaderParams($header)
+        ->post(API::LIST['oAuthRevoke']);
     }
 
     // ------------------------------------------------------------------------------

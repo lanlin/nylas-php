@@ -56,7 +56,10 @@ class Account
 
         $header = ['Authorization' => $accessToken];
 
-        return $this->options->getRequest()->setHeaderParams($header)->get(API::LIST['account']);
+        return $this->options
+        ->getRequest()
+        ->setHeaderParams($header)
+        ->get(API::LIST['account']);
     }
 
     // ------------------------------------------------------------------------------
