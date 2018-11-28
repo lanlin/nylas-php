@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,17 +41,13 @@ class Thread
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getThreadsList(array $params)
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!$this->getThreadsRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->getThreadsRules()->assert($params);
 
         $query =
         [
@@ -80,7 +75,6 @@ class Thread
      * @param string $threadId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getThread(string $threadId, string $accessToken = null)
     {
@@ -95,17 +89,13 @@ class Thread
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneThread']);
     }
@@ -117,7 +107,6 @@ class Thread
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function addThread(array $params)
     {
@@ -128,18 +117,15 @@ class Thread
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
 
-            V::key('unread', V::boolType(), false),
-            V::key('starred', V::boolType(), false),
-            V::key('folder_id', V::stringType()::notEmpty(), false),
-            V::key('label_ids', V::arrayVal()->each(V::stringType(), V::intType()), false)
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
+            V::keyOptional('folder_id', V::stringType()::notEmpty()),
+            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType(), V::intType()))
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['access_token'], $params['id']);
@@ -163,25 +149,25 @@ class Thread
     private function getThreadsRules()
     {
         return V::keySet(
-            V::key('in', V::stringType()::notEmpty(), false),
-            V::key('to', V::email(), false),
-            V::key('from', V::email(), false),
-            V::key('cc', V::email(), false),
-            V::key('bcc', V::email(), false),
-            V::key('subject', V::stringType()::notEmpty(), false),
-            V::key('any_email', V::stringType()::notEmpty(), false),
+            V::keyOptional('in', V::stringType()::notEmpty()),
+            V::keyOptional('to', V::email()),
+            V::keyOptional('from', V::email()),
+            V::keyOptional('cc', V::email()),
+            V::keyOptional('bcc', V::email()),
+            V::keyOptional('subject', V::stringType()::notEmpty()),
+            V::keyOptional('any_email', V::stringType()::notEmpty()),
 
-            V::key('started_after', V::timestampType(), false),
-            V::key('started_before', V::timestampType(), false),
-            V::key('last_message_after', V::timestampType(), false),
-            V::key('last_message_before', V::timestampType(), false),
+            V::keyOptional('started_after', V::timestampType()),
+            V::keyOptional('started_before', V::timestampType()),
+            V::keyOptional('last_message_after', V::timestampType()),
+            V::keyOptional('last_message_before', V::timestampType()),
 
-            V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false),
-            V::key('view', V::in(['ids', 'count', 'expanded']), false),
-            V::key('unread', V::boolType(), false),
-            V::key('starred', V::boolType(), false),
-            V::key('filename', V::stringType()::notEmpty(), false),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
+            V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
+            V::keyOptional('filename', V::stringType()::notEmpty()),
 
             V::key('access_token', V::stringType()::notEmpty())
         );

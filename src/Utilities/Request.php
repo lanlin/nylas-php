@@ -35,7 +35,7 @@ class Request
 
     private $formFiles    = [];
     private $pathParams   = [];
-    private $formParams   = [];
+    private $jsonParams   = [];
     private $queryParams  = [];
     private $headerParams = [];
     private $bodyContents = [];
@@ -50,7 +50,10 @@ class Request
      */
     public function __construct(string $server = null, bool $debug = false)
     {
-        $option = ['base_uri' => $server ?? API::LIST['server']];
+        $option =
+        [
+            'base_uri' => trim($server ?? API::LIST['server'])
+        ];
 
         $this->debug  = $debug;
         $this->guzzle = new Client($option);
@@ -61,7 +64,7 @@ class Request
     /**
      * set path params
      *
-     * @param string ...$path
+     * @param string[] $path
      * @return $this
      */
     public function setPath(string ...$path)
@@ -111,7 +114,7 @@ class Request
      */
     public function setFormParams(array $params)
     {
-        $this->formParams = ['form_params' => $params];
+        $this->jsonParams = ['json' => $params];
 
         return $this;
     }
@@ -237,14 +240,18 @@ class Request
     {
         if ($statusCode === Errors::StatusOK) { return; }
 
+        $exception = Errors::StatusExceptions['default'];
+
         // normal exception
         if (isset(Errors::StatusExceptions[$statusCode]))
         {
-            throw new (Errors::StatusExceptions[$statusCode]);
+            $exception = Errors::StatusExceptions[$statusCode];
+
+            throw new $exception;
         }
 
         // unexpected exception
-        throw new (Errors::StatusExceptions['default']);
+        throw new $exception;
     }
 
     // ------------------------------------------------------------------------------
@@ -257,7 +264,7 @@ class Request
      */
     private function concatApiPath(string $api)
     {
-        return sprintf($api, $this->pathParams);
+        return sprintf($api, ...$this->pathParams);
     }
 
     // ------------------------------------------------------------------------------
@@ -278,7 +285,7 @@ class Request
         return array_merge(
             $temp,
             empty($this->formFiles) ? [] : $this->formFiles,
-            empty($this->formParams) ? [] : $this->formParams,
+            empty($this->jsonParams) ? [] : $this->jsonParams,
             empty($this->queryParams) ? [] : $this->queryParams,
             empty($this->headerParams) ? [] : $this->headerParams,
             empty($this->bodyContents) ? [] : $this->bodyContents
@@ -299,7 +306,7 @@ class Request
         $expc = 'application/json';
         $type = $response->getHeader('Content-Type');
 
-        if (strpos(strtolower($type), $expc) === false)
+        if (strpos(strtolower(current($type)), $expc) === false)
         {
             return $response->getBody();
         }

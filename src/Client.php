@@ -72,20 +72,21 @@ class Client
     /**
      * call nylas apis
      *
-     * @param string $subject
+     * @param string $name
+     * @param array $arguments
      * @return object
      */
-    public function __call(string $subject)
+    public function __call(string $name, array $arguments)
     {
-        $subClass = __NAMESPACE__ .'\\'. ucfirst($subject) . '\\Abs';
+        $apiClass = __NAMESPACE__ .'\\'. ucfirst($name) . '\\Abs';
 
         // check class exists
-        if (!class_exists($subClass))
+        if (!class_exists($apiClass))
         {
-            throw new NylasException("class {$subClass} not found!");
+            throw new NylasException("class {$apiClass} not found!");
         }
 
-        return new $subClass($this->options);
+        return new $apiClass($this->options);
     }
 
     // ------------------------------------------------------------------------------

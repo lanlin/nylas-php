@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +41,6 @@ class File
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getFilesList(array $params)
     {
@@ -50,17 +48,15 @@ class File
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('view', V::in(['count', 'ids']), false),
-            V::key('filename', V::stringType()::notEmpty(), false),
-            V::key('message_id', V::stringType()::notEmpty(), false),
-            V::key('content_type', V::stringType()::notEmpty(), false),
+            V::keyOptional('view', V::in(['count', 'ids'])),
+            V::keyOptional('filename', V::stringType()::notEmpty()),
+            V::keyOptional('message_id', V::stringType()::notEmpty()),
+            V::keyOptional('content_type', V::stringType()::notEmpty()),
+
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -80,7 +76,6 @@ class File
      * @param string $fileId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getFile(string $fileId, string $accessToken = null)
     {
@@ -95,17 +90,13 @@ class File
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneFile']);
     }
@@ -118,7 +109,6 @@ class File
      * @param string $fileId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function deleteFile(string $fileId, string $accessToken = null)
     {
@@ -133,17 +123,13 @@ class File
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->delete(API::LIST['oneFile']);
     }
@@ -156,7 +142,6 @@ class File
      * @param array $file
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function uploadFile(array $file, string $accessToken = null)
     {
@@ -171,10 +156,7 @@ class File
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -195,7 +177,6 @@ class File
      * @param string $fileId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function downloadFile(string $fileId, string $accessToken = null)
     {
@@ -207,13 +188,10 @@ class File
 
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty(), false)
+            V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 

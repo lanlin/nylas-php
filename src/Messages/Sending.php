@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
@@ -46,17 +45,13 @@ class Sending
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function sendDirectly(array $params)
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!$this->getMessageRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->getMessageRules()->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -77,7 +72,6 @@ class Sending
      * @TODO boundary
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function sendRawMIME(array $params)
     {
@@ -98,10 +92,7 @@ class Sending
         $body = new MimeMessage();
         $body->setParts([$html, $image]);
 
-        if (!$this->getMessageRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->getMessageRules()->assert($params);
 
         $header =
         [
@@ -131,31 +122,31 @@ class Sending
         $ids = V::arrayVal()->each(V::stringType()->notEmpty(), V::intType());
 
         $tmp = V::each(V::keySet(
-            V::key('name', V::stringType(), false),
-            V::key('email', V::stringType(), false)
+            V::keyOptional('name', V::stringType()),
+            V::keyOptional('email', V::stringType())
         ));
 
         $tracking = V::keySet(
             V::key('links', V::boolType()),
             V::key('opens', V::boolType()),
             V::key('thread_replies', V::boolType()),
-            V::key('payload', V::stringType()->notEmpty(), false)
+            V::keyOptional('payload', V::stringType()->notEmpty())
         );
 
         return V::keySet(
             V::key('access_token', V::stringType()::notEmpty()),
 
-            V::key('to', $tmp, false),
-            V::key('cc', $tmp, false),
-            V::key('bcc', $tmp, false),
-            V::key('from', $tmp, false),
-            V::key('reply_to', $tmp, false),
-            V::key('reply_to_message_id', V::stringType()::notEmpty(), false),
+            V::keyOptional('to', $tmp),
+            V::keyOptional('cc', $tmp),
+            V::keyOptional('bcc', $tmp),
+            V::keyOptional('from', $tmp),
+            V::keyOptional('reply_to', $tmp),
+            V::keyOptional('reply_to_message_id', V::stringType()::notEmpty()),
 
-            V::key('body', V::stringType()::notEmpty(), false),
-            V::key('subject', V::stringType()::notEmpty(), false),
-            V::key('file_ids', $ids, false),
-            V::key('tracking', $tracking, false)
+            V::keyOptional('body', V::stringType()::notEmpty()),
+            V::keyOptional('subject', V::stringType()::notEmpty()),
+            V::keyOptional('file_ids', $ids),
+            V::keyOptional('tracking', $tracking)
         );
     }
 

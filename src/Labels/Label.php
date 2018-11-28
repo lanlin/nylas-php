@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +41,6 @@ class Label
      *
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getLabelsList(string $accessToken = null)
     {
@@ -50,10 +48,7 @@ class Label
 
         $rule = V::stringType()::notEmpty();
 
-        if (!$rule->validate($accessToken))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -71,7 +66,6 @@ class Label
      * @param string $labelId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getLabel(string $labelId, string $accessToken = null)
     {
@@ -86,17 +80,13 @@ class Label
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneLabel']);
     }
@@ -109,7 +99,6 @@ class Label
      * @param string $displayName
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function addLabel(string $displayName, string $accessToken = null)
     {
@@ -124,10 +113,7 @@ class Label
             V::key('display_name', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -147,7 +133,6 @@ class Label
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function updateLabel(array $params)
     {
@@ -160,12 +145,9 @@ class Label
             V::key('display_name', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['id'], $params['access_token']);
@@ -185,7 +167,6 @@ class Label
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function deleteLabel(array $params)
     {
@@ -198,12 +179,9 @@ class Label
             V::key('display_name', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['id'], $params['access_token']);

@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +41,6 @@ class Event
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getEventsList(array $params)
     {
@@ -51,10 +49,7 @@ class Event
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -74,7 +69,6 @@ class Event
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getEvent(array $params)
     {
@@ -84,12 +78,9 @@ class Event
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['id'], $params['access_token']);
@@ -109,17 +100,13 @@ class Event
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function addEvent(array $params)
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!$this->addEventRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->addEventRules()->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
         $query  = ['notify_participants' => $params['notify_participants']];
@@ -141,19 +128,15 @@ class Event
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function updateEvent(array $params)
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!$this->updateEventRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->updateEventRules()->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
         $query  = ['notify_participants' => $params['notify_participants']];
 
@@ -175,7 +158,6 @@ class Event
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function deleteEvent(array $params)
     {
@@ -185,15 +167,11 @@ class Event
         $rule = V::keySet(
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
-            V::key('notify_participants', V::boolType(), false)
+            V::keyOptional('notify_participants', V::boolType())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         $temps = empty($params['notify_participants']);
@@ -201,7 +179,7 @@ class Event
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setQuery($query)
         ->setHeaderParams($header)
         ->delete(API::LIST['oneEvent']);
@@ -212,7 +190,6 @@ class Event
     /**
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function rsvping(array $params)
     {
@@ -227,13 +204,10 @@ class Event
             V::key('event_id', V::stringType()::notEmpty()),
             V::key('account_id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
-            V::key('notify_participants', V::boolType(), false)
+            V::keyOptional('notify_participants', V::boolType())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
         $temps = empty($params['notify_participants']);
         $query = $temps ? [] : ['notify_participants' => $params['notify_participants']];
@@ -260,21 +234,21 @@ class Event
     {
         return
         [
-            V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false),
-            V::key('event_id', V::stringType()::notEmpty(), false),
-            V::key('calendar_id', V::stringType()::notEmpty(), false),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
+            V::keyOptional('event_id', V::stringType()::notEmpty()),
+            V::keyOptional('calendar_id', V::stringType()::notEmpty()),
 
-            V::key('title', V::stringType()::notEmpty(), false),
-            V::key('location', V::stringType()::notEmpty(), false),
-            V::key('description', V::stringType()::notEmpty(), false),
-            V::key('show_cancelled', V::boolType(), false),
-            V::key('expand_recurring', V::boolType(), false),
+            V::keyOptional('title', V::stringType()::notEmpty()),
+            V::keyOptional('location', V::stringType()::notEmpty()),
+            V::keyOptional('description', V::stringType()::notEmpty()),
+            V::keyOptional('show_cancelled', V::boolType()),
+            V::keyOptional('expand_recurring', V::boolType()),
 
-            V::key('ends_after', V::timestampType(), false),
-            V::key('ends_before', V::timestampType(), false),
-            V::key('start_after', V::timestampType(), false),
-            V::key('start_before', V::timestampType(), false),
+            V::keyOptional('ends_after', V::timestampType()),
+            V::keyOptional('ends_before', V::timestampType()),
+            V::keyOptional('start_after', V::timestampType()),
+            V::keyOptional('start_before', V::timestampType()),
 
             V::key('access_token', V::stringType()::notEmpty())
         ];
@@ -293,19 +267,19 @@ class Event
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
 
-            V::key('when', $this->timeRules(), false),
-            V::key('busy', V::boolType(), false),
-            V::key('title', V::stringType()::notEmpty(), false),
-            V::key('location', V::stringType()::notEmpty(), false),
-            V::key('description', V::stringType()::notEmpty(), false),
-            V::key('notify_participants', V::boolType(), false),
+            V::keyOptional('when', $this->timeRules()),
+            V::keyOptional('busy', V::boolType()),
+            V::keyOptional('title', V::stringType()::notEmpty()),
+            V::keyOptional('location', V::stringType()::notEmpty()),
+            V::keyOptional('description', V::stringType()::notEmpty()),
+            V::keyOptional('notify_participants', V::boolType()),
 
-            V::key('participants', V::arrayVal()->each(V::keySet(
+            V::keyOptional('participants', V::arrayVal()->each(V::keySet(
                 V::key('email', V::email()),
                 V::key('status', V::stringType()),
                 V::key('name', V::stringType()),
                 V::key('comment', V::stringType())
-            )), false)
+            )))
         );
     }
 
@@ -323,19 +297,19 @@ class Event
             V::key('calendar_id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
 
-            V::key('busy', V::boolType(), false),
-            V::key('title', V::stringType()::notEmpty(), false),
-            V::key('location', V::stringType()::notEmpty(), false),
-            V::key('recurrence', V::arrayType(), false),
-            V::key('description', V::stringType()::notEmpty(), false),
-            V::key('notify_participants', V::boolType(), false),
+            V::keyOptional('busy', V::boolType()),
+            V::keyOptional('title', V::stringType()::notEmpty()),
+            V::keyOptional('location', V::stringType()::notEmpty()),
+            V::keyOptional('recurrence', V::arrayType()),
+            V::keyOptional('description', V::stringType()::notEmpty()),
+            V::keyOptional('notify_participants', V::boolType()),
 
-            V::key('participants', V::arrayVal()->each(V::keySet(
+            V::keyOptional('participants', V::arrayVal()->each(V::keySet(
                 V::key('email', V::email()),
                 V::key('status', V::stringType()),
                 V::key('name', V::stringType()),
                 V::key('comment', V::stringType())
-            )), false)
+            )))
         );
     }
 

@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,17 +41,13 @@ class Contact
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
-    public function getContactsList(array $params)
+    public function getContactsList(array $params = [])
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!$this->getBaseRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->getBaseRules()->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -73,7 +68,6 @@ class Contact
      * @param string $contactId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getContact(string $contactId, string $accessToken = null)
     {
@@ -88,17 +82,13 @@ class Contact
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneContact']);
     }
@@ -110,7 +100,6 @@ class Contact
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function addContact(array $params)
     {
@@ -119,10 +108,7 @@ class Contact
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -142,7 +128,6 @@ class Contact
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function updateContact(array $params)
     {
@@ -153,12 +138,9 @@ class Contact
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['id'], $params['access_token']);
@@ -179,7 +161,6 @@ class Contact
      * @param string $contactId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function deleteContact(string $contactId, string $accessToken = null)
     {
@@ -194,17 +175,13 @@ class Contact
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->delete(API::LIST['oneContact']);
     }
@@ -216,16 +193,12 @@ class Contact
      *
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getContactGroups(string $accessToken = null)
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        if (!V::stringType()::notEmpty()->validate($accessToken))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::stringType()::notEmpty()->assert($accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -243,7 +216,6 @@ class Contact
      * @param string $contactId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getContactPicture(string $contactId, string $accessToken = null)
     {
@@ -258,17 +230,13 @@ class Contact
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['contactPic']);
     }
@@ -283,19 +251,19 @@ class Contact
     private function getBaseRules()
     {
         return V::keySet(
-            V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
 
-            V::key('email', V::email(), false),
-            V::key('state', V::stringType()::notEmpty(), false),
-            V::key('group', V::stringType()::notEmpty(), false),
-            V::key('source', V::stringType()::notEmpty(), false),
-            V::key('country', V::stringType()::notEmpty(), false),
+            V::keyOptional('email', V::email()),
+            V::keyOptional('state', V::stringType()::notEmpty()),
+            V::keyOptional('group', V::stringType()::notEmpty()),
+            V::keyOptional('source', V::stringType()::notEmpty()),
+            V::keyOptional('country', V::stringType()::notEmpty()),
 
-            V::key('recurse', V::boolType(), false),
-            V::key('postal_code', V::stringType()::notEmpty(), false),
-            V::key('phone_number', V::stringType()::notEmpty(), false),
-            V::key('street_address', V::stringType()::notEmpty(), false),
+            V::keyOptional('recurse', V::boolType()),
+            V::keyOptional('postal_code', V::stringType()::notEmpty()),
+            V::keyOptional('phone_number', V::stringType()::notEmpty()),
+            V::keyOptional('street_address', V::stringType()::notEmpty()),
 
             V::key('access_token', V::stringType()::notEmpty())
         );
@@ -312,24 +280,24 @@ class Contact
     {
         return
         [
-            V::key('given_name', V::stringType()::notEmpty(), false),
-            V::key('middle_name', V::stringType()::notEmpty(), false),
-            V::key('surname', V::stringType()::notEmpty(), false),
-            V::key('birthday', V::date('c'), false),
-            V::key('suffix', V::stringType()::notEmpty(), false),
-            V::key('nickname', V::stringType()::notEmpty(), false),
-            V::key('company_name', V::stringType()::notEmpty(), false),
-            V::key('job_title', V::stringType()::notEmpty(), false),
+            V::keyOptional('given_name', V::stringType()::notEmpty()),
+            V::keyOptional('middle_name', V::stringType()::notEmpty()),
+            V::keyOptional('surname', V::stringType()::notEmpty()),
+            V::keyOptional('birthday', V::date('c')),
+            V::keyOptional('suffix', V::stringType()::notEmpty()),
+            V::keyOptional('nickname', V::stringType()::notEmpty()),
+            V::keyOptional('company_name', V::stringType()::notEmpty()),
+            V::keyOptional('job_title', V::stringType()::notEmpty()),
 
-            V::key('manager_name', V::stringType()::notEmpty(), false),
-            V::key('office_location', V::stringType()::notEmpty(), false),
-            V::key('notes', V::stringType()::notEmpty(), false),
-            V::key('emails', V::arrayVal()->each(V::email()), false),
+            V::keyOptional('manager_name', V::stringType()::notEmpty()),
+            V::keyOptional('office_location', V::stringType()::notEmpty()),
+            V::keyOptional('notes', V::stringType()::notEmpty()),
+            V::keyOptional('emails', V::arrayVal()->each(V::email())),
 
-            V::key('im_addresses', V::arrayType(), false),
-            V::key('physical_addresses', V::arrayType(), false),
-            V::key('phone_numbers', V::arrayType(), false),
-            V::key('web_pages', V::arrayType(), false),
+            V::keyOptional('im_addresses', V::arrayType()),
+            V::keyOptional('physical_addresses', V::arrayType()),
+            V::keyOptional('phone_numbers', V::arrayType()),
+            V::keyOptional('web_pages', V::arrayType()),
 
             V::key('access_token', V::stringType()::notEmpty())
         ];

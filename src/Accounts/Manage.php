@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,22 +41,17 @@ class Manage
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getAccountsList(array $params = [])
     {
         $rules = V::keySet(
-            V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false)
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0))
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
         $client = $this->options->getClientApps();
-        $path   = [$client['client_id']];
         $header = ['Authorization' => $client['client_secret']];
 
         $pagination =
@@ -68,7 +62,7 @@ class Manage
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($client['client_id'])
         ->setQuery($pagination)
         ->setHeaderParams($header)
         ->get(API::LIST['listAllAccounts']);
@@ -84,15 +78,14 @@ class Manage
      */
     public function getAccountInfo(string $accountId = null)
     {
-        $client    = $this->options->getClientApps();
         $accountId = $accountId ?? $this->options->getAccountId();
 
-        $path   = [$client['client_id'], $accountId];
+        $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->get(API::LIST['listAnAccount']);
     }
@@ -107,15 +100,14 @@ class Manage
      */
     public function reactiveAccount(string $accountId = null)
     {
-        $client    = $this->options->getClientApps();
         $accountId = $accountId ?? $this->options->getAccountId();
 
-        $path   = [$client['client_id'], $accountId];
+        $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->post(API::LIST['reactiveAnAccount']);
     }
@@ -130,15 +122,14 @@ class Manage
      */
     public function cancelAccount(string $accountId = null)
     {
-        $client    = $this->options->getClientApps();
         $accountId = $accountId ?? $this->options->getAccountId();
 
-        $path   = [$client['client_id'], $accountId];
+        $client    = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->post(API::LIST['cancelAnAccount']);
     }

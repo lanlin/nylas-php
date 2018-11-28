@@ -25,7 +25,7 @@ class Options
     /**
      * @var string
      */
-    private $server = (string) API::LIST['server'];
+    private $server;
 
     // ------------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ class Options
     public function __construct(array $options)
     {
         $this->debug       = $options['debug'] ?? false;
-        $this->server      = $options['server'] ?? $this->server;
+        $this->server      = $options['server'] ?? API::LIST['server'];
         $this->accountId   = $options['account_id'] ?? '';
         $this->accessToken = $options['access_token'] ?? '';
 
@@ -123,6 +123,16 @@ class Options
     public function getAccountId()
     {
         return $this->accountId ?? null;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return string
+     */
+    public function getServer()
+    {
+        return $this->server ?? null;
     }
 
     // ------------------------------------------------------------------------------

@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -43,7 +42,6 @@ class Search
      * @param string $q
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function threads(string $q, string $accessToken = null)
     {
@@ -58,10 +56,7 @@ class Search
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
         $query  = ['q' => $params['q']];
         $header = ['Authorization' => $params['access_token']];

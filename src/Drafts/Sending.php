@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +41,6 @@ class Sending
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function sendDraft(array $params)
     {
@@ -55,10 +53,7 @@ class Sending
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 

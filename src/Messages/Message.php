@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 use ZBateson\MailMimeParser\MailMimeParser;
 
 /**
@@ -43,17 +42,13 @@ class Message
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getMessagesList(array $params)
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!$this->getMessagesRules()->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $this->getMessagesRules()->assert($params);
 
         $query =
         [
@@ -81,7 +76,6 @@ class Message
      * @param string $messageId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getMessage(string $messageId, string $accessToken = null)
     {
@@ -96,17 +90,13 @@ class Message
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneMessage']);
     }
@@ -119,7 +109,6 @@ class Message
      * @param string $messageId
      * @param string $accessToken
      * @return \ZBateson\MailMimeParser\Message
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getRawMessage(string $messageId, string $accessToken = null)
     {
@@ -134,12 +123,7 @@ class Message
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
-
-        $path = [$params['id']];
+        $rules->assert($params);
 
         $header =
         [
@@ -149,7 +133,7 @@ class Message
 
         $rawStream = $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneMessage']);
 
@@ -165,7 +149,6 @@ class Message
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function updateMessage(array $params)
     {
@@ -176,18 +159,15 @@ class Message
             V::key('id', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
 
-            V::key('unread', V::boolType(), false),
-            V::key('starred', V::boolType(), false),
-            V::key('folder_id', V::stringType()::notEmpty(), false),
-            V::key('label_ids', V::arrayVal()->each(V::stringType(), V::intType()), false)
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
+            V::keyOptional('folder_id', V::stringType()::notEmpty()),
+            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType(), V::intType()))
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['access_token'], $params['id']);
@@ -211,25 +191,25 @@ class Message
     private function getMessagesRules()
     {
         return V::keySet(
-            V::key('in', V::stringType()::notEmpty(), false),
-            V::key('to', V::email(), false),
-            V::key('from', V::email(), false),
-            V::key('cc', V::email(), false),
-            V::key('bcc', V::email(), false),
-            V::key('subject', V::stringType()::notEmpty(), false),
-            V::key('any_email', V::stringType()::notEmpty(), false),
-            V::key('thread_id', V::stringType()::notEmpty(), false),
+            V::keyOptional('in', V::stringType()::notEmpty()),
+            V::keyOptional('to', V::email()),
+            V::keyOptional('from', V::email()),
+            V::keyOptional('cc', V::email()),
+            V::keyOptional('bcc', V::email()),
+            V::keyOptional('subject', V::stringType()::notEmpty()),
+            V::keyOptional('any_email', V::stringType()::notEmpty()),
+            V::keyOptional('thread_id', V::stringType()::notEmpty()),
 
-            V::key('received_after', V::timestampType(), false),
-            V::key('received_before', V::timestampType(), false),
-            V::key('has_attachment', V::boolType(), false),
+            V::keyOptional('received_after', V::timestampType()),
+            V::keyOptional('received_before', V::timestampType()),
+            V::keyOptional('has_attachment', V::boolType()),
 
-            V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false),
-            V::key('view', V::in(['ids', 'count', 'expanded']), false),
-            V::key('unread', V::boolType(), false),
-            V::key('starred', V::boolType(), false),
-            V::key('filename', V::stringType()::notEmpty(), false),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
+            V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
+            V::keyOptional('filename', V::stringType()::notEmpty()),
 
             V::key('access_token', V::stringType()::notEmpty())
         );

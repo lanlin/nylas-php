@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -52,14 +51,10 @@ class Native
      *
      * @param string $code
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function postConnectToken(string $code)
     {
-        if (!V::stringType()::notEmpty()->validate($code))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::stringType()::notEmpty()->assert($code);
 
         $params = $this->options->getClientApps();
 
@@ -78,7 +73,6 @@ class Native
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function postConnectAuthorize(array $params)
     {
@@ -92,13 +86,10 @@ class Native
             V::key('provider', V::in($this->providers)),
             V::key('client_id', V::stringType()::notEmpty()),
             V::key('email_address', V::email()),
-            V::key('reauth_account_id', V::stringType()::notEmpty(), false)
+            V::keyOptional('reauth_account_id', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
         return $this->options
         ->getRequest()

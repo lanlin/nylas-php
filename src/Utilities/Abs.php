@@ -37,12 +37,15 @@ trait Abs
     /**
      * call nylas apis
      *
-     * @param string $subject
+     * @param string $name
+     * @param array $arguments
      * @return object
      */
-    public function __call(string $subject)
+    public function __call(string $name, array $arguments)
     {
-        $subClass = __NAMESPACE__ .'\\'. ucfirst($subject) . '\\Abs';
+        $nmSpace  = trim(get_class($this), 'Abs');
+        $nmSpace  = trim($nmSpace, '\\');
+        $subClass = $nmSpace .'\\'. ucfirst($name);
 
         // check class exists
         if (!class_exists($subClass))

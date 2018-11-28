@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +41,6 @@ class Delta
      *
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getLatestCursor(string $accessToken = null)
     {
@@ -50,10 +48,7 @@ class Delta
 
         $rules = V::key('access_token', V::stringType()::notEmpty());
 
-        if (!$rules->validate($accessToken))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -70,7 +65,6 @@ class Delta
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getSetOfDeltas(array $params)
     {
@@ -79,10 +73,7 @@ class Delta
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -102,7 +93,6 @@ class Delta
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function longPollingDelta(array $params)
     {
@@ -114,10 +104,7 @@ class Delta
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -137,7 +124,6 @@ class Delta
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function streamingDelta(array $params)
     {
@@ -146,10 +132,7 @@ class Delta
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -178,9 +161,9 @@ class Delta
             V::key('cursor', V::stringType()::notEmpty()),
             V::key('access_token', V::stringType()::notEmpty()),
 
-            V::key('view', V::stringType()::notEmpty(), false),
-            V::key('exclude_types', V::in($types), false),
-            V::key('include_types', V::in($types), false)
+            V::keyOptional('view', V::stringType()::notEmpty()),
+            V::keyOptional('exclude_types', V::in($types)),
+            V::keyOptional('include_types', V::in($types))
         ];
     }
 

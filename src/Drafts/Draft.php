@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -43,7 +42,6 @@ class Draft
      * @param string $anyEmail
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getDraftsList(string $anyEmail = null, string $accessToken = null)
     {
@@ -53,13 +51,10 @@ class Draft
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()::notEmpty()),
-            V::key('any_email', V::arrayVal()->each(V::email(), V::intType()), false)
+            V::keyOptional('any_email', V::arrayVal()->each(V::email(), V::intType()))
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
         $emails = implode(',', $params['any_email'] ?? []);
         $header = ['Authorization' => $params['access_token']];
@@ -80,7 +75,6 @@ class Draft
      * @param string $draftId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getDraft(string $draftId, string $accessToken = null)
     {
@@ -95,17 +89,13 @@ class Draft
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneDraft']);
     }
@@ -117,7 +107,6 @@ class Draft
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function addDraft(array $params)
     {
@@ -126,10 +115,7 @@ class Draft
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -149,7 +135,6 @@ class Draft
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function updateDraft(array $params)
     {
@@ -158,12 +143,9 @@ class Draft
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        if (!V::keySet(...$rules)->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::keySet(...$rules)->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['id'], $params['access_token']);
@@ -183,7 +165,6 @@ class Draft
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function deleteDraft(array $params)
     {
@@ -195,12 +176,9 @@ class Draft
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
+        $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
 
         unset($params['id'], $params['access_token']);
@@ -274,15 +252,15 @@ class Draft
     {
         return
         [
-            V::key('to', $this->arrayOfObject(), false),
-            V::key('cc', $this->arrayOfObject(), false),
-            V::key('bcc', $this->arrayOfObject(), false),
-            V::key('from', $this->arrayOfObject(), false),
-            V::key('reply_to', $this->arrayOfObject(), false),
+            V::keyOptional('to', $this->arrayOfObject()),
+            V::keyOptional('cc', $this->arrayOfObject()),
+            V::keyOptional('bcc', $this->arrayOfObject()),
+            V::keyOptional('from', $this->arrayOfObject()),
+            V::keyOptional('reply_to', $this->arrayOfObject()),
 
-            V::key('file_ids', $this->arrayOfString(), false),
-            V::key('subject', V::stringType(), false),
-            V::key('body', V::stringType(), false),
+            V::keyOptional('file_ids', $this->arrayOfString()),
+            V::keyOptional('subject', V::stringType()),
+            V::keyOptional('body', V::stringType()),
 
             V::key('access_token', V::stringType()::notEmpty())
         ];

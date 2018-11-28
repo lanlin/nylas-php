@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -41,7 +40,6 @@ class Webhook
      * get webhook list
      *
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getWebhookList()
     {
@@ -52,17 +50,13 @@ class Webhook
             V::key('client_secret', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $path   = [$params['client_id']];
         $header = ['Authorization' => $params['client_secret']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['client_id'])
         ->setHeaderParams($header)
         ->get(API::LIST['webhooks']);
     }
@@ -74,7 +68,6 @@ class Webhook
      *
      * @param string $webhookId
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getWebhook(string $webhookId)
     {
@@ -88,17 +81,13 @@ class Webhook
             V::key('client_secret', V::stringType()::notEmpty())
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $path   = [$params['client_id'], $params['id']];
         $header = ['Authorization' => $params['client_secret']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['client_id'], $params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneWebhook']);
     }

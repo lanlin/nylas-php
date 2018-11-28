@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -38,13 +37,12 @@ class Hosted
     // ------------------------------------------------------------------------------
 
     /**
-     * get oauth authorize
+     * get oauth authorize url
      *
      * @param array $params
-     * @return mixed
-     * @throws \Exception
+     * @return string
      */
-    public function getOAuthAuthorize(array $params)
+    public function getOAuthAuthorizeUrl(array $params)
     {
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
@@ -52,26 +50,22 @@ class Hosted
             V::key('login_hint', V::email()),
             V::key('redirect_uri', V::url()),
             V::key('client_id', V::stringType()::notEmpty()),
-            V::key('state', V::stringType()::length(1, 255), false)
+            V::keyOptional('state', V::stringType()::length(1, 255)),
+            V::keyOptional('scopes', V::stringType()::notEmpty()),
+            V::keyOptional('response_type', V::in(['code', 'token']))
         );
 
-        if (!$rules->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rules->assert($params);
 
-        $query =
-        [
-            'scope'         => 'email',
-            'response_type' => 'code',     // code for server side, token for client side
-        ];
+        // @link https://docs.nylas.com/docs/how-to-use-selective-sync
+        $params['scopes']        = $params['scopes'] ?? 'calendar,email,contacts';
+        $params['response_type'] = $params['response_type'] ?? 'code';
 
-        $query = array_merge($query, $params);
+        $query = http_build_query($params, null, '&', PHP_QUERY_RFC3986);
 
-        return $this->options
-        ->getRequest()
-        ->setQuery($query)
-        ->get(API::LIST['oAuthAuthorize']);
+        $apiUrl = trim($this->options->getServer(), '/') . API::LIST['oAuthAuthorize'];
+
+        return trim($apiUrl, '/') .'?'. $query;
     }
 
     // ------------------------------------------------------------------------------
@@ -81,14 +75,10 @@ class Hosted
      *
      * @param string $code
      * @return mixed
-     * @throws \Exception
      */
     public function postOAuthToken(string $code)
     {
-        if (!V::stringType()::notEmpty()->validate($code))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::stringType()::notEmpty()->assert($code);
 
         $params = $this->options->getClientApps();
 
@@ -110,16 +100,12 @@ class Hosted
      *
      * @param string $accessToken
      * @return mixed
-     * @throws \Exception
      */
     public function postOAuthRevoke(string $accessToken = null)
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        if (!V::stringType()::notEmpty()->validate($accessToken))
-        {
-            throw new NylasException('invalid params');
-        }
+        V::stringType()::notEmpty()->assert($accessToken);
 
         $header = ['Authorization' => $accessToken];
 

@@ -3,7 +3,6 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +41,6 @@ class Calendar
      *
      * @param array $params
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getCalendarsList(array $params)
     {
@@ -50,16 +48,14 @@ class Calendar
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('view', V::in(['count', 'ids']), false),
-            V::key('limit', V::intType()::min(1), false),
-            V::key('offset', V::intType()::min(0), false),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()::notEmpty()),
+
+            V::keyOptional('view', V::in(['count', 'ids'])),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0))
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -80,7 +76,6 @@ class Calendar
      * @param string $calendarId
      * @param string $accessToken
      * @return mixed
-     * @throws \Nylas\Exceptions\NylasException
      */
     public function getCalendar(string $calendarId, string $accessToken = null)
     {
@@ -95,17 +90,13 @@ class Calendar
             V::key('access_token', V::stringType()::notEmpty())
         );
 
-        if (!$rule->validate($params))
-        {
-            throw new NylasException('invalid params');
-        }
+        $rule->assert($params);
 
-        $path   = [$params['id']];
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
         ->getRequest()
-        ->setPath($path)
+        ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneCalendar']);
     }
