@@ -26,7 +26,7 @@ class Validate extends Validator
      */
     public static function timestampType()
     {
-        return static::intType()->min(strtotime('1971-1-1'));
+        return self::intType()->min(strtotime('1971-1-1'));
     }
 
     // ------------------------------------------------------------------------------
@@ -34,46 +34,36 @@ class Validate extends Validator
     /**
      * optional key
      *
-     * @param string                               $reference
-     * @param \Respect\Validation\Validatable|NULL $referenceValidator
+     * @param string                          $reference
+     * @param \Respect\Validation\Validatable $referenceValidator
      * @return \Respect\Validation\Validator
      */
-    public static function keyOptional(string $reference, Validatable $referenceValidator = null)
+    public static function keyOptional(string $reference, Validatable $referenceValidator)
     {
-        $rules = static::oneOf(static::nullType(), $referenceValidator);
+        $rules = self::oneOf(self::nullType(), $referenceValidator);
 
-        return static::key($reference, $rules, false);
+        return self::key($reference, $rules, false);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * nylas params
+     * nylas doing validate
      *
+     * @param Validatable $validatable
      * @param mixed $input
      * @return bool
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function assert($input)
+    public static function doValidate(Validatable $validatable, $input)
     {
-        if (is_array($input))
-        {
-            foreach ($input as &$val)
-            {
-                if (is_string($val) && empty($val))
-                {
-                    $val = null;
-                }
-            }
-        }
-
         try
         {
-            return parent::assert($input);
+            return $validatable->assert($input);
         }
         catch (\Exception $e)
         {
-            throw new NylasException($e->getMessage(), $e->getCode(), $e);
+            throw new NylasException($e->getMessage());
         }
     }
 

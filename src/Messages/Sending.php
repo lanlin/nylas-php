@@ -51,7 +51,7 @@ class Sending
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        $this->getMessageRules()->assert($params);
+        V::doValidate($this->getMessageRules(), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -92,7 +92,7 @@ class Sending
         $body = new MimeMessage();
         $body->setParts([$html, $image]);
 
-        $this->getMessageRules()->assert($params);
+        V::doValidate($this->getMessageRules(), $params);
 
         $header =
         [
@@ -134,17 +134,17 @@ class Sending
         );
 
         return V::keySet(
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('to', $tmp),
             V::keyOptional('cc', $tmp),
             V::keyOptional('bcc', $tmp),
             V::keyOptional('from', $tmp),
             V::keyOptional('reply_to', $tmp),
-            V::keyOptional('reply_to_message_id', V::stringType()::notEmpty()),
+            V::keyOptional('reply_to_message_id', V::stringType()->notEmpty()),
 
-            V::keyOptional('body', V::stringType()::notEmpty()),
-            V::keyOptional('subject', V::stringType()::notEmpty()),
+            V::keyOptional('body', V::stringType()->notEmpty()),
+            V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('file_ids', $ids),
             V::keyOptional('tracking', $tracking)
         );

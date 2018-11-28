@@ -49,7 +49,7 @@ class Event
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -72,13 +72,13 @@ class Event
      */
     public function getEvent(array $params)
     {
-        $temps = [V::key('id', V::stringType()::notEmpty())];
+        $temps = [V::key('id', V::stringType()->notEmpty())];
         $rules = array_merge($temps, $this->getBaseRules());
 
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -106,7 +106,7 @@ class Event
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        $this->addEventRules()->assert($params);
+        V::doValidate($this->addEventRules(), $params);
 
         $header = ['Authorization' => $params['access_token']];
         $query  = ['notify_participants' => $params['notify_participants']];
@@ -134,7 +134,7 @@ class Event
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        $this->updateEventRules()->assert($params);
+        V::doValidate($this->updateEventRules(), $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -165,12 +165,12 @@ class Event
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -201,13 +201,13 @@ class Event
 
         $rules = V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
-            V::key('event_id', V::stringType()::notEmpty()),
-            V::key('account_id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('event_id', V::stringType()->notEmpty()),
+            V::key('account_id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $temps = empty($params['notify_participants']);
         $query = $temps ? [] : ['notify_participants' => $params['notify_participants']];
@@ -234,14 +234,14 @@ class Event
     {
         return
         [
-            V::keyOptional('limit', V::intType()::min(1)),
-            V::keyOptional('offset', V::intType()::min(0)),
-            V::keyOptional('event_id', V::stringType()::notEmpty()),
-            V::keyOptional('calendar_id', V::stringType()::notEmpty()),
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('event_id', V::stringType()->notEmpty()),
+            V::keyOptional('calendar_id', V::stringType()->notEmpty()),
 
-            V::keyOptional('title', V::stringType()::notEmpty()),
-            V::keyOptional('location', V::stringType()::notEmpty()),
-            V::keyOptional('description', V::stringType()::notEmpty()),
+            V::keyOptional('title', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('show_cancelled', V::boolType()),
             V::keyOptional('expand_recurring', V::boolType()),
 
@@ -250,7 +250,7 @@ class Event
             V::keyOptional('start_after', V::timestampType()),
             V::keyOptional('start_before', V::timestampType()),
 
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         ];
     }
 
@@ -264,14 +264,14 @@ class Event
     private function updateEventRules()
     {
         return V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('when', $this->timeRules()),
             V::keyOptional('busy', V::boolType()),
-            V::keyOptional('title', V::stringType()::notEmpty()),
-            V::keyOptional('location', V::stringType()::notEmpty()),
-            V::keyOptional('description', V::stringType()::notEmpty()),
+            V::keyOptional('title', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
 
             V::keyOptional('participants', V::arrayVal()->each(V::keySet(
@@ -294,14 +294,14 @@ class Event
     {
         return V::keySet(
             V::key('when', $this->timeRules()),
-            V::key('calendar_id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('calendar_id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('busy', V::boolType()),
-            V::keyOptional('title', V::stringType()::notEmpty()),
-            V::keyOptional('location', V::stringType()::notEmpty()),
+            V::keyOptional('title', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()->notEmpty()),
             V::keyOptional('recurrence', V::arrayType()),
-            V::keyOptional('description', V::stringType()::notEmpty()),
+            V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
 
             V::keyOptional('participants', V::arrayVal()->each(V::keySet(

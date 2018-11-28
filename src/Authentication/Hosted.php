@@ -49,13 +49,13 @@ class Hosted
         $rules = V::keySet(
             V::key('login_hint', V::email()),
             V::key('redirect_uri', V::url()),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::keyOptional('state', V::stringType()::length(1, 255)),
-            V::keyOptional('scopes', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::keyOptional('state', V::stringType()->length(1, 255)),
+            V::keyOptional('scopes', V::stringType()->notEmpty()),
             V::keyOptional('response_type', V::in(['code', 'token']))
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         // @link https://docs.nylas.com/docs/how-to-use-selective-sync
         $params['scopes']        = $params['scopes'] ?? 'calendar,email,contacts';
@@ -78,7 +78,7 @@ class Hosted
      */
     public function postOAuthToken(string $code)
     {
-        V::stringType()::notEmpty()->assert($code);
+        V::doValidate(V::stringType()->notEmpty(), $code);
 
         $params = $this->options->getClientApps();
 
@@ -105,7 +105,7 @@ class Hosted
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        V::stringType()::notEmpty()->assert($accessToken);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $header = ['Authorization' => $accessToken];
 

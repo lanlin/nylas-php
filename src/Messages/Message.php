@@ -48,7 +48,7 @@ class Message
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        $this->getMessagesRules()->assert($params);
+        V::doValidate($this->getMessagesRules(), $params);
 
         $query =
         [
@@ -86,11 +86,11 @@ class Message
         ];
 
         $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -119,11 +119,11 @@ class Message
         ];
 
         $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $header =
         [
@@ -156,16 +156,16 @@ class Message
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('folder_id', V::stringType()::notEmpty()),
+            V::keyOptional('folder_id', V::stringType()->notEmpty()),
             V::keyOptional('label_ids', V::arrayVal()->each(V::stringType(), V::intType()))
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -191,27 +191,27 @@ class Message
     private function getMessagesRules()
     {
         return V::keySet(
-            V::keyOptional('in', V::stringType()::notEmpty()),
+            V::keyOptional('in', V::stringType()->notEmpty()),
             V::keyOptional('to', V::email()),
             V::keyOptional('from', V::email()),
             V::keyOptional('cc', V::email()),
             V::keyOptional('bcc', V::email()),
-            V::keyOptional('subject', V::stringType()::notEmpty()),
-            V::keyOptional('any_email', V::stringType()::notEmpty()),
-            V::keyOptional('thread_id', V::stringType()::notEmpty()),
+            V::keyOptional('subject', V::stringType()->notEmpty()),
+            V::keyOptional('any_email', V::stringType()->notEmpty()),
+            V::keyOptional('thread_id', V::stringType()->notEmpty()),
 
             V::keyOptional('received_after', V::timestampType()),
             V::keyOptional('received_before', V::timestampType()),
             V::keyOptional('has_attachment', V::boolType()),
 
-            V::keyOptional('limit', V::intType()::min(1)),
-            V::keyOptional('offset', V::intType()::min(0)),
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('filename', V::stringType()::notEmpty()),
+            V::keyOptional('filename', V::stringType()->notEmpty()),
 
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         );
     }
 

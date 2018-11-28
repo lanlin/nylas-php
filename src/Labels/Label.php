@@ -46,9 +46,9 @@ class Label
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::stringType()::notEmpty();
+        $rule = V::stringType()->notEmpty();
 
-        $rule->assert($accessToken);
+        V::doValidate($rule, $accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -76,11 +76,11 @@ class Label
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -109,11 +109,11 @@ class Label
         ];
 
         $rule = V::keySet(
-            V::key('access_token', V::stringType()::notEmpty()),
-            V::key('display_name', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty()),
+            V::key('display_name', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -140,12 +140,12 @@ class Label
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
-            V::key('display_name', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
+            V::key('display_name', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -174,12 +174,12 @@ class Label
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
-            V::key('display_name', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
+            V::key('display_name', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];

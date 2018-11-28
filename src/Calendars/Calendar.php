@@ -48,14 +48,14 @@ class Calendar
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('view', V::in(['count', 'ids'])),
-            V::keyOptional('limit', V::intType()::min(1)),
-            V::keyOptional('offset', V::intType()::min(0))
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0))
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -86,11 +86,11 @@ class Calendar
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 

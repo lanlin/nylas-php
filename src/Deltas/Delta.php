@@ -46,9 +46,9 @@ class Delta
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rules = V::key('access_token', V::stringType()::notEmpty());
+        $rules = V::key('access_token', V::stringType()->notEmpty());
 
-        $rules->assert($accessToken);
+        V::doValidate($rules, $accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -73,7 +73,7 @@ class Delta
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -97,14 +97,14 @@ class Delta
     public function longPollingDelta(array $params)
     {
         $rules = $this->getBaseRules();
-        $times = V::key('timeout', V::intType()::min(1));
+        $times = V::key('timeout', V::intType()->min(1));
 
         array_push($rules, $times);
 
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -132,7 +132,7 @@ class Delta
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -158,10 +158,10 @@ class Delta
 
         return
         [
-            V::key('cursor', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('cursor', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
 
-            V::keyOptional('view', V::stringType()::notEmpty()),
+            V::keyOptional('view', V::stringType()->notEmpty()),
             V::keyOptional('exclude_types', V::in($types)),
             V::keyOptional('include_types', V::in($types))
         ];

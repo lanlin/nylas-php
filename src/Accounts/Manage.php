@@ -45,11 +45,11 @@ class Manage
     public function getAccountsList(array $params = [])
     {
         $rules = V::keySet(
-            V::keyOptional('limit', V::intType()::min(1)),
-            V::keyOptional('offset', V::intType()::min(0))
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0))
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];

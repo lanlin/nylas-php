@@ -50,10 +50,10 @@ class Sending
         $rules = V::keySet(
             V::key('draft', V::stringType()->notEmpty()),
             V::key('version', V::intType()->min(0)),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $header = ['Authorization' => $params['access_token']];
 

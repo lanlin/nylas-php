@@ -47,7 +47,7 @@ class Contact
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        $this->getBaseRules()->assert($params);
+        V::doValidate($this->getBaseRules(), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -78,11 +78,11 @@ class Contact
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -108,7 +108,7 @@ class Contact
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -133,12 +133,12 @@ class Contact
     {
         $rules = $this->addContactRules();
 
-        array_push($rules,  V::key('id', V::stringType()::notEmpty()));
+        array_push($rules,  V::key('id', V::stringType()->notEmpty()));
 
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -171,11 +171,11 @@ class Contact
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -198,7 +198,7 @@ class Contact
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        V::stringType()::notEmpty()->assert($accessToken);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -226,11 +226,11 @@ class Contact
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -251,21 +251,21 @@ class Contact
     private function getBaseRules()
     {
         return V::keySet(
-            V::keyOptional('limit', V::intType()::min(1)),
-            V::keyOptional('offset', V::intType()::min(0)),
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
 
             V::keyOptional('email', V::email()),
-            V::keyOptional('state', V::stringType()::notEmpty()),
-            V::keyOptional('group', V::stringType()::notEmpty()),
-            V::keyOptional('source', V::stringType()::notEmpty()),
-            V::keyOptional('country', V::stringType()::notEmpty()),
+            V::keyOptional('state', V::stringType()->notEmpty()),
+            V::keyOptional('group', V::stringType()->notEmpty()),
+            V::keyOptional('source', V::stringType()->notEmpty()),
+            V::keyOptional('country', V::stringType()->notEmpty()),
 
             V::keyOptional('recurse', V::boolType()),
-            V::keyOptional('postal_code', V::stringType()::notEmpty()),
-            V::keyOptional('phone_number', V::stringType()::notEmpty()),
-            V::keyOptional('street_address', V::stringType()::notEmpty()),
+            V::keyOptional('postal_code', V::stringType()->notEmpty()),
+            V::keyOptional('phone_number', V::stringType()->notEmpty()),
+            V::keyOptional('street_address', V::stringType()->notEmpty()),
 
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         );
     }
 
@@ -280,18 +280,18 @@ class Contact
     {
         return
         [
-            V::keyOptional('given_name', V::stringType()::notEmpty()),
-            V::keyOptional('middle_name', V::stringType()::notEmpty()),
-            V::keyOptional('surname', V::stringType()::notEmpty()),
+            V::keyOptional('given_name', V::stringType()->notEmpty()),
+            V::keyOptional('middle_name', V::stringType()->notEmpty()),
+            V::keyOptional('surname', V::stringType()->notEmpty()),
             V::keyOptional('birthday', V::date('c')),
-            V::keyOptional('suffix', V::stringType()::notEmpty()),
-            V::keyOptional('nickname', V::stringType()::notEmpty()),
-            V::keyOptional('company_name', V::stringType()::notEmpty()),
-            V::keyOptional('job_title', V::stringType()::notEmpty()),
+            V::keyOptional('suffix', V::stringType()->notEmpty()),
+            V::keyOptional('nickname', V::stringType()->notEmpty()),
+            V::keyOptional('company_name', V::stringType()->notEmpty()),
+            V::keyOptional('job_title', V::stringType()->notEmpty()),
 
-            V::keyOptional('manager_name', V::stringType()::notEmpty()),
-            V::keyOptional('office_location', V::stringType()::notEmpty()),
-            V::keyOptional('notes', V::stringType()::notEmpty()),
+            V::keyOptional('manager_name', V::stringType()->notEmpty()),
+            V::keyOptional('office_location', V::stringType()->notEmpty()),
+            V::keyOptional('notes', V::stringType()->notEmpty()),
             V::keyOptional('emails', V::arrayVal()->each(V::email())),
 
             V::keyOptional('im_addresses', V::arrayType()),
@@ -299,7 +299,7 @@ class Contact
             V::keyOptional('phone_numbers', V::arrayType()),
             V::keyOptional('web_pages', V::arrayType()),
 
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         ];
     }
 

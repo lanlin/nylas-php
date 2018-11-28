@@ -54,7 +54,7 @@ class Native
      */
     public function postConnectToken(string $code)
     {
-        V::stringType()::notEmpty()->assert($code);
+        V::doValidate(V::stringType()->notEmpty(), $code);
 
         $params = $this->options->getClientApps();
 
@@ -81,15 +81,15 @@ class Native
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
         $rules = V::keySet(
-            V::key('name', V::stringType()::notEmpty()),
+            V::key('name', V::stringType()->notEmpty()),
             V::key('settings', $setting),
             V::key('provider', V::in($this->providers)),
-            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()->notEmpty()),
             V::key('email_address', V::email()),
-            V::keyOptional('reauth_account_id', V::stringType()::notEmpty())
+            V::keyOptional('reauth_account_id', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         return $this->options
         ->getRequest()
@@ -131,7 +131,7 @@ class Native
      */
     private function knownProviderRule()
     {
-        return V::keySet(V::key('password', V::stringType()::notEmpty()));
+        return V::keySet(V::key('password', V::stringType()->notEmpty()));
     }
 
     // ------------------------------------------------------------------------------
@@ -144,9 +144,9 @@ class Native
     private function gmailProviderRule()
     {
         return V::keySet(
-            V::key('google_client_id', V::stringType()::notEmpty()),
-            V::key('google_client_secret', V::stringType()::notEmpty()),
-            V::key('google_refresh_token', V::stringType()::notEmpty())
+            V::key('google_client_id', V::stringType()->notEmpty()),
+            V::key('google_client_secret', V::stringType()->notEmpty()),
+            V::key('google_refresh_token', V::stringType()->notEmpty())
         );
     }
 
@@ -160,9 +160,9 @@ class Native
     private function exchangeProviderRule()
     {
         return V::keySet(
-            V::key('username', V::stringType()::notEmpty()),
-            V::key('password', V::stringType()::notEmpty()),
-            V::key('eas_server_host', V::stringType()::notEmpty())
+            V::key('username', V::stringType()->notEmpty()),
+            V::key('password', V::stringType()->notEmpty()),
+            V::key('eas_server_host', V::stringType()->notEmpty())
         );
     }
 
@@ -176,15 +176,15 @@ class Native
     private function imapProviderRule()
     {
         return V::keySet(
-            V::key('imap_host', V::stringType()::notEmpty()),
-            V::key('imap_port', V::stringType()::notEmpty()),
-            V::key('imap_username', V::stringType()::notEmpty()),
-            V::key('imap_password', V::stringType()::notEmpty()),
+            V::key('imap_host', V::stringType()->notEmpty()),
+            V::key('imap_port', V::stringType()->notEmpty()),
+            V::key('imap_username', V::stringType()->notEmpty()),
+            V::key('imap_password', V::stringType()->notEmpty()),
 
-            V::key('smtp_host', V::stringType()::notEmpty()),
-            V::key('smtp_port', V::stringType()::notEmpty()),
-            V::key('smtp_username', V::stringType()::notEmpty()),
-            V::key('smtp_password', V::stringType()::notEmpty()),
+            V::key('smtp_host', V::stringType()->notEmpty()),
+            V::key('smtp_port', V::stringType()->notEmpty()),
+            V::key('smtp_username', V::stringType()->notEmpty()),
+            V::key('smtp_password', V::stringType()->notEmpty()),
             V::key('ssl_required', V::boolType())
         );
     }

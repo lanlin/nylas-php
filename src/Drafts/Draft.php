@@ -50,11 +50,11 @@ class Draft
         !empty($anyEmail) AND $params['any_email'] = $anyEmail;
 
         $rule = V::keySet(
-            V::key('access_token', V::stringType()::notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
             V::keyOptional('any_email', V::arrayVal()->each(V::email(), V::intType()))
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $emails = implode(',', $params['any_email'] ?? []);
         $header = ['Authorization' => $params['access_token']];
@@ -85,11 +85,11 @@ class Draft
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -115,7 +115,7 @@ class Draft
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -143,7 +143,7 @@ class Draft
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
 
-        V::keySet(...$rules)->assert($params);
+        V::doValidate(V::keySet(...$rules), $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -171,12 +171,12 @@ class Draft
         $params['access_token'] = $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('version', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('version', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -201,7 +201,7 @@ class Draft
     private function arrayOfString()
     {
         return V::arrayVal()->each(
-            V::stringType()::notEmpty(),
+            V::stringType()->notEmpty(),
             V::intType()
         );
     }
@@ -234,8 +234,8 @@ class Draft
 
         $update =
         [
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('version', V::stringType()::notEmpty()),
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('version', V::stringType()->notEmpty()),
         ];
 
         return array_merge($rules, $update);
@@ -262,7 +262,7 @@ class Draft
             V::keyOptional('subject', V::stringType()),
             V::keyOptional('body', V::stringType()),
 
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         ];
     }
 

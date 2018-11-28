@@ -47,7 +47,7 @@ class Account
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        V::stringType()::notEmpty()->assert($accessToken);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -69,7 +69,7 @@ class Account
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        V::stringType()::notEmpty()->assert($accessToken);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         return (new Hosted($this->options))->postOAuthRevoke($accessToken);
     }

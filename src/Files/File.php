@@ -49,14 +49,14 @@ class File
 
         $rule = V::keySet(
             V::keyOptional('view', V::in(['count', 'ids'])),
-            V::keyOptional('filename', V::stringType()::notEmpty()),
-            V::keyOptional('message_id', V::stringType()::notEmpty()),
-            V::keyOptional('content_type', V::stringType()::notEmpty()),
+            V::keyOptional('filename', V::stringType()->notEmpty()),
+            V::keyOptional('message_id', V::stringType()->notEmpty()),
+            V::keyOptional('content_type', V::stringType()->notEmpty()),
 
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -86,11 +86,11 @@ class File
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -119,11 +119,11 @@ class File
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -152,11 +152,11 @@ class File
         ];
 
         $rule = V::keySet(
-            V::key('file', V::arrayType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('file', V::arrayType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -187,11 +187,11 @@ class File
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 

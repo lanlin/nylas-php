@@ -52,11 +52,11 @@ class Search
         ];
 
         $rules = V::keySet(
-            V::key('q', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('q', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $query  = ['q' => $params['q']];
         $header = ['Authorization' => $params['access_token']];

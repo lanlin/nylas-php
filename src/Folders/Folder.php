@@ -44,11 +44,11 @@ class Folder
      */
     public function getFoldersList(string $accessToken = null)
     {
-        $rule = V::stringType()::notEmpty();
+        $rule = V::stringType()->notEmpty();
 
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule->assert($accessToken);
+        V::doValidate($rule, $accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -76,11 +76,11 @@ class Folder
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -107,11 +107,11 @@ class Folder
         !empty($displayName) AND $params['dispaly_name'] = $displayName;
 
         $rule = V::keySet(
-            V::key('access_token', V::stringType()::notEmpty()),
-            V::keyOptional('display_name', V::stringType()::notEmpty())
+            V::key('access_token', V::stringType()->notEmpty()),
+            V::keyOptional('display_name', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 
@@ -138,12 +138,12 @@ class Folder
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty()),
-            V::keyOptional('display_name', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty()),
+            V::keyOptional('display_name', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $path   = $params['id'];
         $header = ['Authorization' => $params['access_token']];
@@ -176,11 +176,11 @@ class Folder
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('access_token', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('access_token', V::stringType()->notEmpty())
         );
 
-        $rule->assert($params);
+        V::doValidate($rule, $params);
 
         $header = ['Authorization' => $params['access_token']];
 

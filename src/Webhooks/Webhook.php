@@ -46,11 +46,11 @@ class Webhook
         $params = $this->options->getClientApps();
 
         $rules = V::keySet(
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_secret', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $header = ['Authorization' => $params['client_secret']];
 
@@ -76,12 +76,12 @@ class Webhook
         $params['id'] = $webhookId;
 
         $rules = V::keySet(
-            V::key('id', V::stringType()::notEmpty()),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('client_secret', V::stringType()::notEmpty())
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_secret', V::stringType()->notEmpty())
         );
 
-        $rules->assert($params);
+        V::doValidate($rules, $params);
 
         $header = ['Authorization' => $params['client_secret']];
 
