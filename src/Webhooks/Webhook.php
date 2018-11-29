@@ -39,7 +39,7 @@ class Webhook
     /**
      * get webhook list
      *
-     * @return mixed
+     * @return array
      */
     public function getWebhookList()
     {
@@ -67,7 +67,7 @@ class Webhook
      * get webhook list
      *
      * @param string $webhookId
-     * @return mixed
+     * @return array
      */
     public function getWebhook(string $webhookId)
     {

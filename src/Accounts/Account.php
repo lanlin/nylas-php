@@ -41,7 +41,7 @@ class Account
      * get account info with access_token
      *
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getAccount(string $accessToken = null)
     {

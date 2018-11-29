@@ -40,7 +40,7 @@ class Label
      * get labels list
      *
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getLabelsList(string $accessToken = null)
     {
@@ -65,7 +65,7 @@ class Label
      *
      * @param string $labelId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getLabel(string $labelId, string $accessToken = null)
     {
@@ -98,7 +98,7 @@ class Label
      *
      * @param string $displayName
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function addLabel(string $displayName, string $accessToken = null)
     {
@@ -132,7 +132,7 @@ class Label
      * update label
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function updateLabel(array $params)
     {

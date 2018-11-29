@@ -41,7 +41,7 @@ class Draft
      *
      * @param string $anyEmail
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getDraftsList(string $anyEmail = null, string $accessToken = null)
     {
@@ -74,7 +74,7 @@ class Draft
      *
      * @param string $draftId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getDraft(string $draftId, string $accessToken = null)
     {
@@ -106,7 +106,7 @@ class Draft
      * add draft
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function addDraft(array $params)
     {
@@ -134,7 +134,7 @@ class Draft
      * update draft
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function updateDraft(array $params)
     {
@@ -215,10 +215,13 @@ class Draft
      */
     private function arrayOfObject()
     {
-        return V::each(V::keySet(
-            V::key('name', V::stringType()),
-            V::key('email', V::email())
-        ));
+        return V::arrayType()->each(
+            V::keySet(
+                V::key('name', V::stringType(), false),
+                V::key('email', V::email())
+            ),
+            V::intType()
+        );
     }
 
     // ------------------------------------------------------------------------------
@@ -235,7 +238,7 @@ class Draft
         $update =
         [
             V::key('id', V::stringType()->notEmpty()),
-            V::key('version', V::stringType()->notEmpty()),
+            V::key('version', V::stringType()->length(1, null))
         ];
 
         return array_merge($rules, $update);

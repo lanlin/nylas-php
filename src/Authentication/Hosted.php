@@ -74,7 +74,7 @@ class Hosted
      * post oauth token
      *
      * @param string $code
-     * @return mixed
+     * @return array
      */
     public function postOAuthToken(string $code)
     {

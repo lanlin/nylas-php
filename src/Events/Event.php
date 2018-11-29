@@ -40,7 +40,7 @@ class Event
      * get events list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getEventsList(array $params)
     {
@@ -68,7 +68,7 @@ class Event
      * get event
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getEvent(array $params)
     {
@@ -99,7 +99,7 @@ class Event
      * add event
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function addEvent(array $params)
     {
@@ -127,7 +127,7 @@ class Event
      * update event
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function updateEvent(array $params)
     {
@@ -220,7 +220,7 @@ class Event
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)
-        ->delete(API::LIST['oneEvent']);
+        ->post(API::LIST['oneEvent']);
     }
 
     // ------------------------------------------------------------------------------

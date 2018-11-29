@@ -40,7 +40,7 @@ class Calendar
      * get calendars list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getCalendarsList(array $params)
     {
@@ -75,7 +75,7 @@ class Calendar
      *
      * @param string $calendarId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getCalendar(string $calendarId, string $accessToken = null)
     {

@@ -41,7 +41,7 @@ class Message
      * get messages list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getMessagesList(array $params)
     {
@@ -75,7 +75,7 @@ class Message
      *
      * @param string $messageId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getMessage(string $messageId, string $accessToken = null)
     {
@@ -148,7 +148,7 @@ class Message
      * update message status & flags
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function updateMessage(array $params)
     {

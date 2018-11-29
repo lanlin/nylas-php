@@ -40,15 +40,13 @@ class Delta
      * get latest cursor
      *
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getLatestCursor(string $accessToken = null)
     {
         $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rules = V::key('access_token', V::stringType()->notEmpty());
-
-        V::doValidate($rules, $accessToken);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $header = ['Authorization' => $accessToken];
 
@@ -64,7 +62,7 @@ class Delta
      * get a set of deltas
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getSetOfDeltas(array $params)
     {
@@ -92,7 +90,7 @@ class Delta
      * long polling delta updates
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function longPollingDelta(array $params)
     {

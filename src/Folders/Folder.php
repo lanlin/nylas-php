@@ -40,7 +40,7 @@ class Folder
      * get folders list
      *
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getFoldersList(string $accessToken = null)
     {
@@ -65,7 +65,7 @@ class Folder
      *
      * @param string $folderId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getFolder(string $folderId, string $accessToken = null)
     {
@@ -98,7 +98,7 @@ class Folder
      *
      * @param string $displayName
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function addFolder(string $displayName = null, string $accessToken = null)
     {
@@ -130,7 +130,7 @@ class Folder
      * update folder
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function updateFolder(array $params)
     {

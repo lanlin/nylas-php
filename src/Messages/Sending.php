@@ -44,7 +44,7 @@ class Sending
      * send message directly
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function sendDirectly(array $params)
     {
@@ -121,9 +121,9 @@ class Sending
     {
         $ids = V::arrayVal()->each(V::stringType()->notEmpty(), V::intType());
 
-        $tmp = V::each(V::keySet(
-            V::keyOptional('name', V::stringType()),
-            V::keyOptional('email', V::stringType())
+        $tmp = V::arrayType()->each(V::keySet(
+            V::key('name', V::stringType(), false),
+            V::key('email', V::email())
         ));
 
         $tracking = V::keySet(

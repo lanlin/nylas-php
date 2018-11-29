@@ -1,6 +1,6 @@
 <?php namespace Nylas\Utilities;
 
-use Nylas\Exceptions\NylasException;
+use Nylas\Utilities\Validate as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -20,47 +20,30 @@ class Options
      */
     private $debug = false;
 
-    // ------------------------------------------------------------------------------
-
     /**
      * @var string
      */
-    private $server;
-
-    // ------------------------------------------------------------------------------
+    private $logFile;
 
     /**
      * @var string
      */
     private $clientId;
 
-    // ------------------------------------------------------------------------------
-
     /**
      * @var string
      */
     private $clientSecret;
-
-    // ------------------------------------------------------------------------------
 
     /**
      * @var string
      */
     private $accessToken;
 
-    // ------------------------------------------------------------------------------
-
     /**
      * @var string
      */
     private $accountId;
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @var Request
-     */
-    private $request;
 
     // ------------------------------------------------------------------------------
 
@@ -71,18 +54,27 @@ class Options
      */
     public function __construct(array $options)
     {
-        $this->debug       = $options['debug'] ?? false;
-        $this->server      = $options['server'] ?? API::LIST['server'];
-        $this->accountId   = $options['account_id'] ?? '';
-        $this->accessToken = $options['access_token'] ?? '';
+        $rules = V::keySet(
+            V::key('debug', V::boolType(), false),
+            V::key('log_file', V::stringType()->notEmpty(), false),
+            V::key('account_id', V::stringType()->notEmpty(), false),
+            V::key('access_token', V::stringType()->notEmpty(), false),
 
-        if (empty($options['client_id']) || empty($options['client_secret']))
-        {
-            throw new NylasException('client_id & client_secret required');
-        }
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_secret', V::stringType()->notEmpty())
+        );
 
+        V::doValidate($rules, $options);
+
+        // required
         $this->clientId     = $options['client_id'];
         $this->clientSecret = $options['client_secret'];
+
+        // optional
+        $this->debug       = $options['debug'] ?? false;
+        $this->logFile     = $options['log_file'] ?? null;
+        $this->accountId   = $options['account_id'] ?? '';
+        $this->accessToken = $options['access_token'] ?? '';
     }
 
     // ------------------------------------------------------------------------------
@@ -132,7 +124,27 @@ class Options
      */
     public function getServer()
     {
-        return $this->server ?? null;
+        return API::LIST['server'];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param bool $debug
+     */
+    public function setDebug(bool $debug)
+    {
+        $this->debug = $debug;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param string $logFile
+     */
+    public function setLogFile(string $logFile)
+    {
+        $this->logFile = $logFile;
     }
 
     // ------------------------------------------------------------------------------
@@ -164,35 +176,6 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * @param string|NULL $server
-     * @param bool        $debug
-     */
-    public function resetRequest(string $server = null, bool $debug = null)
-    {
-        $debug  = $debug ?? $this->debug;
-        $server = $server ?? $this->server;
-
-        $this->request = new Request($server, $debug);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @return \Nylas\Utilities\Request
-     */
-    public function getRequest()
-    {
-        if (!$this->request instanceof Request)
-        {
-            $this->resetRequest();
-        }
-
-        return $this->request;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * @return array
      */
     public function getAllOptions()
@@ -200,12 +183,32 @@ class Options
         return
         [
             'debug'         => $this->debug,
-            'server'        => $this->server,
+            'log_file'      => $this->logFile,
+            'server'        => API::LIST['server'],
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
             'account_id'    => $this->accountId,
             'access_token'  => $this->accessToken,
         ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * reset request instance
+     */
+    public function getRequest()
+    {
+        $debug  = $this->debug;
+        $server = $this->getServer();
+
+        // when set log file
+        if ($this->debug && !empty($this->logFile))
+        {
+            $debug = fopen($this->logFile, 'a');
+        }
+
+        return new Request($server, $debug);
     }
 
     // ------------------------------------------------------------------------------

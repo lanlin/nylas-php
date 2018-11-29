@@ -50,7 +50,7 @@ class Native
      * connect token
      *
      * @param string $code
-     * @return mixed
+     * @return array
      */
     public function postConnectToken(string $code)
     {
@@ -72,7 +72,7 @@ class Native
      * connect authorize
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function postConnectAuthorize(array $params)
     {

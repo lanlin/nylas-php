@@ -40,7 +40,7 @@ class File
      * get files list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getFilesList(array $params)
     {
@@ -75,7 +75,7 @@ class File
      *
      * @param string $fileId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getFile(string $fileId, string $accessToken = null)
     {
@@ -141,7 +141,7 @@ class File
      *
      * @param array $file
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function uploadFile(array $file, string $accessToken = null)
     {

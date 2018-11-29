@@ -41,7 +41,7 @@ class Search
      *
      * @param string $q
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function messages(string $q, string $accessToken = null)
     {

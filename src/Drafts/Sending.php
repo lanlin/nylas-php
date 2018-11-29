@@ -40,7 +40,7 @@ class Sending
      * send draft
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function sendDraft(array $params)
     {

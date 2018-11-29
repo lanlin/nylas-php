@@ -1,6 +1,7 @@
 <?php namespace Nylas\Utilities;
 
 use GuzzleHttp\Client;
+use Nylas\Utilities\Validate as V;
 use Nylas\Exceptions\NylasException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -10,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/21
+ * @change 2018/11/29
  */
 class Request
 {
@@ -27,18 +28,19 @@ class Request
     /**
      * enable or disable debug mode
      *
-     * @var string
+     * @var bool|resource
      */
     private $debug = false;
 
     // ------------------------------------------------------------------------------
 
-    private $formFiles    = [];
-    private $pathParams   = [];
-    private $jsonParams   = [];
-    private $queryParams  = [];
-    private $headerParams = [];
-    private $bodyContents = [];
+    private $formFiles     = [];
+    private $pathParams    = [];
+    private $jsonParams    = [];
+    private $queryParams   = [];
+    private $headerParams  = [];
+    private $bodyContents  = [];
+    private $onHeadersFunc = [];
 
     // ------------------------------------------------------------------------------
 
@@ -46,9 +48,9 @@ class Request
      * Request constructor.
      *
      * @param string|NULL $server
-     * @param bool $debug
+     * @param bool|resource $debug
      */
-    public function __construct(string $server = null, bool $debug = false)
+    public function __construct(string $server = null, $debug = false)
     {
         $option =
         [
@@ -152,6 +154,16 @@ class Request
     // ------------------------------------------------------------------------------
 
     /**
+     * @param callable $func
+     */
+    public function setHeaderFunctions(callable $func)
+    {
+        $this->onHeadersFunc[] = $func;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get request
      *
      * @param string $api
@@ -160,11 +172,17 @@ class Request
      */
     public function get(string $api)
     {
-        $apiPath  = $this->concatApiPath($api);
-        $options  = $this->concatOptions();
-        $response = $this->guzzle->get($apiPath, $options);
+        $apiPath = $this->concatApiPath($api);
+        $options = $this->concatOptions();
 
-        $this->checkStatusCode($response->getStatusCode());
+        try
+        {
+            $response = $this->guzzle->get($apiPath, $options);
+        }
+        catch (\Exception $e)
+        {
+            throw new NylasException($this->getExceptionMsg($e));
+        }
 
         return $this->parseResponse($response);
     }
@@ -180,11 +198,17 @@ class Request
      */
     public function put(string $api)
     {
-        $apiPath  = $this->concatApiPath($api);
-        $options  = $this->concatOptions();
-        $response = $this->guzzle->put($apiPath, $options);
+        $apiPath = $this->concatApiPath($api);
+        $options = $this->concatOptions();
 
-        $this->checkStatusCode($response->getStatusCode());
+        try
+        {
+            $response = $this->guzzle->put($apiPath, $options);
+        }
+        catch (\Exception $e)
+        {
+            throw new NylasException($this->getExceptionMsg($e));
+        }
 
         return $this->parseResponse($response);
     }
@@ -200,11 +224,17 @@ class Request
      */
     public function post(string $api)
     {
-        $apiPath  = $this->concatApiPath($api);
-        $options  = $this->concatOptions();
-        $response = $this->guzzle->post($apiPath, $options);
+        $apiPath = $this->concatApiPath($api);
+        $options = $this->concatOptions();
 
-        $this->checkStatusCode($response->getStatusCode());
+        try
+        {
+            $response = $this->guzzle->post($apiPath, $options);
+        }
+        catch (\Exception $e)
+        {
+            throw new NylasException($this->getExceptionMsg($e));
+        }
 
         return $this->parseResponse($response);
     }
@@ -220,11 +250,17 @@ class Request
      */
     public function delete(string $api)
     {
-        $apiPath  = $this->concatApiPath($api);
-        $options  = $this->concatOptions();
-        $response = $this->guzzle->delete($apiPath, $options);
+        $apiPath = $this->concatApiPath($api);
+        $options = $this->concatOptions();
 
-        $this->checkStatusCode($response->getStatusCode());
+        try
+        {
+            $response = $this->guzzle->delete($apiPath, $options);
+        }
+        catch (\Exception $e)
+        {
+            throw new NylasException($this->getExceptionMsg($e));
+        }
 
         return $this->parseResponse($response);
     }
@@ -232,26 +268,67 @@ class Request
     // ------------------------------------------------------------------------------
 
     /**
-     * check http status code
+     * get request & return body stream without preloaded
      *
-     * @param int $statusCode
+     * @param string $api
+     * @return mixed
+     * @throws \Exception
      */
-    private function checkStatusCode(int $statusCode)
+    public function getStream(string $api)
     {
-        if ($statusCode === Errors::StatusOK) { return; }
+        $apiPath = $this->concatApiPath($api);
+        $options = $this->concatOptions();
+        $options = array_merge($options, ['stream' => true]);
 
-        $exception = Errors::StatusExceptions['default'];
-
-        // normal exception
-        if (isset(Errors::StatusExceptions[$statusCode]))
+        try
         {
-            $exception = Errors::StatusExceptions[$statusCode];
-
-            throw new $exception;
+            $response = $this->guzzle->get($apiPath, $options);
+        }
+        catch (\Exception $e)
+        {
+            throw new NylasException($this->getExceptionMsg($e));
         }
 
-        // unexpected exception
-        throw new $exception;
+        return $this->parseResponse($response);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get request & save body to some where
+     *
+     * @param string $api
+     * @param string|resource|\Psr\Http\Message\StreamInterface $sink
+     * @return array
+     * @throws \Exception
+     */
+    public function getSink(string $api, $sink)
+    {
+        $rules = V::oneOf(
+            V::resourceType(),
+            V::stringType()->notEmpty(),
+            V::instance('\Psr\Http\Message\StreamInterface')
+        );
+
+        V::doValidate($rules, $sink);
+
+        $options = $this->concatOptions();
+        $options = array_merge($options, ['sink' => $sink]);
+        $apiPath = $this->concatApiPath($api);
+
+        try
+        {
+            $response = $this->guzzle->get($apiPath, $options);
+        }
+        catch (\Exception $e)
+        {
+            throw new NylasException($this->getExceptionMsg($e));
+        }
+
+        $type   = $response->getHeader('Content-Type');
+        $length = $response->getHeader('Content-Length');
+
+        return [current($type) => current($length)];
     }
 
     // ------------------------------------------------------------------------------
@@ -270,16 +347,35 @@ class Request
     // ------------------------------------------------------------------------------
 
     /**
+     * get exception message
+     *
+     * @param \Exception $e
+     * @return string
+     */
+    private function getExceptionMsg(\Exception $e)
+    {
+        $preExcep = $e->getPrevious();
+
+        $finalExc = ($preExcep instanceof NylasException) ? $preExcep : $e;
+
+        return $finalExc->getMessage();
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * concat options for request
      *
+     * @param bool $httpErrors
      * @return array
      */
-    private function concatOptions()
+    private function concatOptions(bool $httpErrors = false)
     {
         $temp =
         [
             'debug'       => $this->debug,
-            'http_errors' => false
+            'on_headers'  => $this->onHeadersFuncions(),
+            'http_errors' => $httpErrors
         ];
 
         return array_merge(
@@ -321,6 +417,41 @@ class Request
         }
 
         return $data ?? [];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check http status code before response body
+     */
+    private function onHeadersFuncions()
+    {
+        $request = $this;
+        $excpArr = Errors::StatusExceptions;
+
+        return function (ResponseInterface $response) use ($request, $excpArr)
+        {
+            $statusCode = $response->getStatusCode();
+
+            // check status code
+            if ($statusCode >= 400)
+            {
+                // normal exception
+                if (isset($excpArr[$statusCode]))
+                {
+                    throw new $excpArr[$statusCode];
+                }
+
+                // unexpected exception
+                throw new $excpArr['default'];
+            }
+
+            // execute others on header functions
+            foreach ($request->onHeadersFunc as $func)
+            {
+                call_user_func($func, $response);
+            }
+        };
     }
 
     // ------------------------------------------------------------------------------

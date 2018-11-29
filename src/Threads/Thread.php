@@ -40,7 +40,7 @@ class Thread
      * get threads list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getThreadsList(array $params)
     {
@@ -74,7 +74,7 @@ class Thread
      *
      * @param string $threadId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getThread(string $threadId, string $accessToken = null)
     {
@@ -106,7 +106,7 @@ class Thread
      * add thread
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function addThread(array $params)
     {

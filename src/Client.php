@@ -43,7 +43,7 @@ class Client
      * @param array $options
      * [
      *     'debug'         => bool,
-     *     'server'        => 'https:://api.nylas.com',
+     *     'log_file'      => 'log file path',
      *     'account_id'    => '',
      *     'access_token'  => '',
      *     'client_id'     => 'required',

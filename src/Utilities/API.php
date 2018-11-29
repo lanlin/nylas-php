@@ -89,7 +89,7 @@ class API
         'delta'              => '/delta',
         'deltaLongpoll'      => '/delta/longpoll',
         'deltaStreaming'     => '/delta/streaming',
-        'deltaLatestCursor'  => '/delta/lastest_cursor',
+        'deltaLatestCursor'  => '/delta/latest_cursor',
     ];
 
 

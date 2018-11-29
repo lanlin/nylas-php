@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/11/29
  */
 class Contact
 {
@@ -40,7 +40,7 @@ class Contact
      * get contacts list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getContactsList(array $params = [])
     {
@@ -67,7 +67,7 @@ class Contact
      *
      * @param string $contactId
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getContact(string $contactId, string $accessToken = null)
     {
@@ -99,7 +99,7 @@ class Contact
      * add contact
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function addContact(array $params)
     {
@@ -127,7 +127,7 @@ class Contact
      * update contact
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function updateContact(array $params)
     {
@@ -160,7 +160,7 @@ class Contact
      *
      * @param string $contactId
      * @param string $accessToken
-     * @return mixed
+     * @return void
      */
     public function deleteContact(string $contactId, string $accessToken = null)
     {
@@ -179,7 +179,7 @@ class Contact
 
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options
+        $this->options
         ->getRequest()
         ->setPath($params['id'])
         ->setHeaderParams($header)
@@ -192,7 +192,7 @@ class Contact
      * get contact groups
      *
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
     public function getContactGroups(string $accessToken = null)
     {
@@ -213,20 +213,23 @@ class Contact
     /**
      * get contact picture
      *
-     * @param string $contactId
-     * @param string $accessToken
-     * @return mixed
+     * @param array $params
+     * @return array
      */
-    public function getContactPicture(string $contactId, string $accessToken = null)
+    public function getContactPicture(array $params)
     {
-        $params =
-        [
-            'id'           => $contactId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
+        $params['access_token'] =
+        $params['access_token'] ?? $this->options->getAccessToken();
+
+        $path = V::oneOf(
+            V::resourceType(),
+            V::stringType()->notEmpty(),
+            V::instance('\Psr\Http\Message\StreamInterface')
+        );
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
+            V::key('path', $path),
             V::key('access_token', V::stringType()->notEmpty())
         );
 
@@ -238,7 +241,7 @@ class Contact
         ->getRequest()
         ->setPath($params['id'])
         ->setHeaderParams($header)
-        ->get(API::LIST['contactPic']);
+        ->getSink(API::LIST['contactPic'], $params['path']);
     }
 
     // ------------------------------------------------------------------------------

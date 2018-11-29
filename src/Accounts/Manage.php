@@ -40,7 +40,7 @@ class Manage
      * get accounts list
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function getAccountsList(array $params = [])
     {
@@ -74,7 +74,7 @@ class Manage
      * get account info
      *
      * @param string $accountId
-     * @return mixed
+     * @return array
      */
     public function getAccountInfo(string $accountId = null)
     {
@@ -96,7 +96,7 @@ class Manage
      * re-active account
      *
      * @param string $accountId
-     * @return mixed
+     * @return array
      */
     public function reactiveAccount(string $accountId = null)
     {
