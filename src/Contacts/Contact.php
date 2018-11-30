@@ -1,8 +1,10 @@
 <?php namespace Nylas\Contacts;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -54,7 +56,7 @@ class Contact
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['contacts']);
@@ -87,7 +89,7 @@ class Contact
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneContact']);
@@ -115,7 +117,7 @@ class Contact
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['contacts']);
@@ -146,7 +148,7 @@ class Contact
         unset($params['id'], $params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -180,7 +182,7 @@ class Contact
         $header = ['Authorization' => $params['access_token']];
 
         $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->delete(API::LIST['oneContact']);
@@ -203,7 +205,7 @@ class Contact
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['contactsGroups']);
     }
@@ -211,37 +213,61 @@ class Contact
     // ------------------------------------------------------------------------------
 
     /**
-     * get contact picture
+     * get contact picture file (support multiple download)
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getContactPicture(array $params)
+    public function getContactPicture(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $downloadArr = Helper::arrayToMulti($params);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
+        V::doValidate($this->pictureRules(), $downloadArr);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $method = [];
+        $target = API::LIST['contactPic'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($downloadArr as $item)
+        {
+            $sink = $item['path'];
+
+            $request = $this->options
+            ->getAsync()
+            ->setPath($item['id'])
+            ->setHeaderParams($header);
+
+            $method[] = function () use ($request, $target, $sink)
+            {
+                return $request->getSink($target, $sink);
+            };
+        }
+
+        return $this->options->getAsync()->pool($method, true);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * rules for download picture
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function pictureRules()
+    {
         $path = V::oneOf(
             V::resourceType(),
             V::stringType()->notEmpty(),
-            V::instance('\Psr\Http\Message\StreamInterface')
+            V::instance(StreamInterface::class)
         );
 
-        $rule = V::keySet(
+        return  V::arrayType()->each(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('path', $path),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getRequest()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->getSink(API::LIST['contactPic'], $params['path']);
+            V::key('path', $path)
+        ));
     }
 
     // ------------------------------------------------------------------------------

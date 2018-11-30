@@ -48,8 +48,8 @@ class Sending
         $params['access_token'] ?? $this->options->getAccessToken();
 
         $rules = V::keySet(
-            V::key('draft', V::stringType()->notEmpty()),
             V::key('version', V::intType()->min(0)),
+            V::key('draft_id', V::stringType()->notEmpty()),
             V::key('access_token', V::stringType()->notEmpty())
         );
 
@@ -60,7 +60,7 @@ class Sending
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['sending']);

@@ -61,7 +61,7 @@ class Thread
         $query = array_merge($params, $query);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['threads']);
@@ -94,7 +94,7 @@ class Thread
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneThread']);
@@ -131,7 +131,7 @@ class Thread
         unset($params['access_token'], $params['id']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

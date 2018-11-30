@@ -1,5 +1,7 @@
 <?php namespace Nylas\Utilities;
 
+use Nylas\Request\Sync;
+use Nylas\Request\Async;
 use Nylas\Utilities\Validate as V;
 
 /**
@@ -195,9 +197,9 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * reset request instance
+     * get sync request instance
      */
-    public function getRequest()
+    public function getSync()
     {
         $debug  = $this->debug;
         $server = $this->getServer();
@@ -208,7 +210,26 @@ class Options
             $debug = fopen($this->logFile, 'a');
         }
 
-        return new Request($server, $debug);
+        return new Sync($server, $debug);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get async request instance
+     */
+    public function getAsync()
+    {
+        $debug  = $this->debug;
+        $server = $this->getServer();
+
+        // when set log file
+        if ($this->debug && !empty($this->logFile))
+        {
+            $debug = fopen($this->logFile, 'a');
+        }
+
+        return new Async($server, $debug);
     }
 
     // ------------------------------------------------------------------------------

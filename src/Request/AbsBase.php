@@ -1,19 +1,21 @@
-<?php namespace Nylas\Utilities;
+<?php namespace Nylas\Request;
 
 use GuzzleHttp\Client;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
+use Nylas\Utilities\Errors;
 use Nylas\Exceptions\NylasException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas RESTFul Request Tool
+ * Nylas RESTFul Request Base
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/29
+ * @change 2018/11/30
  */
-class Request
+trait AbsBase
 {
 
     // ------------------------------------------------------------------------------
@@ -164,176 +166,6 @@ class Request
     // ------------------------------------------------------------------------------
 
     /**
-     * get request
-     *
-     * @param string $api
-     * @return mixed
-     * @throws \Exception
-     */
-    public function get(string $api)
-    {
-        $apiPath = $this->concatApiPath($api);
-        $options = $this->concatOptions();
-
-        try
-        {
-            $response = $this->guzzle->get($apiPath, $options);
-        }
-        catch (\Exception $e)
-        {
-            throw new NylasException($this->getExceptionMsg($e));
-        }
-
-        return $this->parseResponse($response);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * put request
-     *
-     * @param string $api
-     * @return mixed
-     * @throws \Exception
-     */
-    public function put(string $api)
-    {
-        $apiPath = $this->concatApiPath($api);
-        $options = $this->concatOptions();
-
-        try
-        {
-            $response = $this->guzzle->put($apiPath, $options);
-        }
-        catch (\Exception $e)
-        {
-            throw new NylasException($this->getExceptionMsg($e));
-        }
-
-        return $this->parseResponse($response);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * post request
-     *
-     * @param string $api
-     * @return mixed
-     * @throws \Exception
-     */
-    public function post(string $api)
-    {
-        $apiPath = $this->concatApiPath($api);
-        $options = $this->concatOptions();
-
-        try
-        {
-            $response = $this->guzzle->post($apiPath, $options);
-        }
-        catch (\Exception $e)
-        {
-            throw new NylasException($this->getExceptionMsg($e));
-        }
-
-        return $this->parseResponse($response);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * delete request
-     *
-     * @param string $api
-     * @return mixed
-     * @throws \Exception
-     */
-    public function delete(string $api)
-    {
-        $apiPath = $this->concatApiPath($api);
-        $options = $this->concatOptions();
-
-        try
-        {
-            $response = $this->guzzle->delete($apiPath, $options);
-        }
-        catch (\Exception $e)
-        {
-            throw new NylasException($this->getExceptionMsg($e));
-        }
-
-        return $this->parseResponse($response);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get request & return body stream without preloaded
-     *
-     * @param string $api
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getStream(string $api)
-    {
-        $apiPath = $this->concatApiPath($api);
-        $options = $this->concatOptions();
-        $options = array_merge($options, ['stream' => true]);
-
-        try
-        {
-            $response = $this->guzzle->get($apiPath, $options);
-        }
-        catch (\Exception $e)
-        {
-            throw new NylasException($this->getExceptionMsg($e));
-        }
-
-        return $this->parseResponse($response);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get request & save body to some where
-     *
-     * @param string $api
-     * @param string|resource|\Psr\Http\Message\StreamInterface $sink
-     * @return array
-     * @throws \Exception
-     */
-    public function getSink(string $api, $sink)
-    {
-        $rules = V::oneOf(
-            V::resourceType(),
-            V::stringType()->notEmpty(),
-            V::instance('\Psr\Http\Message\StreamInterface')
-        );
-
-        V::doValidate($rules, $sink);
-
-        $options = $this->concatOptions();
-        $options = array_merge($options, ['sink' => $sink]);
-        $apiPath = $this->concatApiPath($api);
-
-        try
-        {
-            $response = $this->guzzle->get($apiPath, $options);
-        }
-        catch (\Exception $e)
-        {
-            throw new NylasException($this->getExceptionMsg($e));
-        }
-
-        $type   = $response->getHeader('Content-Type');
-        $length = $response->getHeader('Content-Length');
-
-        return [current($type) => current($length)];
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * concat api path for request
      *
      * @param string $api
@@ -394,11 +226,14 @@ class Request
      * Parse the JSON response body and return an array
      *
      * @param ResponseInterface $response
+     * @param bool $headers  TIPS: true for get headers, false get body data
      * @return mixed
      * @throws \Exception if the response body is not in JSON format
      */
-    private function parseResponse(ResponseInterface $response)
+    private function parseResponse(ResponseInterface $response, bool $headers = false)
     {
+        if ($headers) { return $response->getHeaders(); }
+
         $expc = 'application/json';
         $type = $response->getHeader('Content-Type');
 

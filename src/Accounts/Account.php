@@ -52,7 +52,7 @@ class Account
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['account']);
     }

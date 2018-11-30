@@ -10,6 +10,7 @@ use ZBateson\MailMimeParser\MailMimeParser;
  * Nylas Message
  * ----------------------------------------------------------------------------------
  *
+ * @info include inline image <img src="cid:file_id">
  * @author lanlin
  * @change 2018/11/22
  */
@@ -62,7 +63,7 @@ class Message
         $query = array_merge($params, $query);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['messages']);
@@ -95,7 +96,7 @@ class Message
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneMessage']);
@@ -132,7 +133,7 @@ class Message
         ];
 
         $rawStream = $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneMessage']);
@@ -173,7 +174,7 @@ class Message
         unset($params['access_token'], $params['id']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

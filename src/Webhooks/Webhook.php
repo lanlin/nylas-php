@@ -55,7 +55,7 @@ class Webhook
         $header = ['Authorization' => $params['client_secret']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['client_id'])
         ->setHeaderParams($header)
         ->get(API::LIST['webhooks']);
@@ -86,7 +86,7 @@ class Webhook
         $header = ['Authorization' => $params['client_secret']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['client_id'], $params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneWebhook']);

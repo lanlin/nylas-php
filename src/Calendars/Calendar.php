@@ -62,7 +62,7 @@ class Calendar
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['calendars']);
@@ -95,7 +95,7 @@ class Calendar
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneCalendar']);

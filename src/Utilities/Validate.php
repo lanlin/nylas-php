@@ -1,8 +1,9 @@
 <?php namespace Nylas\Utilities;
 
-use Nylas\Exceptions\NylasException;
 use Respect\Validation\Validator;
 use Respect\Validation\Validatable;
+use Nylas\Exceptions\NylasException;
+use Respect\Validation\Exceptions\NestedValidationException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -61,9 +62,9 @@ class Validate extends Validator
         {
             return $validatable->assert($input);
         }
-        catch (\Exception $e)
+        catch (NestedValidationException $e)
         {
-            throw new NylasException($e->getMessage());
+            throw new NylasException($e->getFullMessage());
         }
     }
 

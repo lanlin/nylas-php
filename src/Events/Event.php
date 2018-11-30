@@ -42,7 +42,7 @@ class Event
      * @param array $params
      * @return array
      */
-    public function getEventsList(array $params)
+    public function getEventsList(array $params = [])
     {
         $rules = $this->getBaseRules();
 
@@ -56,7 +56,7 @@ class Event
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['events']);
@@ -86,7 +86,7 @@ class Event
         unset($params['id'], $params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -108,13 +108,14 @@ class Event
 
         V::doValidate($this->addEventRules(), $params);
 
+        $notify = 'notify_participants';
         $header = ['Authorization' => $params['access_token']];
-        $query  = ['notify_participants' => $params['notify_participants']];
+        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
         unset($params['access_token'], $params['notify_participants']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -137,13 +138,14 @@ class Event
         V::doValidate($this->updateEventRules(), $params);
 
         $path   = $params['id'];
+        $notify = 'notify_participants';
         $header = ['Authorization' => $params['access_token']];
-        $query  = ['notify_participants' => $params['notify_participants']];
+        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
         unset($params['id'], $params['access_token'], $params['notify_participants']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setQuery($query)
         ->setFormParams($params)
@@ -157,7 +159,7 @@ class Event
      * delete event
      *
      * @param array $params
-     * @return mixed
+     * @return void
      */
     public function deleteEvent(array $params)
     {
@@ -172,13 +174,12 @@ class Event
 
         V::doValidate($rule, $params);
 
+        $notify = 'notify_participants';
         $header = ['Authorization' => $params['access_token']];
+        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
-        $temps = empty($params['notify_participants']);
-        $query = $temps ? [] : ['notify_participants' => $params['notify_participants']];
-
-        return $this->options
-        ->getRequest()
+        $this->options
+        ->getSync()
         ->setPath($params['id'])
         ->setQuery($query)
         ->setHeaderParams($header)
@@ -209,14 +210,14 @@ class Event
 
         V::doValidate($rules, $params);
 
-        $temps = empty($params['notify_participants']);
-        $query = $temps ? [] : ['notify_participants' => $params['notify_participants']];
-
+        $notify = 'notify_participants';
         $header = ['Authorization' => $params['access_token']];
+        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
+
         unset($params['access_token'], $params['notify_participants']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->setFormParams($params)
         ->setHeaderParams($header)

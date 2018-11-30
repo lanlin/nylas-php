@@ -61,7 +61,7 @@ class Manage
         ];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($client['client_id'])
         ->setQuery($pagination)
         ->setHeaderParams($header)
@@ -84,7 +84,7 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->get(API::LIST['listAnAccount']);
@@ -106,7 +106,7 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->post(API::LIST['reactiveAnAccount']);
@@ -128,7 +128,7 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->post(API::LIST['cancelAnAccount']);

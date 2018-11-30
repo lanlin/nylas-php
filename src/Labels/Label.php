@@ -53,7 +53,7 @@ class Label
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['labels']);
     }
@@ -85,7 +85,7 @@ class Label
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneLabel']);
@@ -120,7 +120,7 @@ class Label
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['labels']);
@@ -153,7 +153,7 @@ class Label
         unset($params['id'], $params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -166,7 +166,7 @@ class Label
      * delete label
      *
      * @param array $params
-     * @return mixed
+     * @return void
      */
     public function deleteLabel(array $params)
     {
@@ -186,8 +186,8 @@ class Label
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options
-        ->getRequest()
+        $this->options
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)

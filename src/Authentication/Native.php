@@ -61,7 +61,7 @@ class Native
         $params['code'] = $code;
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->post(API::LIST['connectToken']);
     }
@@ -92,7 +92,7 @@ class Native
         V::doValidate($rules, $params);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->post(API::LIST['connectAuthorize']);
     }

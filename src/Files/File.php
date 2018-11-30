@@ -1,8 +1,10 @@
 <?php namespace Nylas\Files;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -42,7 +44,7 @@ class File
      * @param array $params
      * @return array
      */
-    public function getFilesList(array $params)
+    public function getFilesList(array $params = [])
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
@@ -63,7 +65,8 @@ class File
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
+        ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['files']);
     }
@@ -71,13 +74,13 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * get file
+     * get file infos (not download file)
      *
      * @param string $fileId
      * @param string $accessToken
      * @return array
      */
-    public function getFile(string $fileId, string $accessToken = null)
+    public function getFileInfo(string $fileId, string $accessToken = null)
     {
         $params =
         [
@@ -95,7 +98,7 @@ class File
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneFile']);
@@ -108,7 +111,7 @@ class File
      *
      * @param string $fileId
      * @param string $accessToken
-     * @return mixed
+     * @return void
      */
     public function deleteFile(string $fileId, string $accessToken = null)
     {
@@ -127,8 +130,8 @@ class File
 
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options
-        ->getRequest()
+        $this->options
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->delete(API::LIST['oneFile']);
@@ -137,7 +140,7 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * add file
+     * upload file (support multiple upload)
      *
      * @param array $file
      * @param string $accessToken
@@ -145,62 +148,120 @@ class File
      */
     public function uploadFile(array $file, string $accessToken = null)
     {
-        $params =
-        [
-            'file'         => $file,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $fileUploads = Helper::arrayToMulti($file);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('file', V::arrayType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        V::doValidate($this->multipartRules(), $fileUploads);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        V::doValidate($rule, $params);
+        $upload = [];
+        $target = API::LIST['files'];
+        $header = ['Authorization' => $accessToken];
 
-        $header = ['Authorization' => $params['access_token']];
+        foreach ($fileUploads as $item)
+        {
+            $item['name'] = 'file';
 
-        unset($params['access_token']);
+            $request = $this->options
+            ->getAsync()
+            ->setFormFiles($item)
+            ->setHeaderParams($header);
 
-        return $this->options
-        ->getRequest()
-        ->setFormFiles($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['files']);
+            $upload[] = function () use ($request, $target)
+            {
+                return $request->post($target);
+            };
+        }
+
+        $temp = $this->options->getAsync()->pool($upload);
+
+        foreach ($temp as $key => $val)
+        {
+            $temp[$key] = Helper::isAssoc($val) ? $val : current($val);
+        }
+
+        return $temp;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * download file
+     * download file (support multiple download)
      *
-     * @param string $fileId
+     * @param array $params
      * @param string $accessToken
-     * @return mixed
+     * @return array
      */
-    public function downloadFile(string $fileId, string $accessToken = null)
+    public function downloadFile(array $params, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => $fileId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $downloadArr = Helper::arrayToMulti($params);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
+        V::doValidate($this->downloadRules(), $downloadArr);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $method = [];
+        $target = API::LIST['downloadFile'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($downloadArr as $item)
+        {
+            $sink = $item['path'];
+
+            $request = $this->options
+            ->getAsync()
+            ->setPath($item['id'])
+            ->setHeaderParams($header);
+
+            $method[] = function () use ($request, $target, $sink)
+            {
+                return $request->getSink($target, $sink);
+            };
+        }
+
+        return $this->options->getAsync()->pool($method, true);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * rules for download params
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function downloadRules()
+    {
+        $path = V::oneOf(
+            V::resourceType(),
+            V::stringType()->notEmpty(),
+            V::instance(StreamInterface::class)
         );
 
-        V::doValidate($rule, $params);
+        return  V::arrayType()->each(V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('path', $path)
+        ));
+    }
 
-        $header = ['Authorization' => $params['access_token']];
+    // ------------------------------------------------------------------------------
 
-        unset($params['access_token']);
+    /**
+     * multipart upload rules
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function multipartRules()
+    {
+        return V::arrayType()->each(V::keyset(
+            V::key('headers', V::arrayType(), false),
+            V::key('filename', V::stringType()->length(1, null), false),
 
-        return $this->options
-        ->getRequest()
-        ->setHeaderParams($header)
-        ->get(API::LIST['downloadFile']);
+            V::key('contents', V::oneOf(
+                V::resourceType(),
+                V::stringType()->notEmpty(),
+                V::instance(StreamInterface::class)
+            ))
+        ));
     }
 
     // ------------------------------------------------------------------------------

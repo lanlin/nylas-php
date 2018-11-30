@@ -51,7 +51,7 @@ class Delta
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setHeaderParams($header)
         ->post(API::LIST['deltaLatestCursor']);
     }
@@ -78,7 +78,7 @@ class Delta
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['delta']);
@@ -109,7 +109,7 @@ class Delta
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['deltaLongpoll']);
@@ -137,7 +137,7 @@ class Delta
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['deltaStreaming']);

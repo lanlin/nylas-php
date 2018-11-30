@@ -88,7 +88,7 @@ class Hosted
         $query = array_merge($query, $params);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->post(API::LIST['oAuthToken']);
     }
@@ -110,7 +110,7 @@ class Hosted
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setHeaderParams($header)
         ->post(API::LIST['oAuthRevoke']);
     }

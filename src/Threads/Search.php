@@ -62,7 +62,7 @@ class Search
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['searchThreads']);

@@ -53,7 +53,7 @@ class Folder
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['folders']);
     }
@@ -85,7 +85,7 @@ class Folder
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneFolder']);
@@ -118,7 +118,7 @@ class Folder
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['folders']);
@@ -151,7 +151,7 @@ class Folder
         unset($params['id'], $params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -165,7 +165,7 @@ class Folder
      *
      * @param string $folderId
      * @param string $accessToken
-     * @return mixed
+     * @return void
      */
     public function deleteFolder(string $folderId, string $accessToken = null)
     {
@@ -184,8 +184,8 @@ class Folder
 
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options
-        ->getRequest()
+        $this->options
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->delete(API::LIST['oneFolder']);

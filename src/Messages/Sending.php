@@ -58,7 +58,7 @@ class Sending
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['sending']);
@@ -103,7 +103,7 @@ class Sending
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setBody($body)
         ->setFormParams($params)
         ->setHeaderParams($header)

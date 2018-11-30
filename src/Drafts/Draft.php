@@ -9,6 +9,7 @@ use Nylas\Utilities\Validate as V;
  * Nylas Drafts
  * ----------------------------------------------------------------------------------
  *
+ * @info include inline image <img src="cid:file_id">
  * @author lanlin
  * @change 2018/11/23
  */
@@ -61,7 +62,7 @@ class Draft
         $query  = empty($emails) ? [] : ['any_email' => $emails];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['drafts']);
@@ -94,7 +95,7 @@ class Draft
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneDraft']);
@@ -122,7 +123,7 @@ class Draft
         unset($params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['drafts']);
@@ -151,7 +152,7 @@ class Draft
         unset($params['id'], $params['access_token']);
 
         return $this->options
-        ->getRequest()
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -164,7 +165,7 @@ class Draft
      * delete draft
      *
      * @param array $params
-     * @return mixed
+     * @return void
      */
     public function deleteDraft(array $params)
     {
@@ -172,7 +173,7 @@ class Draft
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('version', V::stringType()->notEmpty()),
+            V::key('version', V::intType()->min(0)),
             V::key('access_token', V::stringType()->notEmpty())
         );
 
@@ -183,8 +184,8 @@ class Draft
 
         unset($params['id'], $params['access_token']);
 
-        return $this->options
-        ->getRequest()
+        $this->options
+        ->getSync()
         ->setPath($path)
         ->setFormParams($params)
         ->setHeaderParams($header)
@@ -238,7 +239,7 @@ class Draft
         $update =
         [
             V::key('id', V::stringType()->notEmpty()),
-            V::key('version', V::stringType()->length(1, null))
+            V::key('version', V::intType()->min(0))
         ];
 
         return array_merge($rules, $update);
