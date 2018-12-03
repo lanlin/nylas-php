@@ -42,7 +42,7 @@ class Thread
      * @param array $params
      * @return array
      */
-    public function getThreadsList(array $params)
+    public function getThreadsList(array $params = [])
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
@@ -103,12 +103,12 @@ class Thread
     // ------------------------------------------------------------------------------
 
     /**
-     * add thread
+     * update thread
      *
      * @param array $params
      * @return array
      */
-    public function addThread(array $params)
+    public function updateThread(array $params)
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();

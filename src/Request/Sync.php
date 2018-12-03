@@ -132,7 +132,7 @@ class Sync
      * get request & return body stream without preloaded
      *
      * @param string $api
-     * @return mixed
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
     public function getStream(string $api)

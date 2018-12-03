@@ -162,6 +162,11 @@ class File
         {
             $item['name'] = 'file';
 
+            if (is_string($item['contents']) && file_exists($item['contents']))
+            {
+                $item['contents'] = fopen($item['contents'], 'r');
+            }
+
             $request = $this->options
             ->getAsync()
             ->setFormFiles($item)
@@ -173,14 +178,9 @@ class File
             };
         }
 
-        $temp = $this->options->getAsync()->pool($upload);
+        $pools = $this->options->getAsync()->pool($upload, false);
 
-        foreach ($temp as $key => $val)
-        {
-            $temp[$key] = Helper::isAssoc($val) ? $val : current($val);
-        }
-
-        return $temp;
+        return $this->concatUploadInfos($file, $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -219,7 +219,9 @@ class File
             };
         }
 
-        return $this->options->getAsync()->pool($method, true);
+        $pools = $this->options->getAsync()->pool($method, true);
+
+        return $this->concatDownloadInfos($downloadArr, $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -262,6 +264,67 @@ class File
                 V::instance(StreamInterface::class)
             ))
         ));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * concat upload infos
+     *
+     * @param array $files
+     * @param array $pools
+     * @return array
+     */
+    private function concatUploadInfos(array $files, array $pools)
+    {
+        foreach ($files as $index => &$item)
+        {
+            if (isset($pools[$index]['error']))
+            {
+                $item = array_merge($item, $pools[$index]);
+            }
+
+            if (isset($pools[$index][0]))
+            {
+                $item = array_merge($item, $pools[$index][0]);
+            }
+        }
+
+        return $files;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * concat download infos
+     *
+     * @param array $params
+     * @param array $pools
+     * @return array
+     */
+    private function concatDownloadInfos(array $params, array $pools)
+    {
+        $data = [];
+
+        foreach ($params as $index => $item)
+        {
+            if (isset($pools[$index]['error']))
+            {
+                $item = array_merge($item, $pools[$index]);
+            }
+
+            if (isset($pools[$index]['Content-Disposition'][0]))
+            {
+                $str = $pools[$index]['Content-Disposition'][0];
+
+                $item['size']     = $pools[$index]['Content-Length'][0];
+                $item['filename'] = str_replace('attachment; filename=', '', $str);
+            }
+
+            $data[$item['id']] = $item;
+        }
+
+        return $data;
     }
 
     // ------------------------------------------------------------------------------

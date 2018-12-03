@@ -3,10 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-
-use Zend\Mime\Mime;
-use Zend\Mime\Part as MimePart;
-use Zend\Mime\Message as MimeMessage;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -69,43 +66,35 @@ class Sending
     /**
      * send raw mime
      *
-     * @TODO boundary
-     * @param array $params
+     * Suggest: use zend-mail for raw message
+     *
+     * @link https://docs.zendframework.com/zend-mail/
+     * @param string|resource|\Psr\Http\Message\StreamInterface $content
+     * @param string $accessToken
      * @return mixed
      */
-    public function sendRawMIME(array $params)
+    public function sendRawMIME($content, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $rule = V::oneOf(
+            V::resourceType(),
+            V::stringType()->notEmpty(),
+            V::instance(StreamInterface::class)
+        );
 
-        $html = new MimePart($htmlMarkup);
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $image = new MimePart(fopen($pathToImage, 'r'));
-        $image->type = 'image/jpeg';
-        $image->filename = 'image-file-name.jpg';
-        $image->disposition = Mime::DISPOSITION_ATTACHMENT;
-        $image->encoding = Mime::ENCODING_BASE64;
-
-        $body = new MimeMessage();
-        $body->setParts([$html, $image]);
-
-        V::doValidate($this->getMessageRules(), $params);
+        V::doValidate($rule, $content);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $header =
         [
             'Content-Type'  => 'message/rfc822',
-            'Authorization' => $params['access_token']
+            'Authorization' => $accessToken
         ];
-
-        unset($params['access_token']);
 
         return $this->options
         ->getSync()
-        ->setBody($body)
-        ->setFormParams($params)
+        ->setBody($content)
         ->setHeaderParams($header)
         ->post(API::LIST['sending']);
     }

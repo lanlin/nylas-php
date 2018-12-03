@@ -104,7 +104,7 @@ class Folder
     {
         $params = ['access_token' => $accessToken ?? $this->options->getAccessToken()];
 
-        !empty($displayName) AND $params['dispaly_name'] = $displayName;
+        !empty($displayName) AND $params['display_name'] = $displayName;
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()->notEmpty()),

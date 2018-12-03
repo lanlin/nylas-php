@@ -3,6 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
+use Zend\Mime\Message as MimeMessage;
 use ZBateson\MailMimeParser\MailMimeParser;
 
 /**
@@ -44,7 +45,7 @@ class Message
      * @param array $params
      * @return array
      */
-    public function getMessagesList(array $params)
+    public function getMessagesList(array $params = [])
     {
         $params['access_token'] =
         $params['access_token'] ?? $this->options->getAccessToken();
@@ -136,7 +137,8 @@ class Message
         ->getSync()
         ->setPath($params['id'])
         ->setHeaderParams($header)
-        ->get(API::LIST['oneMessage']);
+        ->getStream(API::LIST['oneMessage'])
+        ->getBody();
 
         // parse mime data
         // @link https://github.com/zbateson/mail-mime-parser
