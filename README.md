@@ -1,6 +1,6 @@
 # Nylas PHP SDK
 
-![Nylas-PHP](media/nylas-php.png)
+# <img align="center" src= "media/nylas-php.png" />
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
 
