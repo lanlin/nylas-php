@@ -1,30 +1,30 @@
 <?php namespace NylasTest;
 
-use Nylas\Client;
-use PHPUnit\Framework\TestCase;
-
 /**
  * ----------------------------------------------------------------------------------
- * Nylas Unit Tests Utils
+ * Hosted Test
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/22
+ * @change 2018/11/28
  */
-class Manage extends TestCase
+class HostedTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountsList()
+    public function testGetOAuthAuthorize()
     {
-        $data =
+        $params =
         [
-            "id"=> "awa6ltos76vz5hvphkp8k17nt",
-            "account_id"=> "awa6ltos76vz5hvphkp8k17nt",
-            "sync_state"=> "running",
-            "billing_state"=> "running",
+            'state'        => 'testing',
+            'login_hint'   => 'test@gmail.com',
+            'redirect_uri' => 'https://www.test.com/redirect_callback',
         ];
+
+        $data = self::$api->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
+
+        $this->assertTrue(is_string($data));
     }
 
     // ------------------------------------------------------------------------------
