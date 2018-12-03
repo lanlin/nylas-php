@@ -12,10 +12,10 @@ Here's why not use the official version
 
 Automatic incomplete effect under phpstorm:
 `$nylas->Accounts()->Account()->`
-[Nylas-PHP](media/nylas-php.png)
+![Nylas-PHP](media/nylas-php.png)
 
 `$nylas->Accounts()->Manage()->`
-[Nylas-PHP](media/nylas-php.png)
+![Nylas-PHP](media/nylas-php.png)
 
 
 ## Installation
@@ -107,11 +107,11 @@ $nylas->Options()->setAccessToken('the token you'v got');
 
 Accounts Methods:
 `$nylas->Accounts()->Account()->`
-[Nylas-PHP](media/nylas-php.png)
+![Nylas-PHP](media/nylas-php.png)
 
 Manage Methods:
 `$nylas->Accounts()->Manage()->`
-[Nylas-PHP](media/nylas-php.png)
+![Nylas-PHP](media/nylas-php.png)
 
 
 ### Calendars
