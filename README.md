@@ -1,14 +1,20 @@
-# Nylas PHP SDK
+<p aligen="center">
+  <img align="center" width="635" height="217" src= "media/nylas-php.png" />
+</p>
 
-# <img align="center" src= "media/nylas-php.png" />
+# Nylas PHP SDK
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
 
-Here's reason why not use the official version</br>
+**Why not use the official version?**</br>
+
 ![Nylas-Official](media/not-use.png)
 
-**1. All Nylas APIs have been implemented within this SDK.**</br>
-**2. Chained calls and good code hints**</br>
+
+**What's new?**</br>
+
+1. All Nylas APIs have been implemented within this SDK.</br>
+2. Chained calls and good code hints</br>
 
 Automatic incomplete effect under phpstorm:</br>
 `$nylas->Accounts()->Account()->`</br>
