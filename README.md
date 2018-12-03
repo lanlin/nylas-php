@@ -1,4 +1,4 @@
-# [![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)
+# <center>[![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)</center>
 
 # Nylas PHP SDK
 
@@ -12,10 +12,10 @@ Here's why not use the official version
 
 Automatic incomplete effect under phpstorm:
 `$nylas->Accounts()->Account()->`
-![Nylas-PHP](media/nylas-php.png)
+![Accounts](media/accounts.png)
 
 `$nylas->Accounts()->Manage()->`
-![Nylas-PHP](media/nylas-php.png)
+![Manage](media/accounts.png)
 
 
 ## Installation
@@ -99,7 +99,7 @@ $data = $nylas->Authentication()->Hosted()->postOAuthToken($params);
 
 // save your token some where
 // or update the client option
-$nylas->Options()->setAccessToken('the token you'v got');
+$nylas->Options()->setAccessToken("pass the token you got");
 ```
 
 
@@ -107,11 +107,11 @@ $nylas->Options()->setAccessToken('the token you'v got');
 
 Accounts Methods:
 `$nylas->Accounts()->Account()->`
-![Nylas-PHP](media/nylas-php.png)
+![Accounts](media/accounts.png)
 
 Manage Methods:
 `$nylas->Accounts()->Manage()->`
-![Nylas-PHP](media/nylas-php.png)
+![Manage](media/accounts.png)
 
 
 ### Calendars
