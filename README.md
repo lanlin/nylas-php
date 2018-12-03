@@ -1,13 +1,11 @@
 # Nylas PHP SDK
 
-<center>
-[![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)
-</center>
+![Nylas-PHP](media/nylas-php.png)
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
 
-Here's why not use the official version</br>
-# [![Nylas-Official](media/not-use.png)](https://github.com/nylas/nylas-php)
+Here's reason why not use the official version</br>
+![Nylas-Official](media/not-use.png)
 
 **1. All Nylas APIs have been implemented within this SDK.**</br>
 **2. Chained calls and good code hints**</br>
