@@ -1,26 +1,25 @@
-# <center>[![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)</center>
-
 # Nylas PHP SDK
 
-PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference
+<center>[![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)</center>
 
-Here's why not use the official version
+PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
+
+Here's why not use the official version</br>
 # [![Nylas-Official](media/not-use.png)](https://github.com/nylas/nylas-php)
 
-**1. All Nylas APIs have been implemented within this SDK.**
-**2. Chained calls and good code hints**
+**1. All Nylas APIs have been implemented within this SDK.**</br>
+**2. Chained calls and good code hints**</br>
 
-Automatic incomplete effect under phpstorm:
-`$nylas->Accounts()->Account()->`
-![Accounts](media/accounts.png)
-
-`$nylas->Accounts()->Manage()->`
-![Manage](media/accounts.png)
-
+Automatic incomplete effect under phpstorm:</br>
+`$nylas->Accounts()->Account()->`</br>
+![Accounts](media/accounts.png)</br>
+`$nylas->Accounts()->Manage()->`</br>
+![Manage](media/accounts.png)</br>
 
 ## Installation
 
-This library is available on http://packagist.org. You can install it by running
+This library is available on http://packagist.org.</br>
+You can install it by running
 
 ```shell
 composer require lanlin/nylas-php
@@ -31,12 +30,12 @@ composer require lanlin/nylas-php
 
 ### App ID and Secret
 
-Before you can interact with the Nylas REST API,
-you need to create a Nylas developer account at [https://www.nylas.com/](https://www.nylas.com/).
-After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
+Before you can interact with the Nylas REST API,</br>
+you need to create a Nylas developer account at [https://www.nylas.com/](https://www.nylas.com/).</br>
+After you've created a developer account, you can create a new application to generate an App ID / Secret pair.</br>
 
-Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control.
-The test projects use configuration files instead, to make it easier to get started.
+Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control.</br>
+The test projects use configuration files instead, to make it easier to get started.</br>
 
 ### Init Nylas-PHP
 
@@ -59,20 +58,20 @@ $nylas = new Client($options);
 
 ### Authentication
 
-There are two ways you can authenticate users to your application.
-Hosted & Native are both supported.
+There are two ways you can authenticate users to your application.</br>
+Hosted & Native are both supported.</br>
 
-Here's the server-side(three-legged) OAuth example:
+Here's the server-side(three-legged) OAuth example:</br>
 
-1. You redirect the user to nylas login page, along with your App Id and Secret
-2. Your user logs in
-3. She is redirected to a callback URL of your own, along with an access code
-4. You use this access code to get an authorization token to the API
+1. You redirect the user to nylas login page, along with your App Id and Secret</br>
+2. Your user logs in</br>
+3. She is redirected to a callback URL of your own, along with an access code</br>
+4. You use this access code to get an authorization token to the API</br>
 
-For more information about authenticating with Nylas,
-visit the [Developer Documentation](https://docs.nylas.com/reference#authentication).
+For more information about authenticating with Nylas,</br>
+visit the [Developer Documentation](https://docs.nylas.com/reference#authentication).</br>
 
-In practice, the Nylas REST API client simplifies this down to two steps.
+In practice, the Nylas REST API client simplifies this down to two steps.</br>
 
 **Step 1: Redirect the user to Nylas:**
 
@@ -88,9 +87,9 @@ $params =
 $url = $nylas->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
 ```
 
-**Step 2: your user logs in:**
-**Step 3: you got the access code from the nylas callback:**
-Please implement the above 2 & 3 steps yourself.
+**Step 2: your user logs in:**</br>
+**Step 3: you got the access code from the nylas callback:**</br>
+Please implement the above 2 & 3 steps yourself.</br>
 
 **Step 4: Get authorization token with access code:**
 
@@ -105,13 +104,13 @@ $nylas->Options()->setAccessToken("pass the token you got");
 
 ### Accounts
 
-Accounts Methods:
-`$nylas->Accounts()->Account()->`
-![Accounts](media/accounts.png)
+Accounts Methods:</br>
+`$nylas->Accounts()->Account()->`</br>
+![Accounts](media/accounts.png)</br>
 
-Manage Methods:
-`$nylas->Accounts()->Manage()->`
-![Manage](media/accounts.png)
+Manage Methods:</br>
+`$nylas->Accounts()->Manage()->`</br>
+![Manage](media/accounts.png)</br>
 
 
 ### Calendars
@@ -120,8 +119,8 @@ Manage Methods:
 
 ## Contributing
 
-For more usage demos, please view the tests.
-Please feel free to use it and send me a pull request if you fix anything or add a feature, though. :)
+For more usage demos, please view the tests.</br>
+Please feel free to use it and send me a pull request if you fix anything or add a feature, though.</br>
 
 
 ## License
