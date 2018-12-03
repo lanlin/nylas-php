@@ -1,6 +1,8 @@
 # Nylas PHP SDK
 
-<center>[![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)</center>
+<center>
+[![Nylas-PHP](media/nylas-php.png)](https://github.com/lanlin/nylas-php)
+</center>
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
 
@@ -13,6 +15,7 @@ Here's why not use the official version</br>
 Automatic incomplete effect under phpstorm:</br>
 `$nylas->Accounts()->Account()->`</br>
 ![Accounts](media/accounts.png)</br>
+
 `$nylas->Accounts()->Manage()->`</br>
 ![Manage](media/accounts.png)</br>
 
