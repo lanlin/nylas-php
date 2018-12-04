@@ -12,12 +12,15 @@ PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br
 2. All Nylas APIs have been implemented within this SDK.</br>
 3. Chained calls and good code hints, easy to use</br>
 4. Support send & get message in raw type</br>
-4. Support async multiple upload & download</br>
+5. Support async multiple upload & download</br>
    -- Contact picture download</br>
    -- File upload & download<br>
+6. The parameters that required by methods almost the same as nylas official api required.</br>
 
-`(new \Nylas\Client($options))->`</br>
-![APIs](media/apis.png)</br>
+```php
+(new \Nylas\Client($options))->
+```
+![apis](media/apis.png)</br>
 
 ## Installation
 
@@ -104,54 +107,52 @@ $data = $nylas->Authentication()->Hosted()->postOAuthToken($params);
 $nylas->Options()->setAccessToken("pass the token you got");
 ```
 
+## Supported Methods
+
+The parameters that required by methods almost the same as nylas official api required.
+
+For more detail, you can view the tests or the source code of validation rules for that method.
 
 ### Accounts
 
-Accounts Methods:</br>
+$nylas->Accounts()->Account()-></br>
+![accounts](media/accounts.png)</br>
 
-`$nylas->Accounts()->Account()->`</br>
-![Accounts](media/accounts.png)</br>
-
-Manage Methods:</br>
-
-`$nylas->Accounts()->Manage()->`</br>
-![Manage](media/manage.png)</br>
+$nylas->Accounts()->Manage()-></br>
+![manage](media/manage.png)</br>
 
 
 ### Authentication
 
-Hosted Methods:</br>
+$nylas->Authentication()->Hosted()-></br>
+![hosted](media/hosted.png)</br>
 
-`$nylas->Authentication()->Hosted()->`</br>
-![Accounts](media/hosted.png)</br>
-
-Native Methods:</br>
-
-`$nylas->Authentication()->Native()->`</br>
-![Accounts](media/native.png)</br>
+$nylas->Authentication()->Native()-></br>
+![native](media/native.png)</br>
 
 
 ### Calendars
 
-`$nylas->Calendars()->Calendar()->`</br>
-![Accounts](media/calendar.png)</br>
+$nylas->Calendars()->Calendar()-></br>
+![calendar](media/calendar.png)</br>
 
 
 ### Contacts
 
-`$nylas->Contacts()->Contact()->`</br>
-![Accounts](media/contact.png)</br>
+$nylas->Contacts()->Contact()-></br>
+![contact](media/contact.png)</br>
 
 ```php
+// multiple contact pictures download
 $params =
 [
     [
-         'id'   => 'contact id',
-         'path' => 'this can be a file path, resource or stream handle',
+        'id'   => 'contact id',
+        'path' => 'this can be a file path, resource or stream handle',
     ],
     [
-         'id'   => 'contact id',
-         'path' => 'this can be a file path, resource or stream handle',
+        'id'   => 'xxxx',
+        'path' => dirname(__FILE__) . '/correct.png',
     ],
     // ...
 ];
@@ -159,7 +160,107 @@ $params =
 $nylas->Contacts()->Contact()->getContactPicture($params);
 ```
 
+
 ### Deltas
+
+$nylas->Deltas()->Delta()-></br>
+![delta](media/delta.png)</br>
+
+
+### Draft
+
+$nylas->Drafts()->Draft()-></br>
+![draft](media/draft.png)</br>
+
+$nylas->Drafts()->Sending()-></br>
+![send-draft](media/send-draft.png)</br>
+
+
+### Events
+
+$nylas->Events()->Event()-></br>
+![event](media/event.png)</br>
+
+
+### Files
+
+$nylas->Files()->File()-></br>
+![file](media/file.png)</br>
+
+
+```php
+// multiple files download
+$params =
+[
+    [
+        'id'   => 'file id',
+        'path' => 'this can be a file path, resource or stream handle',
+    ],
+    [
+        'id'   => 'xxxx',
+        'path' => dirname(__FILE__) . '/correct.png',
+    ],
+    // ...
+];
+
+$nylas->Files()->File()->downloadFile($params);
+
+
+// multiple files upload
+$params =
+[
+    [
+        'contents' => 'this can be a file path, resource or stream handle',
+        'filename' => 'your file name'
+    ],
+    [
+        'contents' => dirname(__FILE__) . '/correct.png',
+        'filename' => 'test_correct.png'
+    ],
+    // ...
+];
+
+$nylas->Files()->File()->uploadFile($params);
+```
+
+
+### Folders
+
+$nylas->Folders()->Folder()-></br>
+![folder](media/folder.png)</br>
+
+
+### Labels
+
+$nylas->Labels()->Label()-></br>
+![label](media/label.png)</br>
+
+
+### Messages
+
+$nylas->Messages()->Message()-></br>
+![message](media/message.png)</br>
+
+$nylas->Messages()->Search()-></br>
+![search-message](media/search-message.png)</br>
+
+$nylas->Messages()->Sending()-></br>
+![send-message](media/send-message.png)</br>
+
+
+### Threads
+
+$nylas->Threads()->Search()-></br>
+![search-thread](media/search-thread.png)</br>
+
+$nylas->Threads()->Thread()-></br>
+![thread](media/thread.png)</br>
+
+
+### Webhooks
+
+$nylas->Webhooks()->Webhook()-></br>
+![webhook](media/webhook.png)</br>
 
 
 ## Contributing
