@@ -1,8 +1,8 @@
-# Nylas PHP SDK
-
 <div align="center">
   <img width="635" height="217" src="media/nylas-php.png" />
 </div>
+
+# Nylas PHP SDK
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
 
@@ -13,8 +13,8 @@ PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br
 3. Chained calls and good code hints, easy to use</br>
 4. Support send & get message in raw type</br>
 4. Support async multiple upload & download</br>
-   -- Contact picture download
-   -- File upload & download
+   -- Contact picture download</br>
+   -- File upload & download<br>
 
 `(new \Nylas\Client($options))->`</br>
 ![APIs](media/apis.png)</br>
