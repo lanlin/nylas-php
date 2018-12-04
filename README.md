@@ -61,6 +61,13 @@ $options =
 $nylas = new Client($options);
 ```
 
+### Options Setting
+
+You can modify options with these methods:
+
+$nylas->Options()-></br>
+![option](media/option.png)</br>
+
 
 ### Authentication
 
