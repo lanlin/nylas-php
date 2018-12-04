@@ -1,31 +1,27 @@
-<p aligen="center">
-  <img align="center" width="635" height="217" src= "media/nylas-php.png" />
-</p>
-
 # Nylas PHP SDK
+
+<div align="center">
+  <img width="635" height="217" src="media/nylas-php.png" />
+</div>
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
 
-**Why not use the official version?**</br>
-
-![Nylas-Official](media/not-use.png)
-
-
 **What's new?**</br>
 
-1. All Nylas APIs have been implemented within this SDK.</br>
-2. Chained calls and good code hints</br>
+1. API 2.0 support</br>
+2. All Nylas APIs have been implemented within this SDK.</br>
+3. Chained calls and good code hints, easy to use</br>
+4. Support send & get message in raw type</br>
+4. Support async multiple upload & download</br>
+   -- Contact picture download
+   -- File upload & download
 
-Automatic incomplete effect under phpstorm:</br>
-`$nylas->Accounts()->Account()->`</br>
-![Accounts](media/accounts.png)</br>
-
-`$nylas->Accounts()->Manage()->`</br>
-![Manage](media/accounts.png)</br>
+`(new \Nylas\Client($options))->`</br>
+![APIs](media/apis.png)</br>
 
 ## Installation
 
-This library is available on http://packagist.org.</br>
+This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
 You can install it by running
 
 ```shell
@@ -112,16 +108,58 @@ $nylas->Options()->setAccessToken("pass the token you got");
 ### Accounts
 
 Accounts Methods:</br>
+
 `$nylas->Accounts()->Account()->`</br>
 ![Accounts](media/accounts.png)</br>
 
 Manage Methods:</br>
+
 `$nylas->Accounts()->Manage()->`</br>
-![Manage](media/accounts.png)</br>
+![Manage](media/manage.png)</br>
+
+
+### Authentication
+
+Hosted Methods:</br>
+
+`$nylas->Authentication()->Hosted()->`</br>
+![Accounts](media/hosted.png)</br>
+
+Native Methods:</br>
+
+`$nylas->Authentication()->Native()->`</br>
+![Accounts](media/native.png)</br>
 
 
 ### Calendars
-**... @todo ...**
+
+`$nylas->Calendars()->Calendar()->`</br>
+![Accounts](media/calendar.png)</br>
+
+
+### Contacts
+
+`$nylas->Contacts()->Contact()->`</br>
+![Accounts](media/contact.png)</br>
+
+```php
+$params =
+[
+    [
+         'id'   => 'contact id',
+         'path' => 'this can be a file path, resource or stream handle',
+    ],
+    [
+         'id'   => 'contact id',
+         'path' => 'this can be a file path, resource or stream handle',
+    ],
+    // ...
+];
+
+$nylas->Contacts()->Contact()->getContactPicture($params);
+```
+
+### Deltas
 
 
 ## Contributing
