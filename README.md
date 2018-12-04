@@ -120,7 +120,7 @@ The parameters that required by methods almost the same as nylas official api re
 
 For more detail, you can view the tests or the source code of validation rules for that method.
 
-### Accounts [Nylas Doc](https://docs.nylas.com/reference#accounts)
+### [Accounts](https://docs.nylas.com/reference#accounts)
 
 $nylas->Accounts()->Account()-></br>
 ![accounts](media/accounts.png)</br>
@@ -129,7 +129,7 @@ $nylas->Accounts()->Manage()-></br>
 ![manage](media/manage.png)</br>
 
 
-### Authentication [Nylas Doc](https://docs.nylas.com/reference#authentication)
+### [Authentication](https://docs.nylas.com/reference#authentication)
 
 $nylas->Authentication()->Hosted()-></br>
 ![hosted](media/hosted.png)</br>
@@ -138,13 +138,13 @@ $nylas->Authentication()->Native()-></br>
 ![native](media/native.png)</br>
 
 
-### Calendars [Nylas Doc](https://docs.nylas.com/reference#calendars)
+### [Calendars](https://docs.nylas.com/reference#calendars)
 
 $nylas->Calendars()->Calendar()-></br>
 ![calendar](media/calendar.png)</br>
 
 
-### Contacts [Nylas Doc](https://docs.nylas.com/reference#contacts-intro)
+### [Contacts](https://docs.nylas.com/reference#contacts-intro)
 
 $nylas->Contacts()->Contact()-></br>
 ![contact](media/contact.png)</br>
@@ -168,13 +168,13 @@ $nylas->Contacts()->Contact()->getContactPicture($params);
 ```
 
 
-### Deltas [Nylas Doc](https://docs.nylas.com/reference#deltas)
+### [Deltas](https://docs.nylas.com/reference#deltas)
 
 $nylas->Deltas()->Delta()-></br>
 ![delta](media/delta.png)</br>
 
 
-### Draft [Nylas Doc](https://docs.nylas.com/reference#drafts)
+### [Draft](https://docs.nylas.com/reference#drafts)
 
 $nylas->Drafts()->Draft()-></br>
 ![draft](media/draft.png)</br>
@@ -183,13 +183,13 @@ $nylas->Drafts()->Sending()-></br>
 ![send-draft](media/send-draft.png)</br>
 
 
-### Events [Nylas Doc](https://docs.nylas.com/reference#events)
+### [Events](https://docs.nylas.com/reference#events)
 
 $nylas->Events()->Event()-></br>
 ![event](media/event.png)</br>
 
 
-### Files [Nylas Doc](https://docs.nylas.com/reference#files)
+### [Files](https://docs.nylas.com/reference#files)
 
 $nylas->Files()->File()-></br>
 ![file](media/file.png)</br>
@@ -231,19 +231,19 @@ $nylas->Files()->File()->uploadFile($params);
 ```
 
 
-### Folders [Nylas Doc](https://docs.nylas.com/reference#folders)
+### [Folders](https://docs.nylas.com/reference#folders)
 
 $nylas->Folders()->Folder()-></br>
 ![folder](media/folder.png)</br>
 
 
-### Labels [Nylas Doc](https://docs.nylas.com/reference#labels)
+### [Labels](https://docs.nylas.com/reference#labels)
 
 $nylas->Labels()->Label()-></br>
 ![label](media/label.png)</br>
 
 
-### Messages [Nylas Doc](https://docs.nylas.com/reference#messages)
+### [Messages](https://docs.nylas.com/reference#messages)
 
 $nylas->Messages()->Message()-></br>
 ![message](media/message.png)</br>
@@ -255,7 +255,7 @@ $nylas->Messages()->Sending()-></br>
 ![send-message](media/send-message.png)</br>
 
 
-### Threads [Nylas Doc](https://docs.nylas.com/reference#threads)
+### [Threads](https://docs.nylas.com/reference#threads)
 
 $nylas->Threads()->Search()-></br>
 ![search-thread](media/search-thread.png)</br>
@@ -264,7 +264,7 @@ $nylas->Threads()->Thread()-></br>
 ![thread](media/thread.png)</br>
 
 
-### Webhooks [Nylas Doc](https://docs.nylas.com/reference#webhooks)
+### [Webhooks](https://docs.nylas.com/reference#webhooks)
 
 $nylas->Webhooks()->Webhook()-></br>
 ![webhook](media/webhook.png)</br>
