@@ -46,7 +46,7 @@ The test projects use configuration files instead, to make it easier to get star
 ### Init Nylas-PHP
 
 ```php
-use Nylas/Client;
+use Nylas\Client;
 
 $options =
 [
