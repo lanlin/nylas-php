@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/29
+ * @change 2018/12/17
  */
 class Contact
 {
@@ -60,39 +60,6 @@ class Contact
         ->setQuery($params)
         ->setHeaderParams($header)
         ->get(API::LIST['contacts']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get contact
-     *
-     * @param string $contactId
-     * @param string $accessToken
-     * @return array
-     */
-    public function getContact(string $contactId, string $accessToken = null)
-    {
-        $params =
-        [
-            'id'           => $contactId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
-
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneContact']);
     }
 
     // ------------------------------------------------------------------------------
@@ -158,34 +125,93 @@ class Contact
     // ------------------------------------------------------------------------------
 
     /**
-     * delete contact
+     * get contact
      *
-     * @param string $contactId
+     * @param string|array $contactId
      * @param string $accessToken
-     * @return void
+     * @return array
      */
-    public function deleteContact(string $contactId, string $accessToken = null)
+    public function getContact($contactId, string $accessToken = null)
     {
         $params =
         [
-            'id'           => $contactId,
+            'id'           => Helper::fooToArray($contactId),
             'access_token' => $accessToken ?? $this->options->getAccessToken()
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
+            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
             V::key('access_token', V::stringType()->notEmpty())
         );
 
         V::doValidate($rule, $params);
 
+        $queues = [];
+        $target = API::LIST['oneContact'];
         $header = ['Authorization' => $params['access_token']];
 
-        $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->delete(API::LIST['oneContact']);
+        foreach ($params['id'] as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return $this->concatContactInfos($params['id'], $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * delete contact
+     *
+     * @param string|array $contactId
+     * @param string $accessToken
+     * @return array
+     */
+    public function deleteContact($contactId, string $accessToken = null)
+    {
+        $params =
+        [
+            'id'           => Helper::fooToArray($contactId),
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
+
+        $rule = V::keySet(
+            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
+            V::key('access_token', V::stringType()->notEmpty())
+        );
+
+        V::doValidate($rule, $params);
+
+        $queues = [];
+        $target = API::LIST['oneContact'];
+        $header = ['Authorization' => $params['access_token']];
+
+        foreach ($params['id'] as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->delete($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return $this->concatContactInfos($params['id'], $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -247,6 +273,32 @@ class Contact
         }
 
         return $this->options->getAsync()->pool($method, true);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * concat contact infos
+     *
+     * @param array $params
+     * @param array $pools
+     * @return array
+     */
+    private function concatContactInfos(array $params, array $pools)
+    {
+        $data = [];
+
+        foreach ($params as $index => $item)
+        {
+            if (isset($pools[$index]['error']))
+            {
+                $item = array_merge($item, $pools[$index]);
+            }
+
+            $data[$item['id']] = $item;
+        }
+
+        return $data;
     }
 
     // ------------------------------------------------------------------------------
