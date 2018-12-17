@@ -97,8 +97,7 @@ class Message
         ->getSync()
         ->setPath($messageId)
         ->setHeaderParams($header)
-        ->getStream(API::LIST['oneMessage'])
-        ->getBody();
+        ->getStream(API::LIST['oneMessage']);
 
         // parse mime data
         // @link https://github.com/zbateson/mail-mime-parser

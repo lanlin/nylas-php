@@ -28,7 +28,7 @@ class FileTest extends Abs
 
         $data = self::$api->Files()->File()->getFileInfo($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

@@ -33,7 +33,7 @@ class CalendarTest extends Abs
 
         $data = self::$api->Calendars()->Calendar()->getCalendar($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

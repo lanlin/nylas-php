@@ -28,7 +28,7 @@ class ThreadTest extends Abs
 
         $data = self::$api->Threads()->Thread()->getThread($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

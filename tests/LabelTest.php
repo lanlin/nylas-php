@@ -28,7 +28,7 @@ class LabelTest extends Abs
 
         $data = self::$api->Labels()->Label()->getLabel($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

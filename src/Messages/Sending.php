@@ -134,7 +134,7 @@ class Sending
             V::keyOptional('payload', V::stringType()->notEmpty())
         );
 
-        return V::keySet(
+        return V::each(V::keySet(
             V::keyOptional('to', $tmp),
             V::keyOptional('cc', $tmp),
             V::keyOptional('bcc', $tmp),
@@ -146,7 +146,7 @@ class Sending
             V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('file_ids', $ids),
             V::keyOptional('tracking', $tracking)
-        );
+        ));
     }
 
     // ------------------------------------------------------------------------------

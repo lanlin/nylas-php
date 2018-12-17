@@ -28,7 +28,7 @@ class ContactTest extends Abs
 
         $data = self::$api->Contacts()->Contact()->getContact($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

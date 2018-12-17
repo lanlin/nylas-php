@@ -12,10 +12,11 @@ PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br
 2. All Nylas APIs have been implemented within this SDK.</br>
 3. Chained calls and good code hints, easy to use</br>
 4. Support send & get message in raw type</br>
-5. Support async multiple upload & download</br>
+5. Support async batch upload & download</br>
    -- Contact picture download</br>
    -- File upload & download<br>
 6. The parameters that required by methods almost the same as nylas official api required.</br>
+7. Support async batch get & delete & send (since version 3.1).
 
 ```php
 (new \Nylas\Client($options))->
@@ -67,6 +68,22 @@ You can modify options with these methods:
 
 $nylas->Options()-></br>
 ![option](media/option.png)</br>
+
+
+### Batch Request
+
+Most of the methods that have the get & delete prefix support batch request.
+
+```php
+$id  = 'id_xxx';
+$ids = ['id_xxx', 'id_yyy', ...];
+
+$dataA = $nylas->Contacts()->Contact()->getContact($id);
+$dataB = $nylas->Contacts()->Contact()->getContact($ids);
+
+$dataC = $nylas->Contacts()->Contact()->deleteContact($id);
+$dataD = $nylas->Contacts()->Contact()->deleteContact($ids);
+```
 
 
 ### Authentication

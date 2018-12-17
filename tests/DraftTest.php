@@ -28,7 +28,7 @@ class DraftTest extends Abs
 
         $data = self::$api->Drafts()->Draft()->getDraft($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ class DraftTest extends Abs
 
         $data = self::$api->Drafts()->Sending()->sendDraft($params);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($draft['id'], $data);
     }
 
     // ------------------------------------------------------------------------------

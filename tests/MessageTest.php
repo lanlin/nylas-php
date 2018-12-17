@@ -28,7 +28,7 @@ class MessageTest extends Abs
 
         $data = self::$api->Messages()->Message()->getMessage($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ class MessageTest extends Abs
 
         $data = self::$api->Messages()->Sending()->sendDirectly($params);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey('id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------

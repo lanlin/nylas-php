@@ -29,14 +29,14 @@ class FolderTest extends Abs
 
         $data = self::$api->Folders()->Folder()->getFolder($id);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
     public function testAddFolder()
     {
-        $name = 'test_folder';
+        $name = 'test_folder'.uniqid();
 
         $data = self::$api->Folders()->Folder()->addFolder($name);
 
