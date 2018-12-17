@@ -41,26 +41,23 @@ class Calendar
      * get calendars list
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getCalendarsList(array $params)
+    public function getCalendarsList(array $params = [], string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
-
             V::keyOptional('view', V::in(['count', 'ids'])),
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0))
         );
 
         V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()

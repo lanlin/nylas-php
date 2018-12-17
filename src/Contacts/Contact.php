@@ -42,18 +42,17 @@ class Contact
      * get contacts list
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getContactsList(array $params = [])
+    public function getContactsList(array $params = [], string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate($this->getBaseRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -68,20 +67,19 @@ class Contact
      * add contact
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function addContact(array $params)
+    public function addContact(array $params, string $accessToken = null)
     {
         $rules = $this->addContactRules();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -96,23 +94,24 @@ class Contact
      * update contact
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateContact(array $params)
+    public function updateContact(array $params, string $accessToken = null)
     {
         $rules = $this->addContactRules();
 
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
         array_push($rules,  V::key('id', V::stringType()->notEmpty()));
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
-
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['id'], $params['access_token']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
@@ -308,9 +307,7 @@ class Contact
             V::keyOptional('recurse', V::boolType()),
             V::keyOptional('postal_code', V::stringType()->notEmpty()),
             V::keyOptional('phone_number', V::stringType()->notEmpty()),
-            V::keyOptional('street_address', V::stringType()->notEmpty()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('street_address', V::stringType()->notEmpty())
         );
     }
 
@@ -342,9 +339,7 @@ class Contact
             V::keyOptional('im_addresses', V::arrayType()),
             V::keyOptional('physical_addresses', V::arrayType()),
             V::keyOptional('phone_numbers', V::arrayType()),
-            V::keyOptional('web_pages', V::arrayType()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('web_pages', V::arrayType())
         ];
     }
 
