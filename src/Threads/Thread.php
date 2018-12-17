@@ -41,14 +41,15 @@ class Thread
      * get threads list
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getThreadsList(array $params = [])
+    public function getThreadsList(array $params = [], string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate($this->getThreadsRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $query =
         [
@@ -56,10 +57,8 @@ class Thread
             'offset' => $params['offset'] ?? 0,
         ];
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
-        $query = array_merge($params, $query);
+        $query  = array_merge($params, $query);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -74,16 +73,15 @@ class Thread
      * update thread
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateThread(array $params)
+    public function updateThread(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
@@ -92,11 +90,12 @@ class Thread
         );
 
         V::doValidate($rules, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['access_token'], $params['id']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
@@ -111,11 +110,11 @@ class Thread
     /**
      * get thread info
      *
-     * @param string $threadId
+     * @param string|array $threadId
      * @param string $accessToken
      * @return array
      */
-    public function getThread(string $threadId, string $accessToken = null)
+    public function getThread($threadId, string $accessToken = null)
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $accessToken ?? $this->options->getAccessToken();
@@ -176,9 +175,7 @@ class Thread
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('filename', V::stringType()->notEmpty()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('filename', V::stringType()->notEmpty())
         );
     }
 
