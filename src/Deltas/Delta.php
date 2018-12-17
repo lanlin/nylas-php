@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2018/12/17
  */
 class Delta
 {
@@ -62,20 +62,19 @@ class Delta
      * get a set of deltas
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getSetOfDeltas(array $params)
+    public function getSetOfDeltas(array $params, string $accessToken = null)
     {
         $rules = $this->getBaseRules();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -90,23 +89,22 @@ class Delta
      * long polling delta updates
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function longPollingDelta(array $params)
+    public function longPollingDelta(array $params, string $accessToken = null)
     {
         $rules = $this->getBaseRules();
         $times = V::key('timeout', V::intType()->min(1));
 
         array_push($rules, $times);
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -121,20 +119,19 @@ class Delta
      * streaming delta updates
      *
      * @param array $params
+     * @param string $accessToken
      * @return mixed
      */
-    public function streamingDelta(array $params)
+    public function streamingDelta(array $params, string $accessToken = null)
     {
         $rules = $this->getBaseRules();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -157,7 +154,6 @@ class Delta
         return
         [
             V::key('cursor', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('view', V::stringType()->notEmpty()),
             V::keyOptional('exclude_types', V::in($types)),
