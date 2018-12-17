@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/12/17
  */
 class Event
 {
@@ -40,20 +40,19 @@ class Event
      * get events list
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getEventsList(array $params = [])
+    public function getEventsList(array $params = [], string $accessToken = null)
     {
         $rules = $this->getBaseRules();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -68,22 +67,23 @@ class Event
      * get event
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getEvent(array $params)
+    public function getEvent(array $params, string $accessToken = null)
     {
         $temps = [V::key('id', V::stringType()->notEmpty())];
         $rules = array_merge($temps, $this->getBaseRules());
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['id'], $params['access_token']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
@@ -99,20 +99,21 @@ class Event
      * add event
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function addEvent(array $params)
+    public function addEvent(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate($this->addEventRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $notify = 'notify_participants';
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
-        unset($params['access_token'], $params['notify_participants']);
+        unset($params['notify_participants']);
 
         return $this->options
         ->getSync()
@@ -128,21 +129,22 @@ class Event
      * update event
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateEvent(array $params)
+    public function updateEvent(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate($this->updateEventRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
         $notify = 'notify_participants';
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
-        unset($params['id'], $params['access_token'], $params['notify_participants']);
+        unset($params['id'], $params['notify_participants']);
 
         return $this->options
         ->getSync()
@@ -159,23 +161,23 @@ class Event
      * delete event
      *
      * @param array $params
+     * @param string $accessToken
      * @return void
      */
-    public function deleteEvent(array $params)
+    public function deleteEvent(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
         );
 
         V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $notify = 'notify_participants';
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
         $this->options
@@ -189,32 +191,33 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
+     * rsvping
+     *
      * @param array $params
+     * @param string $accessToken
      * @return mixed
      */
-    public function rsvping(array $params)
+    public function rsvping(array $params, string $accessToken = null)
     {
-        $params['account_id'] =
-        $params['account_id'] ?? $this->options->getAccountId();
+        $params['account_id'] = $params['account_id'] ?? $this->options->getAccountId();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
             V::key('event_id', V::stringType()->notEmpty()),
             V::key('account_id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
         );
 
         V::doValidate($rules, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $notify = 'notify_participants';
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
-        unset($params['access_token'], $params['notify_participants']);
+        unset($params['notify_participants']);
 
         return $this->options
         ->getSync()
@@ -249,9 +252,7 @@ class Event
             V::keyOptional('ends_after', V::timestampType()),
             V::keyOptional('ends_before', V::timestampType()),
             V::keyOptional('start_after', V::timestampType()),
-            V::keyOptional('start_before', V::timestampType()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('start_before', V::timestampType())
         ];
     }
 
@@ -266,7 +267,6 @@ class Event
     {
         return V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('when', $this->timeRules()),
             V::keyOptional('busy', V::boolType()),
@@ -296,7 +296,6 @@ class Event
         return V::keySet(
             V::key('when', $this->timeRules()),
             V::key('calendar_id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('busy', V::boolType()),
             V::keyOptional('title', V::stringType()->notEmpty()),
