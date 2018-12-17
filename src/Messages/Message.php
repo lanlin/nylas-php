@@ -43,14 +43,15 @@ class Message
      * get messages list
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getMessagesList(array $params = [])
+    public function getMessagesList(array $params = [], string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate($this->getMessagesRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $query =
         [
@@ -58,10 +59,8 @@ class Message
             'offset' => $params['offset'] ?? 0,
         ];
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
-        $query = array_merge($params, $query);
+        $query  = array_merge($params, $query);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -81,28 +80,22 @@ class Message
      */
     public function getRawMessage(string $messageId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => $messageId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $rule = V::stringType()->notEmpty();
 
-        $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        V::doValidate($rules, $params);
+        V::doValidate($rule, $messageId);
+        V::doValidate($rule, $accessToken);
 
         $header =
         [
             'Accept'        => 'message/rfc822',        // RFC-2822 message object
-            'Authorization' => $params['access_token']
+            'Authorization' => $accessToken
         ];
 
         $rawStream = $this->options
         ->getSync()
-        ->setPath($params['id'])
+        ->setPath($messageId)
         ->setHeaderParams($header)
         ->getStream(API::LIST['oneMessage'])
         ->getBody();
@@ -118,16 +111,15 @@ class Message
      * update message status & flags
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateMessage(array $params)
+    public function updateMessage(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
 
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
@@ -136,11 +128,12 @@ class Message
         );
 
         V::doValidate($rules, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['access_token'], $params['id']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
@@ -220,9 +213,7 @@ class Message
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('filename', V::stringType()->notEmpty()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('filename', V::stringType()->notEmpty())
         );
     }
 
