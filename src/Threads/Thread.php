@@ -1,6 +1,7 @@
 <?php namespace Nylas\Threads;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -10,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/22
+ * @change 2018/12/17
  */
 class Thread
 {
@@ -70,39 +71,6 @@ class Thread
     // ------------------------------------------------------------------------------
 
     /**
-     * get thread info
-     *
-     * @param string $threadId
-     * @param string $accessToken
-     * @return array
-     */
-    public function getThread(string $threadId, string $accessToken = null)
-    {
-        $params =
-        [
-            'id'           => $threadId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
-
-        $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneThread']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * update thread
      *
      * @param array $params
@@ -136,6 +104,47 @@ class Thread
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->put(API::LIST['oneThread']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get thread info
+     *
+     * @param string $threadId
+     * @param string $accessToken
+     * @return array
+     */
+    public function getThread(string $threadId, string $accessToken = null)
+    {
+        $threadId    = Helper::fooToArray($threadId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+
+        V::doValidate($rule, $threadId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneThread'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($threadId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($threadId, $pools);
     }
 
     // ------------------------------------------------------------------------------

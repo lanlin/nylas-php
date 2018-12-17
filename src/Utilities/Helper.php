@@ -101,8 +101,8 @@ class Helper
         {
             $item = ['id' => $id];
 
-            // check if get errors
-            if (isset($pools[$index]['error']))
+            // merge with pool data
+            if (isset($pools[$index]))
             {
                 $item = array_merge($item, $pools[$index]);
             }
