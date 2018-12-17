@@ -165,7 +165,7 @@ class Contact
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return $this->concatContactInfos($params['id'], $pools);
+        return Helper::concatPoolInfos($params['id'], $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ class Contact
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return $this->concatContactInfos($params['id'], $pools);
+        return Helper::concatPoolInfos($params['id'], $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -273,32 +273,6 @@ class Contact
         }
 
         return $this->options->getAsync()->pool($method, true);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * concat contact infos
-     *
-     * @param array $params
-     * @param array $pools
-     * @return array
-     */
-    private function concatContactInfos(array $params, array $pools)
-    {
-        $data = [];
-
-        foreach ($params as $index => $item)
-        {
-            if (isset($pools[$index]['error']))
-            {
-                $item = array_merge($item, $pools[$index]);
-            }
-
-            $data[$item['id']] = $item;
-        }
-
-        return $data;
     }
 
     // ------------------------------------------------------------------------------
