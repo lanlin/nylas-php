@@ -6,7 +6,7 @@
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/21
+ * @change 2018/12/17
  */
 class Helper
 {
@@ -27,6 +27,23 @@ class Helper
         }
 
         return false;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * something foo to array
+     *
+     * @param $foo
+     * @return array
+     */
+    public static function fooToArray($foo)
+    {
+        if ($foo === null) { return []; }
+
+        $temp = is_array($foo) ? $foo : [$foo];
+
+        return array_values(array_unique($temp));
     }
 
     // ------------------------------------------------------------------------------
