@@ -75,20 +75,19 @@ class Draft
      * add draft
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function addDraft(array $params)
+    public function addDraft(array $params, string $accessToken = null)
     {
         $rules = $this->getBaseRules();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -103,21 +102,21 @@ class Draft
      * update draft
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateDraft(array $params)
+    public function updateDraft(array $params, string $accessToken = null)
     {
         $rules = $this->getUpdateRules();
 
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['id'], $params['access_token']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
@@ -286,9 +285,7 @@ class Draft
 
             V::keyOptional('file_ids', $this->arrayOfString()),
             V::keyOptional('subject', V::stringType()),
-            V::keyOptional('body', V::stringType()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('body', V::stringType())
         ];
     }
 
