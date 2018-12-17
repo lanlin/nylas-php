@@ -1,6 +1,7 @@
 <?php namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 use Psr\Http\Message\StreamInterface;
@@ -11,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2018/12/17
  */
 class Sending
 {
@@ -41,24 +42,35 @@ class Sending
      * send message directly
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function sendDirectly(array $params)
+    public function sendDirectly(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $params      = Helper::arrayToMulti($params);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         V::doValidate($this->getMessageRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
+        $queues = [];
+        $target = API::LIST['sending'];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['access_token']);
+        foreach ($params as $item)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setFormParams($item)
+            ->setHeaderParams($header);
 
-        return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['sending']);
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->post($target);
+            };
+        }
+
+        return $this->options->getAsync()->pool($queues, false);
     }
 
     // ------------------------------------------------------------------------------
@@ -123,8 +135,6 @@ class Sending
         );
 
         return V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
-
             V::keyOptional('to', $tmp),
             V::keyOptional('cc', $tmp),
             V::keyOptional('bcc', $tmp),
