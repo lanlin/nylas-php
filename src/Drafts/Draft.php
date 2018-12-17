@@ -1,6 +1,7 @@
 <?php namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -11,7 +12,7 @@ use Nylas\Utilities\Validate as V;
  *
  * @info include inline image <img src="cid:file_id">
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/12/17
  */
 class Draft
 {
@@ -66,39 +67,6 @@ class Draft
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['drafts']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get draft
-     *
-     * @param string $draftId
-     * @param string $accessToken
-     * @return array
-     */
-    public function getDraft(string $draftId, string $accessToken = null)
-    {
-        $params =
-        [
-            'id'           => $draftId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
-
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneDraft']);
     }
 
     // ------------------------------------------------------------------------------
@@ -162,34 +130,93 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * delete draft
+     * get draft
      *
-     * @param array $params
-     * @return void
+     * @param string|array $draftId
+     * @param string $accessToken
+     * @return array
      */
-    public function deleteDraft(array $params)
+    public function getDraft($draftId, string $accessToken = null)
     {
-        $params['access_token'] = $params['access_token'] ?? $this->options->getAccessToken();
+        $params =
+        [
+            'id'           => Helper::fooToArray($draftId),
+            'access_token' => $accessToken ?? $this->options->getAccessToken()
+        ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('version', V::intType()->min(0)),
+            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
             V::key('access_token', V::stringType()->notEmpty())
         );
 
         V::doValidate($rule, $params);
 
-        $path   = $params['id'];
+        $queues = [];
+        $target = API::LIST['oneDraft'];
         $header = ['Authorization' => $params['access_token']];
 
-        unset($params['id'], $params['access_token']);
+        foreach ($params['id'] as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
 
-        $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->delete(API::LIST['oneDraft']);
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($params['id'], $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * delete draft
+     *
+     * @param array $params
+     * @param string $accessToken
+     * @return array
+     */
+    public function deleteDraft(array $params, string $accessToken = null)
+    {
+        $params      = Helper::arrayToMulti($params);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
+        $rule = V::each(V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('version', V::intType()->min(0))
+        ));
+
+        V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneDraft'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($params as $item)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($item['id'])
+            ->setFormParams(['version' => $item['version']])
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->delete($target);
+            };
+        }
+
+        $dftId = Helper::generateArray($params, 'id');
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($dftId, $pools);
     }
 
     // ------------------------------------------------------------------------------
