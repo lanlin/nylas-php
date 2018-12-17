@@ -1,9 +1,9 @@
 <?php namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
-use Zend\Mime\Message as MimeMessage;
 use ZBateson\MailMimeParser\MailMimeParser;
 
 /**
@@ -68,39 +68,6 @@ class Message
         ->setQuery($query)
         ->setHeaderParams($header)
         ->get(API::LIST['messages']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get message info
-     *
-     * @param string $messageId
-     * @param string $accessToken
-     * @return array
-     */
-    public function getMessage(string $messageId, string $accessToken = null)
-    {
-        $params =
-        [
-            'id'           => $messageId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
-
-        $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
@@ -181,6 +148,47 @@ class Message
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->put(API::LIST['oneMessage']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get message info
+     *
+     * @param string|array $messageId
+     * @param string $accessToken
+     * @return array
+     */
+    public function getMessage($messageId, string $accessToken = null)
+    {
+        $messageId    = Helper::fooToArray($messageId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+
+        V::doValidate($rule, $messageId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneMessage'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($messageId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($messageId, $pools);
     }
 
     // ------------------------------------------------------------------------------
