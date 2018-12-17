@@ -133,24 +133,19 @@ class Contact
      */
     public function getContact($contactId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => Helper::fooToArray($contactId),
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
+        $contactId   = Helper::fooToArray($contactId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $contactId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
         $target = API::LIST['oneContact'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        foreach ($params['id'] as $id)
+        foreach ($contactId as $id)
         {
             $request = $this->options
             ->getAsync()
@@ -165,7 +160,7 @@ class Contact
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return Helper::concatPoolInfos($params['id'], $pools);
+        return Helper::concatPoolInfos($contactId, $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -179,24 +174,19 @@ class Contact
      */
     public function deleteContact($contactId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => Helper::fooToArray($contactId),
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
+        $contactId   = Helper::fooToArray($contactId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $contactId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
         $target = API::LIST['oneContact'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        foreach ($params['id'] as $id)
+        foreach ($contactId as $id)
         {
             $request = $this->options
             ->getAsync()
@@ -211,7 +201,7 @@ class Contact
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return Helper::concatPoolInfos($params['id'], $pools);
+        return Helper::concatPoolInfos($contactId, $pools);
     }
 
     // ------------------------------------------------------------------------------
