@@ -112,33 +112,7 @@ class Calendar
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return $this->concatCalendarInfos($params['id'], $pools);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * concat calendar infos
-     *
-     * @param array $params
-     * @param array $pools
-     * @return array
-     */
-    private function concatCalendarInfos(array $params, array $pools)
-    {
-        $data = [];
-
-        foreach ($params as $index => $item)
-        {
-            if (isset($pools[$index]['error']))
-            {
-                $item = array_merge($item, $pools[$index]);
-            }
-
-            $data[$item['id']] = $item;
-        }
-
-        return $data;
+        return Helper::concatPoolInfos($params['id'], $pools);
     }
 
     // ------------------------------------------------------------------------------
