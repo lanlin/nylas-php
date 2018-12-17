@@ -1,6 +1,7 @@
 <?php namespace Nylas\Labels;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -56,39 +57,6 @@ class Label
         ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['labels']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get label
-     *
-     * @param string $labelId
-     * @param string $accessToken
-     * @return array
-     */
-    public function getLabel(string $labelId, string $accessToken = null)
-    {
-        $params =
-        [
-            'id'           => $labelId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
-
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneLabel']);
     }
 
     // ------------------------------------------------------------------------------
@@ -163,35 +131,88 @@ class Label
     // ------------------------------------------------------------------------------
 
     /**
+     * get label
+     *
+     * @param string|array $labelId
+     * @param string $accessToken
+     * @return array
+     */
+    public function getLabel($labelId, string $accessToken = null)
+    {
+        $labelId     = Helper::fooToArray($labelId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+
+        V::doValidate($rule, $labelId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneLabel'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($labelId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($labelId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * delete label
      *
      * @param array $params
-     * @return void
+     * @param string $accessToken
+     * @return array
      */
-    public function deleteLabel(array $params)
+    public function deleteLabel(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $params      = Helper::arrayToMulti($params);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
+        $rule = V::each(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
             V::key('display_name', V::stringType()->notEmpty())
-        );
+        ));
 
         V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $queues = [];
+        $target = API::LIST['oneLabel'];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['id'], $params['access_token']);
+        foreach ($params as $item)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($item['id'])
+            ->setFormParams(['display_name' => $item['display_name']])
+            ->setHeaderParams($header);
 
-        $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->delete(API::LIST['oneLabel']);
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->delete($target);
+            };
+        }
+
+        $labId = Helper::generateArray($params, 'id');
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($labId, $pools);
     }
 
     // ------------------------------------------------------------------------------
