@@ -70,20 +70,13 @@ class Folder
      */
     public function addFolder(string $displayName = null, string $accessToken = null)
     {
-        $params = ['access_token' => $accessToken ?? $this->options->getAccessToken()];
+        $params = !empty($displayName) ? ['display_name' => $displayName] : [];
 
-        !empty($displayName) AND $params['display_name'] = $displayName;
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
-            V::keyOptional('display_name', V::stringType()->notEmpty())
-        );
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
@@ -98,25 +91,25 @@ class Folder
      * update folder
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateFolder(array $params)
+    public function updateFolder(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
             V::keyOptional('display_name', V::stringType()->notEmpty())
         );
 
         V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['id'], $params['access_token']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
