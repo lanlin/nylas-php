@@ -42,27 +42,24 @@ class File
      * get files list
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function getFilesList(array $params = [])
+    public function getFilesList(array $params = [], string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::keyOptional('view', V::in(['count', 'ids'])),
             V::keyOptional('filename', V::stringType()->notEmpty()),
             V::keyOptional('message_id', V::stringType()->notEmpty()),
-            V::keyOptional('content_type', V::stringType()->notEmpty()),
-
-            V::key('access_token', V::stringType()->notEmpty())
+            V::keyOptional('content_type', V::stringType()->notEmpty())
         );
 
         V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
 
         return $this->options
         ->getSync()
