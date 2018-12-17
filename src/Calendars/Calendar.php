@@ -1,6 +1,7 @@
 <?php namespace Nylas\Calendars;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -10,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/12/17
  */
 class Calendar
 {
@@ -73,32 +74,71 @@ class Calendar
     /**
      * get calendar
      *
-     * @param string $calendarId
+     * @param string|array $calendarId
      * @param string $accessToken
      * @return array
      */
-    public function getCalendar(string $calendarId, string $accessToken = null)
+    public function getCalendar($calendarId, string $accessToken = null)
     {
         $params =
         [
-            'id'           => $calendarId,
+            'id'           => Helper::fooToArray($calendarId),
             'access_token' => $accessToken ?? $this->options->getAccessToken()
         ];
 
         $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
+            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
             V::key('access_token', V::stringType()->notEmpty())
         );
 
         V::doValidate($rule, $params);
 
+        $queues = [];
+        $target = API::LIST['oneCalendar'];
         $header = ['Authorization' => $params['access_token']];
 
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneCalendar']);
+        foreach ($params['id'] as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return $this->concatCalendarInfos($params['id'], $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * concat calendar infos
+     *
+     * @param array $params
+     * @param array $pools
+     * @return array
+     */
+    private function concatCalendarInfos(array $params, array $pools)
+    {
+        $data = [];
+
+        foreach ($params as $index => $item)
+        {
+            if (isset($pools[$index]['error']))
+            {
+                $item = array_merge($item, $pools[$index]);
+            }
+
+            $data[$item['id']] = $item;
+        }
+
+        return $data;
     }
 
     // ------------------------------------------------------------------------------
