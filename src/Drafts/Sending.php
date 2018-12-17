@@ -1,6 +1,7 @@
 <?php namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -10,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2018/12/17
  */
 class Sending
 {
@@ -40,30 +41,43 @@ class Sending
      * send draft
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function sendDraft(array $params)
+    public function sendDraft(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $params      = Helper::arrayToMulti($params);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rules = V::keySet(
+        $rule = V::each(V::keySet(
             V::key('version', V::intType()->min(0)),
-            V::key('draft_id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+            V::key('draft_id', V::stringType()->notEmpty())
+        ));
 
-        V::doValidate($rules, $params);
+        V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
+        $queues = [];
+        $target = API::LIST['sending'];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['access_token']);
+        foreach ($params as $item)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setFormParams($item)
+            ->setHeaderParams($header);
 
-        return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['sending']);
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->post($target);
+            };
+        }
+
+        $dftId = Helper::generateArray($params, 'draft_id');
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($dftId, $pools);
     }
 
     // ------------------------------------------------------------------------------
