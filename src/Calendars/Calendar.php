@@ -80,24 +80,19 @@ class Calendar
      */
     public function getCalendar($calendarId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => Helper::fooToArray($calendarId),
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
+        $calendarId  = Helper::fooToArray($calendarId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $calendarId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
         $target = API::LIST['oneCalendar'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        foreach ($params['id'] as $id)
+        foreach ($calendarId as $id)
         {
             $request = $this->options
             ->getAsync()
@@ -112,7 +107,7 @@ class Calendar
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return Helper::concatPoolInfos($params['id'], $pools);
+        return Helper::concatPoolInfos($calendarId, $pools);
     }
 
     // ------------------------------------------------------------------------------
