@@ -52,7 +52,7 @@ class Helper
      */
     public static function fooToArray($foo) : array
     {
-        if ($foo === null) { return []; }
+        if (!$foo) { return []; }
 
         $temp = is_array($foo) ? $foo : [$foo];
 

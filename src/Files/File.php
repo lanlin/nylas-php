@@ -76,32 +76,40 @@ class File
     /**
      * get file infos (not download file)
      *
-     * @param string $fileId
+     * @param string|array $fileId
      * @param string $accessToken
      * @return array
      */
-    public function getFileInfo(string $fileId, string $accessToken = null)
+    public function getFileInfo($fileId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => $fileId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $fileId      = Helper::fooToArray($fileId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $fileId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
+        $queues = [];
+        $target = API::LIST['oneFile'];
+        $header = ['Authorization' => $accessToken];
 
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneFile']);
+        foreach ($fileId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($fileId, $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -109,32 +117,40 @@ class File
     /**
      * delete file
      *
-     * @param string $fileId
+     * @param string|array $fileId
      * @param string $accessToken
-     * @return void
+     * @return array
      */
-    public function deleteFile(string $fileId, string $accessToken = null)
+    public function deleteFile($fileId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => $fileId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $fileId      = Helper::fooToArray($fileId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $fileId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
+        $queues = [];
+        $target = API::LIST['oneFile'];
+        $header = ['Authorization' => $accessToken];
 
-        $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->delete(API::LIST['oneFile']);
+        foreach ($fileId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->delete($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($fileId, $pools);
     }
 
     // ------------------------------------------------------------------------------
