@@ -1,6 +1,7 @@
 <?php namespace Nylas\Folders;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -10,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/12/17
  */
 class Folder
 {
@@ -56,39 +57,6 @@ class Folder
         ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['folders']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get folder
-     *
-     * @param string $folderId
-     * @param string $accessToken
-     * @return array
-     */
-    public function getFolder(string $folderId, string $accessToken = null)
-    {
-        $params =
-        [
-            'id'           => $folderId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
-
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-
-        return $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneFolder']);
     }
 
     // ------------------------------------------------------------------------------
@@ -161,34 +129,83 @@ class Folder
     // ------------------------------------------------------------------------------
 
     /**
+     * get folder
+     *
+     * @param string|array $folderId
+     * @param string $accessToken
+     * @return array
+     */
+    public function getFolder($folderId, string $accessToken = null)
+    {
+        $folderId    = Helper::fooToArray($folderId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
+
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+
+        V::doValidate($rule, $folderId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneFolder'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($folderId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($folderId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * delete folder
      *
-     * @param string $folderId
+     * @param string|array $folderId
      * @param string $accessToken
-     * @return void
+     * @return array
      */
-    public function deleteFolder(string $folderId, string $accessToken = null)
+    public function deleteFolder($folderId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => $folderId,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $folderId    = Helper::fooToArray($folderId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $folderId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
+        $queues = [];
+        $target = API::LIST['oneFolder'];
+        $header = ['Authorization' => $accessToken];
 
-        $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setHeaderParams($header)
-        ->delete(API::LIST['oneFolder']);
+        foreach ($folderId as $id)
+        {
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->delete($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($folderId, $pools);
     }
 
     // ------------------------------------------------------------------------------
