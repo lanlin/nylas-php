@@ -18,9 +18,7 @@ PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br
 6. The parameters that required by methods almost the same as nylas official api required.</br>
 7. Support async batch get & delete & send (since version 3.1).
 
-```php
-(new \Nylas\Client($options))->
-```
+**`(new \Nylas\Client($options))->`**
 ![apis](media/apis.png)</br>
 
 ## Installation
@@ -78,12 +76,17 @@ Most of the methods that have the get & delete prefix support batch request.
 $id  = 'id_xxx';
 $ids = ['id_xxx', 'id_yyy', ...];
 
+// one per time
 $dataA = $nylas->Contacts()->Contact()->getContact($id);
-$dataB = $nylas->Contacts()->Contact()->getContact($ids);
+$dataB = $nylas->Contacts()->Contact()->deleteContact($id);
 
-$dataC = $nylas->Contacts()->Contact()->deleteContact($id);
+// batch request
+$dataC = $nylas->Contacts()->Contact()->getContact($ids);
 $dataD = $nylas->Contacts()->Contact()->deleteContact($ids);
 ```
+
+For more detail about the batch request, you should have to read the source code.
+Sorry, I have no time to write documents.
 
 
 ### Authentication
