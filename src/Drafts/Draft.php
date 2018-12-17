@@ -138,24 +138,19 @@ class Draft
      */
     public function getDraft($draftId, string $accessToken = null)
     {
-        $params =
-        [
-            'id'           => Helper::fooToArray($draftId),
-            'access_token' => $accessToken ?? $this->options->getAccessToken()
-        ];
+        $draftId     = Helper::fooToArray($draftId);
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('id', V::each(V::stringType()->notEmpty(), V::intType())),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
+        $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $draftId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
         $target = API::LIST['oneDraft'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        foreach ($params['id'] as $id)
+        foreach ($draftId as $id)
         {
             $request = $this->options
             ->getAsync()
@@ -170,7 +165,7 @@ class Draft
 
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return Helper::concatPoolInfos($params['id'], $pools);
+        return Helper::concatPoolInfos($draftId, $pools);
     }
 
     // ------------------------------------------------------------------------------
