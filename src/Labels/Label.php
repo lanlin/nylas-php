@@ -70,22 +70,15 @@ class Label
      */
     public function addLabel(string $displayName, string $accessToken = null)
     {
-        $params =
-        [
-            'display_name' => $displayName,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
-        ];
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
-        $rule = V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
-            V::key('display_name', V::stringType()->notEmpty())
-        );
+        $rule = V::stringType()->notEmpty();
 
-        V::doValidate($rule, $params);
+        V::doValidate($rule, $displayName);
+        V::doValidate($rule, $accessToken);
 
-        $header = ['Authorization' => $params['access_token']];
-
-        unset($params['access_token']);
+        $header = ['Authorization' => $accessToken];
+        $params = ['display_name'  => $displayName];
 
         return $this->options
         ->getSync()
@@ -100,25 +93,25 @@ class Label
      * update label
      *
      * @param array $params
+     * @param string $accessToken
      * @return array
      */
-    public function updateLabel(array $params)
+    public function updateLabel(array $params, string $accessToken = null)
     {
-        $params['access_token'] =
-        $params['access_token'] ?? $this->options->getAccessToken();
+        $accessToken = $accessToken ?? $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty()),
             V::key('display_name', V::stringType()->notEmpty())
         );
 
         V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
-        $header = ['Authorization' => $params['access_token']];
+        $header = ['Authorization' => $accessToken];
 
-        unset($params['id'], $params['access_token']);
+        unset($params['id']);
 
         return $this->options
         ->getSync()
