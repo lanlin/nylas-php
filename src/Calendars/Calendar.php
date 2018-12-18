@@ -41,12 +41,11 @@ class Calendar
      * get calendars list
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getCalendarsList(array $params = [], string $accessToken = null)
+    public function getCalendarsList(array $params = [])
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::keyOptional('view', V::in(['count', 'ids'])),
@@ -72,13 +71,12 @@ class Calendar
      * get calendar
      *
      * @param string|array $calendarId
-     * @param string $accessToken
      * @return array
      */
-    public function getCalendar($calendarId, string $accessToken = null)
+    public function getCalendar($calendarId)
     {
         $calendarId  = Helper::fooToArray($calendarId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
