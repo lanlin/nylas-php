@@ -40,14 +40,13 @@ class Folder
     /**
      * get folders list
      *
-     * @param string $accessToken
      * @return array
      */
-    public function getFoldersList(string $accessToken = null)
+    public function getFoldersList()
     {
         $rule = V::stringType()->notEmpty();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($rule, $accessToken);
 
@@ -65,14 +64,13 @@ class Folder
      * add folder
      *
      * @param string $displayName
-     * @param string $accessToken
      * @return array
      */
-    public function addFolder(string $displayName = null, string $accessToken = null)
+    public function addFolder(string $displayName = null)
     {
         $params = !empty($displayName) ? ['display_name' => $displayName] : [];
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
@@ -91,12 +89,11 @@ class Folder
      * update folder
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateFolder(array $params, string $accessToken = null)
+    public function updateFolder(array $params)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
@@ -125,13 +122,12 @@ class Folder
      * get folder
      *
      * @param string|array $folderId
-     * @param string $accessToken
      * @return array
      */
-    public function getFolder($folderId, string $accessToken = null)
+    public function getFolder($folderId)
     {
         $folderId    = Helper::fooToArray($folderId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -166,13 +162,12 @@ class Folder
      * delete folder
      *
      * @param string|array $folderId
-     * @param string $accessToken
      * @return array
      */
-    public function deleteFolder($folderId, string $accessToken = null)
+    public function deleteFolder($folderId)
     {
         $folderId    = Helper::fooToArray($folderId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
