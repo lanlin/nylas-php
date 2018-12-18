@@ -42,12 +42,11 @@ class Draft
      * get drafts list
      *
      * @param string $anyEmail
-     * @param string $accessToken
      * @return array
      */
-    public function getDraftsList(string $anyEmail = null, string $accessToken = null)
+    public function getDraftsList(string $anyEmail = null)
     {
-        $params = ['access_token' => $accessToken ?? $this->options->getAccessToken()];
+        $params = ['access_token' => $this->options->getAccessToken()];
 
         !empty($anyEmail) AND $params['any_email'] = $anyEmail;
 
@@ -75,14 +74,13 @@ class Draft
      * add draft
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function addDraft(array $params, string $accessToken = null)
+    public function addDraft(array $params)
     {
         $rules = $this->getBaseRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -102,14 +100,13 @@ class Draft
      * update draft
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateDraft(array $params, string $accessToken = null)
+    public function updateDraft(array $params)
     {
         $rules = $this->getUpdateRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
 
@@ -132,13 +129,12 @@ class Draft
      * get draft
      *
      * @param string|array $draftId
-     * @param string $accessToken
      * @return array
      */
-    public function getDraft($draftId, string $accessToken = null)
+    public function getDraft($draftId)
     {
         $draftId     = Helper::fooToArray($draftId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -173,13 +169,12 @@ class Draft
      * delete draft
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function deleteDraft(array $params, string $accessToken = null)
+    public function deleteDraft(array $params)
     {
         $params      = Helper::arrayToMulti($params);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
