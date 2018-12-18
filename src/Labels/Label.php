@@ -44,6 +44,8 @@ class Label
      */
     public function getLabelsList()
     {
+        Helper::checkProviderUnit($this->options, true);
+
         $accessToken = $this->options->getAccessToken();
 
         $rule = V::stringType()->notEmpty();
@@ -68,6 +70,8 @@ class Label
      */
     public function addLabel(string $displayName)
     {
+        Helper::checkProviderUnit($this->options, true);
+
         $accessToken = $this->options->getAccessToken();
 
         $rule = V::stringType()->notEmpty();
@@ -95,6 +99,8 @@ class Label
      */
     public function updateLabel(array $params)
     {
+        Helper::checkProviderUnit($this->options, true);
+
         $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
@@ -128,6 +134,8 @@ class Label
      */
     public function getLabel($labelId)
     {
+        Helper::checkProviderUnit($this->options, true);
+
         $labelId     = Helper::fooToArray($labelId);
         $accessToken = $this->options->getAccessToken();
 
@@ -168,6 +176,8 @@ class Label
      */
     public function deleteLabel(array $params)
     {
+        Helper::checkProviderUnit($this->options, true);
+
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 

@@ -44,6 +44,8 @@ class Folder
      */
     public function getFoldersList()
     {
+        Helper::checkProviderUnit($this->options, false);
+
         $rule = V::stringType()->notEmpty();
 
         $accessToken = $this->options->getAccessToken();
@@ -68,6 +70,8 @@ class Folder
      */
     public function addFolder(string $displayName = null)
     {
+        Helper::checkProviderUnit($this->options, false);
+
         $params = !empty($displayName) ? ['display_name' => $displayName] : [];
 
         $accessToken = $this->options->getAccessToken();
@@ -93,6 +97,8 @@ class Folder
      */
     public function updateFolder(array $params)
     {
+        Helper::checkProviderUnit($this->options, false);
+
         $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
@@ -126,6 +132,8 @@ class Folder
      */
     public function getFolder($folderId)
     {
+        Helper::checkProviderUnit($this->options, false);
+
         $folderId    = Helper::fooToArray($folderId);
         $accessToken = $this->options->getAccessToken();
 
@@ -166,6 +174,8 @@ class Folder
      */
     public function deleteFolder($folderId)
     {
+        Helper::checkProviderUnit($this->options, false);
+
         $folderId    = Helper::fooToArray($folderId);
         $accessToken = $this->options->getAccessToken();
 
