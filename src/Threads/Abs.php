@@ -7,9 +7,9 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
+ * @method Smart Smart()
  * @method Search Search()
  * @method Thread Thread()
- * @method Express Express()
  *
  * @author lanlin
  * @change 2018/11/26

@@ -274,6 +274,9 @@ $nylas->Messages()->Search()-></br>
 $nylas->Messages()->Sending()-></br>
 ![send-message](media/send-message.png)</br>
 
+$nylas->Messages()->Smart()-></br>
+![message-smart](media/message-smart.png)</br>
+
 
 ### [Threads](https://docs.nylas.com/reference#threads)
 
@@ -282,6 +285,9 @@ $nylas->Threads()->Search()-></br>
 
 $nylas->Threads()->Thread()-></br>
 ![thread](media/thread.png)</br>
+
+$nylas->Threads()->Smart()-></br>
+![thread-smart](media/thread-smart.png)</br>
 
 
 ### [Webhooks](https://docs.nylas.com/reference#webhooks)
