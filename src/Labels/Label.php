@@ -40,12 +40,11 @@ class Label
     /**
      * get labels list
      *
-     * @param string $accessToken
      * @return array
      */
-    public function getLabelsList(string $accessToken = null)
+    public function getLabelsList()
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::stringType()->notEmpty();
 
@@ -65,12 +64,11 @@ class Label
      * add label
      *
      * @param string $displayName
-     * @param string $accessToken
      * @return array
      */
-    public function addLabel(string $displayName, string $accessToken = null)
+    public function addLabel(string $displayName)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::stringType()->notEmpty();
 
@@ -93,12 +91,11 @@ class Label
      * update label
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateLabel(array $params, string $accessToken = null)
+    public function updateLabel(array $params)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
@@ -127,13 +124,12 @@ class Label
      * get label
      *
      * @param string|array $labelId
-     * @param string $accessToken
      * @return array
      */
-    public function getLabel($labelId, string $accessToken = null)
+    public function getLabel($labelId)
     {
         $labelId     = Helper::fooToArray($labelId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -168,13 +164,12 @@ class Label
      * delete label
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function deleteLabel(array $params, string $accessToken = null)
+    public function deleteLabel(array $params)
     {
         $params      = Helper::arrayToMulti($params);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
