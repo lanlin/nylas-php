@@ -1,5 +1,7 @@
 <?php namespace Nylas\Utilities;
 
+use Nylas\Exceptions\NylasException;
+
 /**
  * ----------------------------------------------------------------------------------
  * Nylas RESTFul Request Errors
@@ -111,6 +113,26 @@ class Helper
         }
 
         return $data;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check email provider unit type
+     *
+     * @param \Nylas\Utilities\Options $options
+     * @param bool                     $label
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public static function checkProviderUnit(Options $options, bool $label = true)
+    {
+        $unitType = $label ? 'label' : 'folder';
+
+        $account = $options->getAccount()['organization_unit'] === $unitType;
+
+        if ($account) { return;}
+
+        throw new NylasException("your organization unit not match to {$unitType}");
     }
 
     // ------------------------------------------------------------------------------
