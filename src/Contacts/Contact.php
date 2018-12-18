@@ -42,12 +42,11 @@ class Contact
      * get contacts list
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getContactsList(array $params = [], string $accessToken = null)
+    public function getContactsList(array $params = [])
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->getBaseRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -67,14 +66,13 @@ class Contact
      * add contact
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function addContact(array $params, string $accessToken = null)
+    public function addContact(array $params)
     {
         $rules = $this->addContactRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -94,14 +92,13 @@ class Contact
      * update contact
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateContact(array $params, string $accessToken = null)
+    public function updateContact(array $params)
     {
         $rules = $this->addContactRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         array_push($rules,  V::key('id', V::stringType()->notEmpty()));
 
@@ -127,13 +124,12 @@ class Contact
      * get contact
      *
      * @param string|array $contactId
-     * @param string $accessToken
      * @return array
      */
-    public function getContact($contactId, string $accessToken = null)
+    public function getContact($contactId)
     {
         $contactId   = Helper::fooToArray($contactId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -168,13 +164,12 @@ class Contact
      * delete contact
      *
      * @param string|array $contactId
-     * @param string $accessToken
      * @return array
      */
-    public function deleteContact($contactId, string $accessToken = null)
+    public function deleteContact($contactId)
     {
         $contactId   = Helper::fooToArray($contactId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -208,12 +203,11 @@ class Contact
     /**
      * get contact groups
      *
-     * @param string $accessToken
      * @return array
      */
-    public function getContactGroups(string $accessToken = null)
+    public function getContactGroups()
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
@@ -231,13 +225,12 @@ class Contact
      * get contact picture file (support multiple download)
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getContactPicture(array $params, string $accessToken = null)
+    public function getContactPicture(array $params)
     {
         $downloadArr = Helper::arrayToMulti($params);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->pictureRules(), $downloadArr);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
