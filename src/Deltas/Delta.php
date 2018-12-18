@@ -39,12 +39,11 @@ class Delta
     /**
      * get latest cursor
      *
-     * @param string $accessToken
      * @return array
      */
-    public function getLatestCursor(string $accessToken = null)
+    public function getLatestCursor()
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
@@ -62,14 +61,13 @@ class Delta
      * get a set of deltas
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getSetOfDeltas(array $params, string $accessToken = null)
+    public function getSetOfDeltas(array $params)
     {
         $rules = $this->getBaseRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -89,17 +87,16 @@ class Delta
      * long polling delta updates
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function longPollingDelta(array $params, string $accessToken = null)
+    public function longPollingDelta(array $params)
     {
         $rules = $this->getBaseRules();
         $times = V::key('timeout', V::intType()->min(1));
 
         array_push($rules, $times);
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -119,14 +116,13 @@ class Delta
      * streaming delta updates
      *
      * @param array $params
-     * @param string $accessToken
      * @return mixed
      */
-    public function streamingDelta(array $params, string $accessToken = null)
+    public function streamingDelta(array $params)
     {
         $rules = $this->getBaseRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
