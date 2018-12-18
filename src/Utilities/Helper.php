@@ -16,6 +16,38 @@ class Helper
     // ------------------------------------------------------------------------------
 
     /**
+     * check email provider unit is label
+     *
+     * @param \Nylas\Utilities\Options $options
+     * @return bool
+     */
+    public static function isLabel(Options $options)
+    {
+        return $options->getAccount()['organization_unit'] === 'label';
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check email provider unit type
+     *
+     * @param \Nylas\Utilities\Options $options
+     * @param bool                     $label
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public static function checkProviderUnit(Options $options, bool $label = true)
+    {
+        $unitType = $label ? 'label' : 'folder';
+        $thisFine = $options->getAccount()['organization_unit'] === $unitType;
+
+        if ($thisFine) { return; }
+
+        throw new NylasException("your organization unit not match to {$unitType}");
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * convert assoc array to multi
      *
      * @param array $arr
@@ -113,26 +145,6 @@ class Helper
         }
 
         return $data;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * check email provider unit type
-     *
-     * @param \Nylas\Utilities\Options $options
-     * @param bool                     $label
-     * @throws \Nylas\Exceptions\NylasException
-     */
-    public static function checkProviderUnit(Options $options, bool $label = true)
-    {
-        $unitType = $label ? 'label' : 'folder';
-
-        $account = $options->getAccount()['organization_unit'] === $unitType;
-
-        if ($account) { return;}
-
-        throw new NylasException("your organization unit not match to {$unitType}");
     }
 
     // ------------------------------------------------------------------------------
