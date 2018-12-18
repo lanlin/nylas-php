@@ -42,12 +42,11 @@ class File
      * get files list
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getFilesList(array $params = [], string $accessToken = null)
+    public function getFilesList(array $params = [])
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
             V::keyOptional('view', V::in(['count', 'ids'])),
@@ -74,13 +73,12 @@ class File
      * get file infos (not download file)
      *
      * @param string|array $fileId
-     * @param string $accessToken
      * @return array
      */
-    public function getFileInfo($fileId, string $accessToken = null)
+    public function getFileInfo($fileId)
     {
         $fileId      = Helper::fooToArray($fileId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -115,13 +113,12 @@ class File
      * delete file
      *
      * @param string|array $fileId
-     * @param string $accessToken
      * @return array
      */
-    public function deleteFile($fileId, string $accessToken = null)
+    public function deleteFile($fileId)
     {
         $fileId      = Helper::fooToArray($fileId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
@@ -156,13 +153,12 @@ class File
      * upload file (support multiple upload)
      *
      * @param array $file
-     * @param string $accessToken
      * @return array
      */
-    public function uploadFile(array $file, string $accessToken = null)
+    public function uploadFile(array $file)
     {
         $fileUploads = Helper::arrayToMulti($file);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->multipartRules(), $fileUploads);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -202,13 +198,12 @@ class File
      * download file (support multiple download)
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function downloadFile(array $params, string $accessToken = null)
+    public function downloadFile(array $params)
     {
         $downloadArr = Helper::arrayToMulti($params);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->downloadRules(), $downloadArr);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
