@@ -2,6 +2,7 @@
 
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
+use Nylas\Accounts\Account;
 use Nylas\Utilities\Validate as V;
 
 /**
@@ -10,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2018/12/18
  */
 class Options
 {
@@ -47,6 +48,11 @@ class Options
      */
     private $accountId;
 
+    /**
+     * @var array
+     */
+    private $accountInfo;
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -69,14 +75,13 @@ class Options
         V::doValidate($rules, $options);
 
         // required
-        $this->clientId     = $options['client_id'];
-        $this->clientSecret = $options['client_secret'];
+        $this->setClientApps($options['client_id'], $options['client_secret']);
 
         // optional
-        $this->debug       = $options['debug'] ?? false;
-        $this->logFile     = $options['log_file'] ?? null;
-        $this->accountId   = $options['account_id'] ?? '';
-        $this->accessToken = $options['access_token'] ?? '';
+        $this->setDebug($options['debug'] ?? false);
+        $this->setLogFile($options['log_file'] ?? null);
+        $this->setAccountId($options['account_id'] ?? '');
+        $this->setAccessToken($options['access_token'] ?? '');
     }
 
     // ------------------------------------------------------------------------------
@@ -87,6 +92,11 @@ class Options
     public function setAccessToken(string $token)
     {
         $this->accessToken = $token;
+
+        if (!$token) { return; }
+
+        // cache account info
+        $this->accountInfo = (new Account($this))->getAccount();
     }
 
     // ------------------------------------------------------------------------------
@@ -230,6 +240,31 @@ class Options
         }
 
         return new Async($server, $debug);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get account infos
+     *
+     * @return array
+     */
+    public function getAccount()
+    {
+        $temp =
+        [
+            'id'                => '',
+            'account_id'        => '',
+            'email_address'     => '',
+            'name'              => '',
+            'object'            => '',
+            'provider'          => '',
+            'linked_at'         => null,
+            'sync_state'        => '',
+            'organization_unit' => '',
+        ];
+
+        return array_merge($temp, $this->accountInfo);
     }
 
     // ------------------------------------------------------------------------------
