@@ -2,7 +2,6 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
 use Nylas\Authentication\Hosted;
 
 /**
@@ -11,7 +10,7 @@ use Nylas\Authentication\Hosted;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/22
+ * @change 2018/12/18
  */
 class Account
 {
@@ -38,16 +37,25 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * get account info with access_token
+     * cancel account
      *
-     * @param string $accessToken
      * @return array
      */
-    public function getAccount(string $accessToken = null)
+    public function cancelAccount()
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        return (new Hosted($this->options))->postOAuthRevoke();
+    }
 
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get account info
+     *
+     * @return array
+     */
+    public function getAccount()
+    {
+        $accessToken = $this->options->getAccessToken();
 
         $header = ['Authorization' => $accessToken];
 
@@ -55,23 +63,6 @@ class Account
         ->getSync()
         ->setHeaderParams($header)
         ->get(API::LIST['account']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * cancel account with access_token
-     *
-     * @param string $accessToken
-     * @return mixed
-     */
-    public function cancelAccount(string $accessToken = null)
-    {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
-
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        return (new Hosted($this->options))->postOAuthRevoke($accessToken);
     }
 
     // ------------------------------------------------------------------------------

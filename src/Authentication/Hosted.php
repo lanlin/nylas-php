@@ -98,12 +98,11 @@ class Hosted
     /**
      * post oauth revoke
      *
-     * @param string $accessToken
-     * @return mixed
+     * @return array
      */
-    public function postOAuthRevoke(string $accessToken = null)
+    public function postOAuthRevoke()
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
