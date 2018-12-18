@@ -13,7 +13,7 @@ use ZBateson\MailMimeParser\MailMimeParser;
  *
  * @info include inline image <img src="cid:file_id">
  * @author lanlin
- * @change 2018/11/22
+ * @change 2018/12/18
  */
 class Message
 {
@@ -43,12 +43,11 @@ class Message
      * get messages list
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getMessagesList(array $params = [], string $accessToken = null)
+    public function getMessagesList(array $params = [])
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->getMessagesRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -75,14 +74,13 @@ class Message
      * get raw message info
      *
      * @param string $messageId
-     * @param string $accessToken
      * @return \ZBateson\MailMimeParser\Message
      */
-    public function getRawMessage(string $messageId, string $accessToken = null)
+    public function getRawMessage(string $messageId)
     {
         $rule = V::stringType()->notEmpty();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($rule, $messageId);
         V::doValidate($rule, $accessToken);
@@ -110,12 +108,11 @@ class Message
      * update message status & flags
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateMessage(array $params, string $accessToken = null)
+    public function updateMessage(array $params)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
@@ -148,13 +145,12 @@ class Message
      * get message info
      *
      * @param string|array $messageId
-     * @param string $accessToken
      * @return array
      */
-    public function getMessage($messageId, string $accessToken = null)
+    public function getMessage($messageId)
     {
-        $messageId    = Helper::fooToArray($messageId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $messageId   = Helper::fooToArray($messageId);
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 
