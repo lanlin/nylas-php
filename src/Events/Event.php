@@ -1,6 +1,7 @@
 <?php namespace Nylas\Events;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
 
@@ -40,14 +41,13 @@ class Event
      * get events list
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getEventsList(array $params = [], string $accessToken = null)
+    public function getEventsList(array $params = [])
     {
         $rules = $this->getBaseRules();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -64,47 +64,14 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * get event
-     *
-     * @param array $params
-     * @param string $accessToken
-     * @return array
-     */
-    public function getEvent(array $params, string $accessToken = null)
-    {
-        $temps = [V::key('id', V::stringType()->notEmpty())];
-        $rules = array_merge($temps, $this->getBaseRules());
-
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $path   = $params['id'];
-        $header = ['Authorization' => $accessToken];
-
-        unset($params['id']);
-
-        return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneEvent']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * add event
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function addEvent(array $params, string $accessToken = null)
+    public function addEvent(array $params)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->addEventRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -129,12 +96,11 @@ class Event
      * update event
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateEvent(array $params, string $accessToken = null)
+    public function updateEvent(array $params)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->updateEventRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -158,50 +124,16 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * delete event
-     *
-     * @param array $params
-     * @param string $accessToken
-     * @return void
-     */
-    public function deleteEvent(array $params, string $accessToken = null)
-    {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
-
-        $rule = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::keyOptional('notify_participants', V::boolType())
-        );
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $notify = 'notify_participants';
-        $header = ['Authorization' => $accessToken];
-        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
-
-        $this->options
-        ->getSync()
-        ->setPath($params['id'])
-        ->setQuery($query)
-        ->setHeaderParams($header)
-        ->delete(API::LIST['oneEvent']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * rsvping
      *
      * @param array $params
-     * @param string $accessToken
      * @return mixed
      */
-    public function rsvping(array $params, string $accessToken = null)
+    public function rsvping(array $params)
     {
         $params['account_id'] = $params['account_id'] ?? $this->options->getAccountId();
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
@@ -225,6 +157,100 @@ class Event
         ->setFormParams($params)
         ->setHeaderParams($header)
         ->post(API::LIST['oneEvent']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get event
+     *
+     * @param array $params
+     * @return array
+     */
+    public function getEvent(array $params)
+    {
+        $params      = Helper::arrayToMulti($params);
+        $accessToken = $this->options->getAccessToken();
+
+        $temps = [V::key('id', V::stringType()->notEmpty())];
+        $rules = array_merge($temps, $this->getBaseRules());
+
+        V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneEvent'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($params as $item)
+        {
+            $id = $item['id'];
+            unset($item['id']);
+
+            $request = $this->options
+            ->getAsync()
+            ->setPath($id)
+            ->setFormParams($item)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->get($target);
+            };
+        }
+
+        $evtID = Helper::generateArray($params, 'id');
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($evtID, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * delete event
+     *
+     * @param array $params
+     * @return array
+     */
+    public function deleteEvent(array $params)
+    {
+        $params      = Helper::arrayToMulti($params);
+        $accessToken = $this->options->getAccessToken();
+
+        $rule = V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            V::keyOptional('notify_participants', V::boolType())
+        );
+
+        V::doValidate($rule, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneEvent'];
+        $notify = 'notify_participants';
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($params as $item)
+        {
+            $query = isset($item[$notify]) ? [$notify => $item[$notify]] : [];
+
+            $request = $this->options
+            ->getAsync()
+            ->setPath($item['id'])
+            ->setQuery($query)
+            ->setHeaderParams($header);
+
+            $queues[] = function () use ($request, $target)
+            {
+                return $request->delete($target);
+            };
+        }
+
+        $evtID = Helper::generateArray($params, 'id');
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($evtID, $pools);
     }
 
     // ------------------------------------------------------------------------------

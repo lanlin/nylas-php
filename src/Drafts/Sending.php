@@ -41,13 +41,12 @@ class Sending
      * send draft
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function sendDraft(array $params, string $accessToken = null)
+    public function sendDraft(array $params)
     {
         $params      = Helper::arrayToMulti($params);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::keySet(
             V::key('version', V::intType()->min(0)),
