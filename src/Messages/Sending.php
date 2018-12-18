@@ -42,13 +42,12 @@ class Sending
      * send message directly
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function sendDirectly(array $params, string $accessToken = null)
+    public function sendDirectly(array $params)
     {
         $params      = Helper::arrayToMulti($params);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->getMessageRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -82,10 +81,9 @@ class Sending
      *
      * @link https://docs.zendframework.com/zend-mail/
      * @param string|resource|\Psr\Http\Message\StreamInterface $content
-     * @param string $accessToken
      * @return mixed
      */
-    public function sendRawMIME($content, string $accessToken = null)
+    public function sendRawMIME($content)
     {
         $rule = V::oneOf(
             V::resourceType(),
@@ -93,7 +91,7 @@ class Sending
             V::instance(StreamInterface::class)
         );
 
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($rule, $content);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);

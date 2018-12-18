@@ -11,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2018/12/18
  */
 class Thread
 {
@@ -41,12 +41,11 @@ class Thread
      * get threads list
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function getThreadsList(array $params = [], string $accessToken = null)
+    public function getThreadsList(array $params = [])
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->getThreadsRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -73,12 +72,11 @@ class Thread
      * update thread
      *
      * @param array $params
-     * @param string $accessToken
      * @return array
      */
-    public function updateThread(array $params, string $accessToken = null)
+    public function updateThread(array $params)
     {
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
@@ -111,13 +109,12 @@ class Thread
      * get thread info
      *
      * @param string|array $threadId
-     * @param string $accessToken
      * @return array
      */
-    public function getThread($threadId, string $accessToken = null)
+    public function getThread($threadId)
     {
         $threadId    = Helper::fooToArray($threadId);
-        $accessToken = $accessToken ?? $this->options->getAccessToken();
+        $accessToken = $this->options->getAccessToken();
 
         $rule = V::each(V::stringType()->notEmpty(), V::intType());
 

@@ -9,6 +9,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  *
  * @method Search Search()
  * @method Thread Thread()
+ * @method Express Express()
  *
  * @author lanlin
  * @change 2018/11/26

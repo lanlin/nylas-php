@@ -40,15 +40,14 @@ class Search
      * search threads list
      *
      * @param string $q
-     * @param string $accessToken
      * @return array
      */
-    public function threads(string $q, string $accessToken = null)
+    public function threads(string $q)
     {
         $params =
         [
             'q'            => $q,
-            'access_token' => $accessToken ?? $this->options->getAccessToken(),
+            'access_token' => $this->options->getAccessToken(),
         ];
 
         $rules = V::keySet(
