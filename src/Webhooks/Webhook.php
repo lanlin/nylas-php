@@ -3,6 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validate as V;
+use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2018/12/20
  */
 class Webhook
 {
@@ -32,6 +33,96 @@ class Webhook
     public function __construct(Options $options)
     {
         $this->options = $options;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * echo chanllenge to validate webhook
+     *
+     * TIPS: you'd better use the output method from your framework.
+     */
+    public function echoChallenge()
+    {
+        $chanllenge = $_GET['chanllenge'] ?? null;
+
+        if (empty($chanllenge)) { return; }
+
+        header('Content-Type: text/html; charset=utf-8', true, 200);
+
+        die($chanllenge);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get notification & parse it
+     *
+     * @return array
+     * [
+     *     date        => Timestamp when the change occurred
+     *     type	       => The trigger for this notification
+     *     object	   => The changed object type
+     *     object_data => Contains the changed object's object type, account_id,
+     *                    object id and an attributes sub-object
+     * ]
+     */
+    public function getNotification()
+    {
+        $code = $_SERVER['HTTP_X_NYLAS_SIGNATURE'] ?? '';
+        $data = file_get_contents('php://input');
+        $vrif = $this->xSignatureVerification($code, $data);
+
+        // check if valid
+        if($vrif === false)
+        {
+            throw new NylasException('not a valid nylas request');
+        }
+
+        // parse notification data
+        return $this->parseNotification($data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * webhook X-Nylas-Signature header verification
+     *
+     * @link https://docs.nylas.com/reference#receiving-notifications
+     *
+     * @param string $code
+     * @param string $data
+     * @return bool
+     */
+    public function xSignatureVerification(string $code, string $data)
+    {
+        $conf = $this->options->getClientApps();
+
+        $hash = hash_hmac('sha256', $data, $conf['client_secret']);
+
+        return $code === $hash;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * parse notification data
+     *
+     * @param string $data
+     * @return array
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function parseNotification(string $data)
+    {
+        $data = json_decode($data, true);
+
+        // check deltas
+        if (!isset($data['deltas']))
+        {
+            throw new NylasException('invalid data');
+        }
+
+        return $data['deltas'];
     }
 
     // ------------------------------------------------------------------------------
