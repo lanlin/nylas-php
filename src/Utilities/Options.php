@@ -24,6 +24,11 @@ class Options
     private $debug = false;
 
     /**
+     * @var bool
+     */
+    private $offDecodeError = false;
+
+    /**
      * @var string
      */
     private $logFile;
@@ -67,6 +72,7 @@ class Options
             V::key('log_file', V::stringType()->notEmpty(), false),
             V::key('account_id', V::stringType()->notEmpty(), false),
             V::key('access_token', V::stringType()->notEmpty(), false),
+            V::key('off_decode_error', V::boolType(), false),
 
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('client_secret', V::stringType()->notEmpty())
@@ -82,6 +88,7 @@ class Options
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccountId($options['account_id'] ?? '');
         $this->setAccessToken($options['access_token'] ?? '');
+        $this->setOffDecodeError($options['off_decode_error'] ?? false);
     }
 
     // ------------------------------------------------------------------------------
@@ -162,6 +169,16 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * @param bool $off
+     */
+    public function setOffDecodeError(bool $off)
+    {
+        $this->offDecodeError = $off;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * @param string $clientId
      * @param string $clientSecret
      */
@@ -194,13 +211,14 @@ class Options
     {
         return
         [
-            'debug'         => $this->debug,
-            'log_file'      => $this->logFile,
-            'server'        => API::LIST['server'],
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'account_id'    => $this->accountId,
-            'access_token'  => $this->accessToken,
+            'debug'            => $this->debug,
+            'log_file'         => $this->logFile,
+            'server'           => API::LIST['server'],
+            'client_id'        => $this->clientId,
+            'client_secret'    => $this->clientSecret,
+            'account_id'       => $this->accountId,
+            'access_token'     => $this->accessToken,
+            'off_decode_error' => $this->offDecodeError,
         ];
     }
 
@@ -220,7 +238,7 @@ class Options
             $debug = fopen($this->logFile, 'a');
         }
 
-        return new Sync($server, $debug);
+        return new Sync($server, $debug, $this->offDecodeError);
     }
 
     // ------------------------------------------------------------------------------
@@ -239,7 +257,7 @@ class Options
             $debug = fopen($this->logFile, 'a');
         }
 
-        return new Async($server, $debug);
+        return new Async($server, $debug, $this->offDecodeError);
     }
 
     // ------------------------------------------------------------------------------

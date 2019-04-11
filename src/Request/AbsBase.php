@@ -36,6 +36,15 @@ trait AbsBase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * enable or disable json_decode exception throws
+     *
+     * @var bool
+     */
+    private $offDecodeError = false;
+
+    // ------------------------------------------------------------------------------
+
     private $formFiles     = [];
     private $pathParams    = [];
     private $jsonParams    = [];
@@ -51,8 +60,9 @@ trait AbsBase
      *
      * @param string|NULL $server
      * @param bool|resource $debug
+     * @param bool $offDecodeError
      */
-    public function __construct(string $server = null, $debug = false)
+    public function __construct(string $server = null, $debug = false, bool $offDecodeError = false)
     {
         $option =
         [
@@ -61,6 +71,7 @@ trait AbsBase
 
         $this->debug  = $debug;
         $this->guzzle = new Client($option);
+        $this->offDecodeError = $offDecodeError;
     }
 
     // ------------------------------------------------------------------------------
@@ -243,15 +254,21 @@ trait AbsBase
         }
 
         $data = $response->getBody()->getContents();
-        $data = json_decode($data, true);
+        $temp = json_decode($data, true);
+        $errs = JSON_ERROR_NONE !== json_last_error();
 
-        if (JSON_ERROR_NONE !== json_last_error())
+        if ($errs && $this->offDecodeError)
+        {
+            return $data;
+        }
+
+        if ($errs)
         {
             $msg = 'Unable to parse response body into JSON: ';
             throw new NylasException($msg . json_last_error());
         }
 
-        return $data ?? [];
+        return $temp ?? [];
     }
 
     // ------------------------------------------------------------------------------

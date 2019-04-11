@@ -42,12 +42,13 @@ class Client
      *
      * @param array $options
      * [
-     *     'debug'         => bool,
-     *     'log_file'      => 'log file path',
-     *     'account_id'    => '',
-     *     'access_token'  => '',
-     *     'client_id'     => 'required',
-     *     'client_secret' => 'required',
+     *     'debug'            => bool,
+     *     'log_file'         => 'log file path',
+     *     'account_id'       => '',
+     *     'access_token'     => '',
+     *     'client_id'        => 'required',
+     *     'client_secret'    => 'required',
+     *     'off_decode_error' => bool,
      * ]
      */
     public function __construct(array $options)
