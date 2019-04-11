@@ -49,12 +49,13 @@ use Nylas\Client;
 
 $options =
 [
-    'debug'         => true,
-    'log_file'      => dirname(__FILE__) . '/test.log',
-    'account_id'    => 'your account id',
-    'access_token'  => 'your access token',
-    'client_id'     => 'your client id',        // required
-    'client_secret' => 'your client secret'     // required
+    'debug'            => true,
+    'log_file'         => dirname(__FILE__) . '/test.log',
+    'account_id'       => 'your account id',
+    'access_token'     => 'your access token',
+    'client_id'        => 'your client id',        // required
+    'client_secret'    => 'your client secret'     // required
+    'off_decode_error' => false,                   // disable json_decode error or not, default enable.
 ];
 
 $nylas = new Client($options);
