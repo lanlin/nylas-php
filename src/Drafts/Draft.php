@@ -48,7 +48,7 @@ class Draft
     {
         $params = ['access_token' => $this->options->getAccessToken()];
 
-        !empty($anyEmail) AND $params['any_email'] = $anyEmail;
+        !empty($anyEmail) && $params['any_email'] = $anyEmail;
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()->notEmpty()),
