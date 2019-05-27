@@ -327,8 +327,7 @@ class Contact
             V::keyOptional('manager_name', V::stringType()->notEmpty()),
             V::keyOptional('office_location', V::stringType()->notEmpty()),
             V::keyOptional('notes', V::stringType()->notEmpty()),
-            V::keyOptional('emails', V::arrayVal()->each(V::email())),
-
+            V::keyOptional('emails', V::arrayVal()->each( v::keySet(v::key('type', v::stringType()->notEmpty()), v::key('email', V::email()->notEmpty())))),
             V::keyOptional('im_addresses', V::arrayType()),
             V::keyOptional('physical_addresses', V::arrayType()),
             V::keyOptional('phone_numbers', V::arrayType()),
