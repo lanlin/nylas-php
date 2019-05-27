@@ -323,7 +323,7 @@ class Contact
             V::keyOptional('nickname', V::stringType()->notEmpty()),
             V::keyOptional('company_name', V::stringType()->notEmpty()),
             V::keyOptional('job_title', V::stringType()->notEmpty()),
-
+            V::keyOptional('group', V::stringType()->notEmpty()),
             V::keyOptional('manager_name', V::stringType()->notEmpty()),
             V::keyOptional('office_location', V::stringType()->notEmpty()),
             V::keyOptional('notes', V::stringType()->notEmpty()),
