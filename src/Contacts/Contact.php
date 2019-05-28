@@ -11,8 +11,10 @@ use Psr\Http\Message\StreamInterface;
  * Nylas Contacts
  * ----------------------------------------------------------------------------------
  *
+ * @link https://docs.nylas.com/reference#contact-limitations
+ *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2019/05/28
  */
 class Contact
 {
@@ -321,19 +323,112 @@ class Contact
             V::keyOptional('birthday', V::date('c')),
             V::keyOptional('suffix', V::stringType()->notEmpty()),
             V::keyOptional('nickname', V::stringType()->notEmpty()),
+
             V::keyOptional('company_name', V::stringType()->notEmpty()),
             V::keyOptional('job_title', V::stringType()->notEmpty()),
-
             V::keyOptional('manager_name', V::stringType()->notEmpty()),
             V::keyOptional('office_location', V::stringType()->notEmpty()),
             V::keyOptional('notes', V::stringType()->notEmpty()),
-            V::keyOptional('emails', V::arrayVal()->each(V::email())),
 
-            V::keyOptional('im_addresses', V::arrayType()),
-            V::keyOptional('physical_addresses', V::arrayType()),
-            V::keyOptional('phone_numbers', V::arrayType()),
-            V::keyOptional('web_pages', V::arrayType())
+            $this->contactEmailsRules(),            // emails
+            $this->contactWebPageRules(),           // web_pages
+            $this->contactImAddressRules(),         // im_addresses
+            $this->contactPhoneNumberRules(),       // phone_numbers
+            $this->contactPhysicalAddressRules(),   // physical_addresses
         ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * emails rules
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function contactEmailsRules()
+    {
+        return V::keyOptional('emails', V::each(V::keySet(
+            V::key('type', V::in(['work', 'personal'])),
+            V::key('email', V::stringType()->notEmpty())   // a free-form string
+        )));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * emails rules
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function contactWebPageRules()
+    {
+        $types = ['profile', 'blog', 'homepage', 'work'];
+
+        return V::keyOptional('web_pages', V::each(V::keySet(
+            V::key('type', V::in($types)),
+            V::key('url', V::stringType()->notEmpty())   // a free-form string
+        )));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * im addresses rules
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function contactImAddressRules()
+    {
+        $types =
+        [
+            'gtalk', 'aim', 'yahoo', 'lync',
+            'skype', 'qq', 'msn', 'icq', 'jabber'
+        ];
+
+        return V::keyOptional('im_addresses', V::each(V::keySet(
+            V::key('type', V::in($types)),
+            V::key('im_address', V::stringType()->notEmpty())  // a free-form string
+        )));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * phone number rules
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function contactPhoneNumberRules()
+    {
+        $types =
+        [
+            'business', 'home', 'mobile', 'pager', 'business_fax',
+            'home_fax', 'organization_main', 'assistant', 'radio', 'other'
+        ];
+
+        return V::keyOptional('phone_numbers', V::each(V::keySet(
+            V::key('type', V::in($types)),
+            V::key('number', V::stringType()->notEmpty()) // a free-form string
+        )));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * physical address rules
+     *
+     * @return \Respect\Validation\Validator
+     */
+    private function contactPhysicalAddressRules()
+    {
+        return V::keyOptional('physical_addresses', V::each(V::keySet(
+            V::key('type', V::in(['work', 'home', 'other'])),
+            V::keyOptional('city', V::stringType()->notEmpty()),
+            V::keyOptional('state', V::stringType()->notEmpty()),
+            V::keyOptional('country', V::stringType()->notEmpty()),
+            V::keyOptional('postal_code', V::stringType()->notEmpty()),
+            V::keyOptional('street_address', V::stringType()->notEmpty())
+        )));
     }
 
     // ------------------------------------------------------------------------------
