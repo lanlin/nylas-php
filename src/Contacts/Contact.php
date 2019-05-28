@@ -423,11 +423,11 @@ class Contact
     {
         return V::keyOptional('physical_addresses', V::each(V::keySet(
             V::key('type', V::in(['work', 'home', 'other'])),
-            V::keyOptional('city', V::stringType()->notEmpty()),
-            V::keyOptional('state', V::stringType()->notEmpty()),
-            V::keyOptional('country', V::stringType()->notEmpty()),
-            V::keyOptional('postal_code', V::stringType()->notEmpty()),
-            V::keyOptional('street_address', V::stringType()->notEmpty())
+            V::key('city', V::stringType()->notEmpty()),
+            V::key('state', V::stringType()->notEmpty()),
+            V::key('country', V::stringType()->notEmpty()),
+            V::key('postal_code', V::stringType()->notEmpty()),
+            V::key('street_address', V::stringType()->notEmpty())
         )));
     }
 
