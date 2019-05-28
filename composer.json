@@ -1,6 +1,6 @@
 {
     "name": "lanlin/nylas-php",
-    "description": "PHP wrapper for the Nylas API (Adapted for lanlin).",
+    "description": "Nylas PHP SDK (api version 2.0)",
     "license": "MIT",
     "authors" : [
         {

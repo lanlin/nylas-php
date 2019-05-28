@@ -5,8 +5,12 @@
  * Nylas RESTFul API List
  * ----------------------------------------------------------------------------------
  *
+ * @link https://changelog.nylas.com/
+ * @link https://docs.nylas.com/reference#api-changelog
+ * @version 2.0 (2018-09-01)
+ *
  * @author lanlin
- * @change 2018/11/22
+ * @change 2019/05/28
  */
 class API
 {
@@ -29,9 +33,11 @@ class API
 
         // Accounts
         'account'            => '/account',
+        'ipAddresses'        => '/a/%s/accounts/%s/ip_addresses',
         'listAnAccount'      => '/a/%s/accounts/%s',
         'listAllAccounts'    => '/a/%s/accounts',
         'cancelAnAccount'    => '/a/%s/accounts/%s/downgrade',
+        'revokeAllTokens'    => '/a/%s/accounts/%s/revoke-all',
         'reactiveAnAccount'  => '/a/%s/accounts/%s/upgrade',
 
         // Threads
