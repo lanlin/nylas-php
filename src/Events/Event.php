@@ -10,8 +10,10 @@ use Nylas\Utilities\Validate as V;
  * Nylas Events
  * ----------------------------------------------------------------------------------
  *
+ * @link https://docs.nylas.com/reference#event-limitations
+ *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2019/05/28
  */
 class Event
 {

@@ -78,14 +78,13 @@ class Manage
      */
     public function revokeAllTokens(array $params = [])
     {
-        $accountId = $params['account_id'] ?? $this->options->getAccountId();
-
-        unset($params['account_id']);
-
         $rules = V::keySet(
             V::keyOptional('keep_access_token', V::stringType()->notEmpty())
         );
 
+        $accountId = $params['account_id'] ?? $this->options->getAccountId();
+
+        unset($params['account_id']);
         V::doValidate($rules, $params);
 
         $client = $this->options->getClientApps();
