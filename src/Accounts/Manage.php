@@ -71,6 +71,37 @@ class Manage
     // ------------------------------------------------------------------------------
 
     /**
+     * revoke all tokens
+     *
+     * @param array $params
+     * @return mixed
+     */
+    public function revokeAllTokens(array $params = [])
+    {
+        $accountId = $params['account_id'] ?? $this->options->getAccountId();
+
+        unset($params['account_id']);
+
+        $rules = V::keySet(
+            V::keyOptional('keep_access_token', V::stringType()->notEmpty())
+        );
+
+        V::doValidate($rules, $params);
+
+        $client = $this->options->getClientApps();
+        $header = ['Authorization' => $client['client_secret']];
+
+        return $this->options
+        ->getSync()
+        ->setPath($client['client_id'], $accountId)
+        ->setFormParams($params)
+        ->setHeaderParams($header)
+        ->post(API::LIST['revokeAllTokens']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get account info
      *
      * @param string $accountId
@@ -124,7 +155,7 @@ class Manage
     {
         $accountId = $accountId ?? $this->options->getAccountId();
 
-        $client    = $this->options->getClientApps();
+        $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
@@ -132,6 +163,25 @@ class Manage
         ->setPath($client['client_id'], $accountId)
         ->setHeaderParams($header)
         ->post(API::LIST['cancelAnAccount']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get ip addresses
+     *
+     * @return array
+     */
+    public function getIpAddresses()
+    {
+        $client = $this->options->getClientApps();
+        $header = ['Authorization' => $client['client_secret']];
+
+        return $this->options
+        ->getSync()
+        ->setPath($client['client_id'])
+        ->setHeaderParams($header)
+        ->get(API::LIST['ipAddresses']);
     }
 
     // ------------------------------------------------------------------------------
