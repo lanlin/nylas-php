@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/22
+ * @change 2019/05/28
  */
 class Manage
 {
@@ -74,7 +74,7 @@ class Manage
      * revoke all tokens
      *
      * @param array $params
-     * @return mixed
+     * @return array
      */
     public function revokeAllTokens(array $params = [])
     {
@@ -148,7 +148,7 @@ class Manage
      * cancel account
      *
      * @param string $accountId
-     * @return mixed
+     * @return array
      */
     public function cancelAccount(string $accountId = null)
     {
