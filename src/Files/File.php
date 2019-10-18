@@ -189,7 +189,7 @@ class File
 
         $pools = $this->options->getAsync()->pool($upload, false);
 
-        return $this->concatUploadInfos($file, $pools);
+        return $this->concatUploadInfos($fileUploads, $pools);
     }
 
     // ------------------------------------------------------------------------------

@@ -5,6 +5,7 @@
 # Nylas PHP SDK
 
 PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
+I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
 
 **What's new?**</br>
 
