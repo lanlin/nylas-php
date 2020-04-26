@@ -19,7 +19,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Nylas\\": "src/",
+            "Nylas\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "NylasTest\\": "tests/"
         }
     }
