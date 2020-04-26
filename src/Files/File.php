@@ -247,7 +247,7 @@ class File
             V::instance(StreamInterface::class)
         );
 
-        return  V::arrayType()->each(V::keySet(
+        return  V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('path', $path)
         ));
@@ -262,7 +262,7 @@ class File
      */
     private function multipartRules() : \Nylas\Utilities\Validator
     {
-        return V::arrayType()->each(V::keyset(
+        return V::simpleArray(V::keyset(
             V::key('headers', V::arrayType(), false),
             V::key('filename', V::stringType()->length(1, null), false),
 

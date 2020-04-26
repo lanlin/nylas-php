@@ -9,7 +9,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas RESTFul API List
+ * Nylas Utils Validator
  * ----------------------------------------------------------------------------------
  *
  * @method static Validator allOf(Validatable ...$rule)

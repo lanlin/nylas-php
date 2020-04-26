@@ -21,7 +21,7 @@ class Webhook
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class Webhook
      *
      * TIPS: you'd better use the output method from your framework.
      */
-    public function echoChallenge()
+    public function echoChallenge() : void
     {
         $chanllenge = $_GET['chanllenge'] ?? null;
 
@@ -67,7 +67,7 @@ class Webhook
      *                    object id and an attributes sub-object
      * ]
      */
-    public function getNotification()
+    public function getNotification() : array
     {
         $code = $_SERVER['HTTP_X_NYLAS_SIGNATURE'] ?? '';
         $data = file_get_contents('php://input');
@@ -94,7 +94,7 @@ class Webhook
      * @param string $data
      * @return bool
      */
-    public function xSignatureVerification(string $code, string $data)
+    public function xSignatureVerification(string $code, string $data) : bool
     {
         $conf = $this->options->getClientApps();
 
@@ -112,9 +112,9 @@ class Webhook
      * @return array
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function parseNotification(string $data)
+    public function parseNotification(string $data) : array
     {
-        $data = json_decode($data, true);
+        $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
 
         // check deltas
         if (!isset($data['deltas']))
@@ -132,7 +132,7 @@ class Webhook
      *
      * @return array
      */
-    public function getWebhookList()
+    public function getWebhookList() : array
     {
         $params = $this->options->getClientApps();
 
@@ -160,7 +160,7 @@ class Webhook
      * @param string $webhookId
      * @return array
      */
-    public function getWebhook(string $webhookId)
+    public function getWebhook(string $webhookId) : array
     {
         $params = $this->options->getClientApps();
 

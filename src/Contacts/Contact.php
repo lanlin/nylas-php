@@ -273,7 +273,7 @@ class Contact
             V::instance(StreamInterface::class)
         );
 
-        return  V::arrayType()->each(V::keySet(
+        return  V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('path', $path)
         ));

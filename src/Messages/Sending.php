@@ -120,7 +120,7 @@ class Sending
     {
         $ids = V::simpleArray(V::stringType()->notEmpty());
 
-        $tmp = V::arrayType()->each(V::keySet(
+        $tmp = V::simpleArray(V::keySet(
             V::key('name', V::stringType(), false),
             V::key('email', V::email())
         ));

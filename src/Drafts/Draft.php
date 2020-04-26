@@ -55,7 +55,7 @@ class Draft
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()->notEmpty()),
-            V::keyOptional('any_email', V::arrayVal()->each(V::email()))
+            V::keyOptional('any_email', V::simpleArray(V::email()))
         );
 
         V::doValidate($rule, $params);

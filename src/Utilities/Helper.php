@@ -4,7 +4,7 @@ use Nylas\Exceptions\NylasException;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas RESTFul Request Errors
+ * Nylas Utils Helper
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin

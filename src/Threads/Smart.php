@@ -23,7 +23,7 @@ class Smart
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ class Smart
      * @param string|array $labels
      * @return array
      */
-    public function addLabels(string $threadId, $labels)
+    public function addLabels(string $threadId, $labels) : array
     {
         return $this->updateLabels($threadId, $labels);
     }
@@ -60,7 +60,7 @@ class Smart
      * @param string|array $labels
      * @return array
      */
-    public function removeLabels(string $threadId, $labels)
+    public function removeLabels(string $threadId, $labels) : array
     {
         return $this->updateLabels($threadId, null, $labels);
     }
@@ -73,7 +73,7 @@ class Smart
      * @param string $threadId
      * @return array
      */
-    public function archive(string $threadId)
+    public function archive(string $threadId) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, null, ['inbox']) :
@@ -88,7 +88,7 @@ class Smart
      * @param string $threadId
      * @return array
      */
-    public function unarchive(string $threadId)
+    public function unarchive(string $threadId) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, ['inbox'], ['archive']) :
@@ -103,7 +103,7 @@ class Smart
      * @param string $threadId
      * @return array
      */
-    public function trash(string $threadId)
+    public function trash(string $threadId) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, ['trash'], ['inbox']) :
@@ -120,7 +120,7 @@ class Smart
      * @param string $goto
      * @return array
      */
-    public function move(string $threadId, string $from, string $goto)
+    public function move(string $threadId, string $from, string $goto) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, [$goto], [$from]) :
@@ -135,7 +135,7 @@ class Smart
      * @param string|array $threadId
      * @return array
      */
-    public function star($threadId)
+    public function star($threadId) : array
     {
         $params = ['starred' => true];
 
@@ -150,7 +150,7 @@ class Smart
      * @param string|array $threadId
      * @return array
      */
-    public function unstar($threadId)
+    public function unstar($threadId) : array
     {
         $params = ['starred' => false];
 
@@ -165,7 +165,7 @@ class Smart
      * @param string|array $threadId
      * @return array
      */
-    public function markAsRead($threadId)
+    public function markAsRead($threadId) : array
     {
         $params = ['unread' => false];
 
@@ -180,7 +180,7 @@ class Smart
      * @param string|array $threadId
      * @return array
      */
-    public function markAsUnread($threadId)
+    public function markAsUnread($threadId) : array
     {
         $params = ['unread' => true];
 
@@ -196,7 +196,7 @@ class Smart
      * @param string $folderId
      * @return array
      */
-    public function moveToFolder($threadId, string $folderId)
+    public function moveToFolder($threadId, string $folderId) : array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -216,7 +216,7 @@ class Smart
      * @param array $labelIds
      * @return array
      */
-    public function moveToLabel($threadId, array $labelIds)
+    public function moveToLabel($threadId, array $labelIds) : array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -236,7 +236,7 @@ class Smart
      * @param string $folder
      * @return array
      */
-    private function updateFolder(string $threadId, string $folder)
+    private function updateFolder(string $threadId, string $folder) : array
     {
         $folderId   = null;
         $allFolders = (new Folder($this->options))->getFoldersList();
@@ -263,7 +263,7 @@ class Smart
      * @param string|array $del
      * @return array
      */
-    private function updateLabels(string $threadId, $add = [], $del = [])
+    private function updateLabels(string $threadId, $add = [], $del = []) : array
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
@@ -276,24 +276,24 @@ class Smart
         // check all labels
         foreach($allLabels as $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $add);
-            $secB = empty($label['name']) && in_array($label['display_name'], $add);
+            $secA = !empty($label['name']) && in_array($label['name'], $add, true);
+            $secB = empty($label['name']) && in_array($label['display_name'], $add, true);
 
             if ($secA || $secB)
             {
-                array_push($tmpLabels, $label['id']);
+                $tmpLabels[] = $label['id'];
             }
         }
 
         // check current thread labels
         foreach($nowLabels as $index => $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $del);
-            $secB = empty($label['name']) && in_array($label['display_name'], $del);
+            $secA = !empty($label['name']) && in_array($label['name'], $del, true);
+            $secB = empty($label['name']) && in_array($label['display_name'], $del, true);
 
             if ($secA || $secB) { continue; }
 
-            array_push($tmpLabels, $label['id']);
+            $tmpLabels[] = $label['id'];
         }
 
         return $this->moveToLabel($threadId, $tmpLabels);
@@ -330,7 +330,7 @@ class Smart
             ->setFormParams($params)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->put($target);
             };

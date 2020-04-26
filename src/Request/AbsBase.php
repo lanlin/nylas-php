@@ -212,7 +212,7 @@ trait AbsBase
      * @param bool $httpErrors
      * @return array
      */
-    private function concatOptions(bool $httpErrors = false)
+    private function concatOptions(bool $httpErrors = false) : array
     {
         $temp =
         [
