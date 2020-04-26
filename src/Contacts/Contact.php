@@ -263,9 +263,9 @@ class Contact
     /**
      * rules for download picture
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function pictureRules() : \Respect\Validation\Validator
+    private function pictureRules() : \Nylas\Utilities\Validator
     {
         $path = V::oneOf(
             V::resourceType(),
@@ -284,9 +284,9 @@ class Contact
     /**
      * get base rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function getBaseRules() : \Respect\Validation\Validator
+    private function getBaseRules() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
@@ -342,9 +342,9 @@ class Contact
     /**
      * emails rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function contactEmailsRules() : \Respect\Validation\Validator
+    private function contactEmailsRules() : \Nylas\Utilities\Validator
     {
         return V::keyOptional('emails', V::simpleArray(V::keySet(
             V::key('type', V::in(['work', 'personal'])),
@@ -357,9 +357,9 @@ class Contact
     /**
      * emails rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function contactWebPageRules() : \Respect\Validation\Validator
+    private function contactWebPageRules() : \Nylas\Utilities\Validator
     {
         $types = ['profile', 'blog', 'homepage', 'work'];
 
@@ -374,9 +374,9 @@ class Contact
     /**
      * im addresses rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function contactImAddressRules() : \Respect\Validation\Validator
+    private function contactImAddressRules() : \Nylas\Utilities\Validator
     {
         $types =
         [
@@ -395,9 +395,9 @@ class Contact
     /**
      * phone number rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function contactPhoneNumberRules() : \Respect\Validation\Validator
+    private function contactPhoneNumberRules() : \Nylas\Utilities\Validator
     {
         $types =
         [
@@ -416,9 +416,9 @@ class Contact
     /**
      * physical address rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function contactPhysicalAddressRules() : \Respect\Validation\Validator
+    private function contactPhysicalAddressRules() : \Nylas\Utilities\Validator
     {
         return V::keyOptional('physical_addresses', V::simpleArray(V::keySet(
             V::key('type', V::in(['work', 'home', 'other'])),

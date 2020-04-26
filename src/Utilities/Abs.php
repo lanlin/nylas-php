@@ -9,7 +9,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2020/04/26
  */
 trait Abs
 {

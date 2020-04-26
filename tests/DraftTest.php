@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/29
+ * @change 2020/04/26
  */
 class DraftTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetDraftList()
+    public function testGetDraftList() : void
     {
         $data = self::$api->Drafts()->Draft()->getDraftsList();
 
@@ -22,7 +22,7 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetDraft()
+    public function testGetDraft() : void
     {
         $id = 'c5m5em1s3jd2ggsttf2zayzre';
 
@@ -33,7 +33,7 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddDraft()
+    public function testAddDraft() : void
     {
         $params =
         [
@@ -48,7 +48,7 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateDraft()
+    public function testUpdateDraft() : void
     {
         $params =
         [
@@ -65,7 +65,7 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteDraft()
+    public function testDeleteDraft() : void
     {
         $params =
         [
@@ -88,7 +88,7 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSending()
+    public function testSending() : void
     {
         $params =
         [

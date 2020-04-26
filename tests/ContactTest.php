@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/28
+ * @change 2020/04/26
  */
 class ContactTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetContactsList()
+    public function testGetContactsList() : void
     {
         $data = self::$api->Contacts()->Contact()->getContactsList();
 
@@ -22,7 +22,7 @@ class ContactTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetContact()
+    public function testGetContact() : void
     {
         $id = 'p8yaokbz6oh8bd45jcs1vt74';
 
@@ -33,7 +33,7 @@ class ContactTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddContact()
+    public function testAddContact() : void
     {
         $params =
         [
@@ -49,7 +49,7 @@ class ContactTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateContact()
+    public function testUpdateContact() : void
     {
         $params =
         [
@@ -66,7 +66,7 @@ class ContactTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteContact()
+    public function testDeleteContact() : void
     {
         $params =
         [
@@ -93,7 +93,7 @@ class ContactTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetContactGroups()
+    public function testGetContactGroups() : void
     {
         $data = self::$api->Contacts()->Contact()->getContactGroups();
 
@@ -102,12 +102,12 @@ class ContactTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetContactPicture()
+    public function testGetContactPicture() : void
     {
         $params =
         [
             'id'   => 'ojuzyfudlwkrwg476ip9sfw4',
-            'path' => dirname(__FILE__). '/temp',
+            'path' => __DIR__. '/temp',
         ];
 
 

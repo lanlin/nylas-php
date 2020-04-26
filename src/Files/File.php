@@ -237,9 +237,9 @@ class File
     /**
      * rules for download params
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function downloadRules() : \Respect\Validation\Validator
+    private function downloadRules() : \Nylas\Utilities\Validator
     {
         $path = V::oneOf(
             V::resourceType(),
@@ -258,9 +258,9 @@ class File
     /**
      * multipart upload rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function multipartRules() : \Respect\Validation\Validator
+    private function multipartRules() : \Nylas\Utilities\Validator
     {
         return V::arrayType()->each(V::keyset(
             V::key('headers', V::arrayType(), false),

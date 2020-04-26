@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/28
+ * @change 2020/04/26
  */
 class AccountTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccount()
+    public function testGetAccount() : void
     {
         $data = self::$api->Accounts()->Account()->getAccount();
 

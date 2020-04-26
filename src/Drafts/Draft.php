@@ -216,13 +216,11 @@ class Draft
     /**
      * array of string
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function arrayOfString() : \Respect\Validation\Validator
+    private function arrayOfString() : \Nylas\Utilities\Validator
     {
-        return V::arrayVal()->each(
-            V::stringType()->notEmpty(),
-        );
+        return V::simpleArray(V::stringType()->notEmpty());
     }
 
     // ------------------------------------------------------------------------------
@@ -230,11 +228,11 @@ class Draft
     /**
      * array of object
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function arrayOfObject() : \Respect\Validation\Validator
+    private function arrayOfObject() : \Nylas\Utilities\Validator
     {
-        return V::arrayType()->each(
+        return V::simpleArray(
             V::keySet(
                 V::key('name', V::stringType(), false),
                 V::key('email', V::email())

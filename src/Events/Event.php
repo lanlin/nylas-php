@@ -289,9 +289,9 @@ class Event
     /**
      * rules for update event
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function updateEventRules() : \Respect\Validation\Validator
+    private function updateEventRules() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::key('id', V::stringType()->notEmpty()),
@@ -303,7 +303,7 @@ class Event
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
 
-            V::keyOptional('participants', V::arrayVal()->each(V::keySet(
+            V::keyOptional('participants', V::simpleArray(V::keySet(
                 V::key('email', V::email()),
                 V::key('status', V::stringType()),
                 V::key('name', V::stringType()),
@@ -317,9 +317,9 @@ class Event
     /**
      * rules for add event
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function addEventRules() : \Respect\Validation\Validator
+    private function addEventRules() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::key('when', $this->timeRules()),
@@ -332,7 +332,7 @@ class Event
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
 
-            V::keyOptional('participants', V::arrayVal()->each(V::keySet(
+            V::keyOptional('participants', V::simpleArray(V::keySet(
                 V::key('email', V::email()),
                 V::key('status', V::stringType()),
                 V::key('name', V::stringType()),
@@ -346,9 +346,9 @@ class Event
     /**
      * get event time rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function timeRules() : \Respect\Validation\Validator
+    private function timeRules() : \Nylas\Utilities\Validator
     {
         return V::oneOf(
 

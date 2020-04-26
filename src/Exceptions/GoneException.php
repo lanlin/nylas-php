@@ -6,7 +6,7 @@
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/21
+ * @change 2020/04/26
  */
 class GoneException extends NylasException
 {

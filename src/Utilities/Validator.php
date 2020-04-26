@@ -1,9 +1,9 @@
 <?php namespace Nylas\Utilities;
 
+use Nylas\Exceptions\NylasException;
 use Respect\Validation\Factory;
 use Respect\Validation\Rules\AllOf;
 use Respect\Validation\Validatable;
-use Nylas\Exceptions\NylasException;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Exceptions\NestedValidationException;
 

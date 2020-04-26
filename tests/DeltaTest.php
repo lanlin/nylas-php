@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/29
+ * @change 2020/04/26
  */
 class DeltaTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetLatestCursor()
+    public function testGetLatestCursor() : void
     {
         $data = self::$api->Deltas()->Delta()->getLatestCursor();
 
@@ -22,7 +22,7 @@ class DeltaTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetSetOfDeltas()
+    public function testGetSetOfDeltas() : void
     {
         $params =
         [
@@ -37,7 +37,7 @@ class DeltaTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testLongPollingDelta()
+    public function testLongPollingDelta() : void
     {
         $params =
         [
@@ -53,7 +53,7 @@ class DeltaTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testStreamingDelta()
+    public function testStreamingDelta() : void
     {
         $params =
         [

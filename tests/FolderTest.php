@@ -7,14 +7,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/12/03
+ * @change 2020/04/26
  */
 class FolderTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFolderList()
+    public function testGetFolderList() : void
     {
         $data = self::$api->Folders()->Folder()->getFoldersList();
 
@@ -23,7 +23,7 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFolder()
+    public function testGetFolder() : void
     {
         $id = 'ejom4k3o5qor5ooyh8yx7hgbw';
 
@@ -34,7 +34,7 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddFolder()
+    public function testAddFolder() : void
     {
         $name = 'test_folder'.uniqid();
 
@@ -45,7 +45,7 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateFolder()
+    public function testUpdateFolder() : void
     {
         $params =
         [
@@ -60,7 +60,7 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteFolder()
+    public function testDeleteFolder() : void
     {
         $id = '47137b6urkg0cf738o7is2aa3';
 

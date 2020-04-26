@@ -120,7 +120,7 @@ class Message
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
-            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType()))
+            V::keyOptional('label_ids', V::simpleArray(V::stringType()))
         );
 
         V::doValidate($rules, $params);
@@ -185,9 +185,9 @@ class Message
      * get messages list filter rules
      *
      * @link https://docs.nylas.com/reference#messages-1
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function getMessagesRules() : \Respect\Validation\Validator
+    private function getMessagesRules() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::keyOptional('in', V::stringType()->notEmpty()),

@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/12/03
+ * @change 2020/04/26
  */
 class ThreadTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetThreadList()
+    public function testGetThreadList() : void
     {
         $data = self::$api->Threads()->Thread()->getThreadsList();
 
@@ -22,7 +22,7 @@ class ThreadTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetThread()
+    public function testGetThread() : void
     {
         $id = '7ax24gg39w06rqosrda5dtw4w';
 
@@ -33,7 +33,7 @@ class ThreadTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateThread()
+    public function testUpdateThread() : void
     {
         $params =
         [
@@ -48,7 +48,7 @@ class ThreadTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSearchThread()
+    public function testSearchThread() : void
     {
         $q = 'test@test.com';
 

@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/12/03
+ * @change 2020/04/26
  */
 class WebhookTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhookList()
+    public function testGetWebhookList() : void
     {
         $data = self::$api->Webhooks()->Webhook()->getWebhookList();
 
@@ -22,7 +22,7 @@ class WebhookTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhook()
+    public function testGetWebhook() : void
     {
         $id = '7ax24gg39w06rqosrda5dtw4w';
 

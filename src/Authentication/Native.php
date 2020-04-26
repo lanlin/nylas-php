@@ -103,9 +103,9 @@ class Native
      * validate settings params
      *
      * @param array $params
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function settingsRules(array $params) : \Respect\Validation\Validator
+    private function settingsRules(array $params) : \Nylas\Utilities\Validator
     {
         $provider = $params['provider'] ?? 'imap';
 
@@ -127,9 +127,9 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function knownProviderRule() : \Respect\Validation\Validator
+    private function knownProviderRule() : \Nylas\Utilities\Validator
     {
         return V::keySet(V::key('password', V::stringType()->notEmpty()));
     }
@@ -139,9 +139,9 @@ class Native
     /**
      * gmail provider rule
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function gmailProviderRule() : \Respect\Validation\Validator
+    private function gmailProviderRule() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::key('google_client_id', V::stringType()->notEmpty()),
@@ -155,9 +155,9 @@ class Native
     /**
      * exchange provider rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function exchangeProviderRule() : \Respect\Validation\Validator
+    private function exchangeProviderRule() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::key('username', V::stringType()->notEmpty()),
@@ -171,9 +171,9 @@ class Native
     /**
      * unknown imap provider
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function imapProviderRule() : \Respect\Validation\Validator
+    private function imapProviderRule() : \Nylas\Utilities\Validator
     {
         return V::keySet(
             V::key('imap_host', V::stringType()->notEmpty()),

@@ -114,11 +114,11 @@ class Sending
     /**
      * get message sending rules
      *
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function getMessageRules() : \Respect\Validation\Validator
+    private function getMessageRules() : \Nylas\Utilities\Validator
     {
-        $ids = V::arrayVal()->each(V::stringType()->notEmpty());
+        $ids = V::simpleArray(V::stringType()->notEmpty());
 
         $tmp = V::arrayType()->each(V::keySet(
             V::key('name', V::stringType(), false),

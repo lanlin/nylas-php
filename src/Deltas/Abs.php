@@ -10,7 +10,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @method Delta Delta()
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2020/04/26
  */
 class Abs
 {

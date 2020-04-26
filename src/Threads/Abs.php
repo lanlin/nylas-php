@@ -12,7 +12,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @method Thread Thread()
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2020/04/26
  */
 class Abs
 {

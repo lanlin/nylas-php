@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/30
+ * @change 2020/04/26
  */
 class FileTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFileList()
+    public function testGetFileList() : void
     {
         $data = self::$api->Files()->File()->getFilesList();
 
@@ -22,7 +22,7 @@ class FileTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFile()
+    public function testGetFile() : void
     {
         $id = '6i1hjmlao8s2b5oi7fsntq9va';
 
@@ -33,17 +33,17 @@ class FileTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUploadFile()
+    public function testUploadFile() : void
     {
         $file[] =
         [
-            'contents' => dirname(__FILE__) . '/correct.png',
+            'contents' => __DIR__. '/correct.png',
             'filename' => 'test_correct.png'
         ];
 
         $file[] =
         [
-            'contents' => dirname(__FILE__) . '/clound.png',
+            'contents' => __DIR__. '/clound.png',
             'filename' => 'test_clound.png'
         ];
 
@@ -54,18 +54,18 @@ class FileTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDownloadFile()
+    public function testDownloadFile() : void
     {
         $file[] =
         [
             'id'   => '3ni3ak1mapl4v03wtr5k2puw0',
-            'path' => dirname(__FILE__) . '/a.png',
+            'path' => __DIR__. '/a.png',
         ];
 
         $file[] =
         [
             'id'   => 'a4xl9ru0vfitmc1dbrij43yyk',
-            'path' => dirname(__FILE__) . '/b.png',
+            'path' => __DIR__. '/b.png',
         ];
 
         $data = self::$api->Files()->File()->downloadFile($file);

@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/28
+ * @change 2020/04/26
  */
 class ManageTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountList()
+    public function testGetAccountList() : void
     {
         $data = self::$api->Accounts()->Manage()->getAccountsList();
 
@@ -22,7 +22,7 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountInfo()
+    public function testGetAccountInfo() : void
     {
         $data = self::$api->Accounts()->Manage()->getAccountInfo();
 
@@ -31,7 +31,7 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testReactiveAccount()
+    public function testReactiveAccount() : void
     {
         $data = self::$api->Accounts()->Manage()->reactiveAccount();
 

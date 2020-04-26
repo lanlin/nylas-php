@@ -11,7 +11,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/18
+ * @change 2020/04/26
  */
 class Thread
 {
@@ -21,7 +21,7 @@ class Thread
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ class Thread
      * @param array $params
      * @return array
      */
-    public function getThreadsList(array $params = [])
+    public function getThreadsList(array $params = []) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -74,7 +74,7 @@ class Thread
      * @param array $params
      * @return array
      */
-    public function updateThread(array $params)
+    public function updateThread(array $params) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -84,7 +84,7 @@ class Thread
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
-            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType()))
+            V::keyOptional('label_ids', V::simpleArray(V::stringType()))
         );
 
         V::doValidate($rules, $params);
@@ -111,7 +111,7 @@ class Thread
      * @param string|array $threadId
      * @return array
      */
-    public function getThread($threadId)
+    public function getThread($threadId) : array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
@@ -132,7 +132,7 @@ class Thread
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -149,9 +149,9 @@ class Thread
      * get threads list filter rules
      *
      * @link https://docs.nylas.com/reference#get-threads
-     * @return \Respect\Validation\Validator
+     * @return \Nylas\Utilities\Validator
      */
-    private function getThreadsRules()
+    private function getThreadsRules() : V
     {
         return V::keySet(
             V::keyOptional('in', V::stringType()->notEmpty()),

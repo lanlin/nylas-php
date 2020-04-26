@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/28
+ * @change 2020/04/26
  */
 class HostedTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetOAuthAuthorize()
+    public function testGetOAuthAuthorize() : void
     {
         $params =
         [

@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/30
+ * @change 2020/04/26
  */
 class EventTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetEventList()
+    public function testGetEventList() : void
     {
         $data = self::$api->Events()->Event()->getEventsList();
 
@@ -22,7 +22,7 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetEvent()
+    public function testGetEvent() : void
     {
         $params = ['id' => 'ejom4k3o5qor5ooyh8yx7hgbw'];
 
@@ -33,7 +33,7 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddEvent()
+    public function testAddEvent() : void
     {
         $params =
         [
@@ -49,7 +49,7 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateEvent()
+    public function testUpdateEvent() : void
     {
         $params =
         [
@@ -64,7 +64,7 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteDraft()
+    public function testDeleteDraft() : void
     {
         $params =
         [

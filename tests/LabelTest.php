@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/12/03
+ * @change 2020/04/26
  */
 class LabelTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetLabelList()
+    public function testGetLabelList() : void
     {
         $data = self::$api->Labels()->Label()->getLabelsList();
 
@@ -22,7 +22,7 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetLabel()
+    public function testGetLabel() : void
     {
         $id = 'aenlhdgl3o55sc37a6fxjgjmo';
 
@@ -33,7 +33,7 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddLabel()
+    public function testAddLabel() : void
     {
         $name = 'test_label' . uniqid();
 
@@ -44,7 +44,7 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateLabel()
+    public function testUpdateLabel() : void
     {
         $params =
         [
@@ -59,7 +59,7 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteLabel()
+    public function testDeleteLabel() : void
     {
 
         $name = 'test_label' . uniqid();

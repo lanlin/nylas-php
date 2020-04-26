@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/11/28
+ * @change 2020/04/26
  */
 class CalendarTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetOAuthAuthorize()
+    public function testGetOAuthAuthorize() : void
     {
         $params =
         [
@@ -27,7 +27,7 @@ class CalendarTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetCalendar()
+    public function testGetCalendar() : void
     {
         $id = 'f0yci053ovp2tit18hwemup33';
 

@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2018/12/03
+ * @change 2020/04/26
  */
 class MessageTest extends Abs
 {
 
     // ------------------------------------------------------------------------------
 
-    public function testGetMessagesList()
+    public function testGetMessagesList() : void
     {
         $data = self::$api->Messages()->Message()->getMessagesList();
 
@@ -22,7 +22,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetMessage()
+    public function testGetMessage() : void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
@@ -33,7 +33,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetRawMessage()
+    public function testGetRawMessage() : void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
@@ -44,7 +44,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateMessage()
+    public function testUpdateMessage() : void
     {
         $params =
         [
@@ -59,7 +59,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSearchMessage()
+    public function testSearchMessage() : void
     {
         $q = '测试';
 
@@ -70,7 +70,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSendMessage()
+    public function testSendMessage() : void
     {
         $params =
         [
@@ -85,7 +85,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSendRaw()
+    public function testSendRaw() : void
     {
         $content = '';
 
