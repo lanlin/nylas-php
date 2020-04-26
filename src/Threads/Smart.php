@@ -308,7 +308,7 @@ class Smart
      * @param array $params
      * @return array
      */
-    private function updateOneField($threadId, array $params)
+    private function updateOneField($threadId, array $params) : array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
