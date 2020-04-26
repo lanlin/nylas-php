@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Calendar
 {
@@ -21,7 +21,7 @@ class Calendar
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ class Calendar
      * @param array $params
      * @return array
      */
-    public function getCalendarsList(array $params = [])
+    public function getCalendarsList(array $params = []) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -73,12 +73,12 @@ class Calendar
      * @param string|array $calendarId
      * @return array
      */
-    public function getCalendar($calendarId)
+    public function getCalendar($calendarId) : array
     {
         $calendarId  = Helper::fooToArray($calendarId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $calendarId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -94,7 +94,7 @@ class Calendar
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };

@@ -10,7 +10,7 @@ use Nylas\Authentication\Hosted;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/18
+ * @change 2020/04/26
  */
 class Account
 {
@@ -20,7 +20,7 @@ class Account
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ class Account
      *
      * @return array
      */
-    public function cancelAccount()
+    public function cancelAccount() : array
     {
         return (new Hosted($this->options))->postOAuthRevoke();
     }
@@ -53,7 +53,7 @@ class Account
      *
      * @return array
      */
-    public function getAccount()
+    public function getAccount() : array
     {
         $accessToken = $this->options->getAccessToken();
 

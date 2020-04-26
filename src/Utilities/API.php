@@ -10,7 +10,7 @@
  * @version 2.0 (2018-09-01)
  *
  * @author lanlin
- * @change 2019/05/28
+ * @change 2020/04/26
  */
 class API
 {
@@ -20,7 +20,7 @@ class API
     /**
      * nylas api list array
      */
-    const LIST =
+    public const LIST =
     [
         'server' => 'https://api.nylas.com',
 

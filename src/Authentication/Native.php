@@ -2,7 +2,7 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/21
+ * @change 2020/04/26
  */
 class Native
 {
@@ -20,7 +20,7 @@ class Native
     /**
      * @var array
      */
-    private $providers =
+    private array $providers =
     [
         'gmail', 'yahoo', 'exchange', 'outlook', 'imap', 'icloud', 'hotmail', 'aol'
     ];
@@ -30,7 +30,7 @@ class Native
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ class Native
      * @param string $code
      * @return array
      */
-    public function postConnectToken(string $code)
+    public function postConnectToken(string $code) : array
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
@@ -74,7 +74,7 @@ class Native
      * @param array $params
      * @return array
      */
-    public function postConnectAuthorize(array $params)
+    public function postConnectAuthorize(array $params) : array
     {
         $setting = $this->settingsRules($params);
 
@@ -105,7 +105,7 @@ class Native
      * @param array $params
      * @return \Respect\Validation\Validator
      */
-    private function settingsRules(array $params)
+    private function settingsRules(array $params) : \Respect\Validation\Validator
     {
         $provider = $params['provider'] ?? 'imap';
 
@@ -129,7 +129,7 @@ class Native
     /**
      * @return \Respect\Validation\Validator
      */
-    private function knownProviderRule()
+    private function knownProviderRule() : \Respect\Validation\Validator
     {
         return V::keySet(V::key('password', V::stringType()->notEmpty()));
     }
@@ -141,7 +141,7 @@ class Native
      *
      * @return \Respect\Validation\Validator
      */
-    private function gmailProviderRule()
+    private function gmailProviderRule() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::key('google_client_id', V::stringType()->notEmpty()),
@@ -157,7 +157,7 @@ class Native
      *
      * @return \Respect\Validation\Validator
      */
-    private function exchangeProviderRule()
+    private function exchangeProviderRule() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::key('username', V::stringType()->notEmpty()),
@@ -173,7 +173,7 @@ class Native
      *
      * @return \Respect\Validation\Validator
      */
-    private function imapProviderRule()
+    private function imapProviderRule() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::key('imap_host', V::stringType()->notEmpty()),

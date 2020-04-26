@@ -2,7 +2,7 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/21
+ * @change 2020/04/26
  */
 class Hosted
 {
@@ -20,7 +20,7 @@ class Hosted
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class Hosted
      * @param array $params
      * @return string
      */
-    public function getOAuthAuthorizeUrl(array $params)
+    public function getOAuthAuthorizeUrl(array $params) : string
     {
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
@@ -76,7 +76,7 @@ class Hosted
      * @param string $code
      * @return array
      */
-    public function postOAuthToken(string $code)
+    public function postOAuthToken(string $code) : array
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
@@ -100,7 +100,7 @@ class Hosted
      *
      * @return array
      */
-    public function postOAuthRevoke()
+    public function postOAuthRevoke() : array
     {
         $accessToken = $this->options->getAccessToken();
 

@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ use Nylas\Utilities\Validate as V;
  * @link https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2019/05/28
+ * @change 2020/04/26
  */
 class Event
 {
@@ -23,7 +23,7 @@ class Event
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ class Event
      * @param array $params
      * @return array
      */
-    public function getEventsList(array $params = [])
+    public function getEventsList(array $params = []) : array
     {
         $rules = $this->getBaseRules();
 
@@ -71,7 +71,7 @@ class Event
      * @param array $params
      * @return array
      */
-    public function addEvent(array $params)
+    public function addEvent(array $params) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -100,7 +100,7 @@ class Event
      * @param array $params
      * @return array
      */
-    public function updateEvent(array $params)
+    public function updateEvent(array $params) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -169,7 +169,7 @@ class Event
      * @param array $params
      * @return array
      */
-    public function getEvent(array $params)
+    public function getEvent(array $params) : array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -195,7 +195,7 @@ class Event
             ->setFormParams($item)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -215,7 +215,7 @@ class Event
      * @param array $params
      * @return array
      */
-    public function deleteEvent(array $params)
+    public function deleteEvent(array $params) : array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -243,7 +243,7 @@ class Event
             ->setQuery($query)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->delete($target);
             };
@@ -262,7 +262,7 @@ class Event
      *
      * @return array
      */
-    private function getBaseRules()
+    private function getBaseRules() : array
     {
         return
         [
@@ -291,7 +291,7 @@ class Event
      *
      * @return \Respect\Validation\Validator
      */
-    private function updateEventRules()
+    private function updateEventRules() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::key('id', V::stringType()->notEmpty()),
@@ -319,7 +319,7 @@ class Event
      *
      * @return \Respect\Validation\Validator
      */
-    private function addEventRules()
+    private function addEventRules() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::key('when', $this->timeRules()),
@@ -348,7 +348,7 @@ class Event
      *
      * @return \Respect\Validation\Validator
      */
-    private function timeRules()
+    private function timeRules() : \Respect\Validation\Validator
     {
         return V::oneOf(
 

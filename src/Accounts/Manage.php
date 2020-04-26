@@ -2,7 +2,7 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2019/05/28
+ * @change 2020/04/26
  */
 class Manage
 {
@@ -20,7 +20,7 @@ class Manage
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class Manage
      * @param array $params
      * @return array
      */
-    public function getAccountsList(array $params = [])
+    public function getAccountsList(array $params = []) : array
     {
         $rules = V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
@@ -76,7 +76,7 @@ class Manage
      * @param array $params
      * @return array
      */
-    public function revokeAllTokens(array $params = [])
+    public function revokeAllTokens(array $params = []) : array
     {
         $rules = V::keySet(
             V::keyOptional('keep_access_token', V::stringType()->notEmpty())
@@ -106,7 +106,7 @@ class Manage
      * @param string $accountId
      * @return array
      */
-    public function getAccountInfo(string $accountId = null)
+    public function getAccountInfo(string $accountId = null) : array
     {
         $accountId = $accountId ?? $this->options->getAccountId();
 
@@ -128,7 +128,7 @@ class Manage
      * @param string $accountId
      * @return array
      */
-    public function reactiveAccount(string $accountId = null)
+    public function reactiveAccount(string $accountId = null) : array
     {
         $accountId = $accountId ?? $this->options->getAccountId();
 
@@ -150,7 +150,7 @@ class Manage
      * @param string $accountId
      * @return array
      */
-    public function cancelAccount(string $accountId = null)
+    public function cancelAccount(string $accountId = null) : array
     {
         $accountId = $accountId ?? $this->options->getAccountId();
 
@@ -171,7 +171,7 @@ class Manage
      *
      * @return array
      */
-    public function getIpAddresses()
+    public function getIpAddresses() : array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];

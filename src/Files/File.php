@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class File
 {
@@ -22,7 +22,7 @@ class File
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ class File
      * @param array $params
      * @return array
      */
-    public function getFilesList(array $params = [])
+    public function getFilesList(array $params = []) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -75,12 +75,12 @@ class File
      * @param string|array $fileId
      * @return array
      */
-    public function getFileInfo($fileId)
+    public function getFileInfo($fileId) : array
     {
         $fileId      = Helper::fooToArray($fileId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $fileId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -96,7 +96,7 @@ class File
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -115,12 +115,12 @@ class File
      * @param string|array $fileId
      * @return array
      */
-    public function deleteFile($fileId)
+    public function deleteFile($fileId) : array
     {
         $fileId      = Helper::fooToArray($fileId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $fileId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -136,7 +136,7 @@ class File
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->delete($target);
             };
@@ -155,7 +155,7 @@ class File
      * @param array $file
      * @return array
      */
-    public function uploadFile(array $file)
+    public function uploadFile(array $file) : array
     {
         $fileUploads = Helper::arrayToMulti($file);
         $accessToken = $this->options->getAccessToken();
@@ -173,7 +173,7 @@ class File
 
             if (is_string($item['contents']) && file_exists($item['contents']))
             {
-                $item['contents'] = fopen($item['contents'], 'r');
+                $item['contents'] = fopen($item['contents'], 'rb');
             }
 
             $request = $this->options
@@ -181,7 +181,7 @@ class File
             ->setFormFiles($item)
             ->setHeaderParams($header);
 
-            $upload[] = function () use ($request, $target)
+            $upload[] = static function () use ($request, $target)
             {
                 return $request->post($target);
             };
@@ -200,7 +200,7 @@ class File
      * @param array $params
      * @return array
      */
-    public function downloadFile(array $params)
+    public function downloadFile(array $params) : array
     {
         $downloadArr = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -221,7 +221,7 @@ class File
             ->setPath($item['id'])
             ->setHeaderParams($header);
 
-            $method[] = function () use ($request, $target, $sink)
+            $method[] = static function () use ($request, $target, $sink)
             {
                 return $request->getSink($target, $sink);
             };
@@ -239,7 +239,7 @@ class File
      *
      * @return \Respect\Validation\Validator
      */
-    private function downloadRules()
+    private function downloadRules() : \Respect\Validation\Validator
     {
         $path = V::oneOf(
             V::resourceType(),
@@ -260,7 +260,7 @@ class File
      *
      * @return \Respect\Validation\Validator
      */
-    private function multipartRules()
+    private function multipartRules() : \Respect\Validation\Validator
     {
         return V::arrayType()->each(V::keyset(
             V::key('headers', V::arrayType(), false),
@@ -283,7 +283,7 @@ class File
      * @param array $pools
      * @return array
      */
-    private function concatUploadInfos(array $files, array $pools)
+    private function concatUploadInfos(array $files, array $pools) : array
     {
         foreach ($files as $index => &$item)
         {
@@ -310,7 +310,7 @@ class File
      * @param array $pools
      * @return array
      */
-    private function concatDownloadInfos(array $params, array $pools)
+    private function concatDownloadInfos(array $params, array $pools) : array
     {
         $data = [];
 

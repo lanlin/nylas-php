@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Sending
 {
@@ -21,7 +21,7 @@ class Sending
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -43,12 +43,12 @@ class Sending
      * @param array $params
      * @return array
      */
-    public function sendDraft(array $params)
+    public function sendDraft(array $params) : array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::keySet(
+        $rule = V::simpleArray(V::keySet(
             V::key('version', V::intType()->min(0)),
             V::key('draft_id', V::stringType()->notEmpty())
         ));
@@ -67,7 +67,7 @@ class Sending
             ->setFormParams($item)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->post($target);
             };

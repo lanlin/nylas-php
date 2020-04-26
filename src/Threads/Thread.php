@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ class Thread
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
-            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType(), V::intType()))
+            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType()))
         );
 
         V::doValidate($rules, $params);
@@ -116,7 +116,7 @@ class Thread
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $threadId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);

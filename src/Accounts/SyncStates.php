@@ -6,14 +6,14 @@
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/22
+ * @change 2020/04/26
  */
 class SyncStates
 {
 
     // ------------------------------------------------------------------------------
 
-    const ENUMS =
+    public const ENUMS =
     [
         'initializing',
         'downloading',
@@ -26,7 +26,7 @@ class SyncStates
 
     // ------------------------------------------------------------------------------
 
-    const INFOS =
+    public const INFOS =
     [
         'running'             => 'Sync is successfully running. No action required. It means we are up to date and listening for new changes.',
         'stopped'             => 'Sync is stopped. This can happen for a variety of reasons. If you are adding accounts beyond the limits of your free trial period, some may be stopped until you upgrade your Nylas application. It can also occur when we repeatedly encounter unexpected errors. These errors most commonly originate from incompatibilities with upstream providers or temporary outages.',

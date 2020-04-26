@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Sending
 {
@@ -22,7 +22,7 @@ class Sending
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ class Sending
      * @param array $params
      * @return array
      */
-    public function sendDirectly(array $params)
+    public function sendDirectly(array $params) : array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -63,7 +63,7 @@ class Sending
             ->setFormParams($item)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->post($target);
             };
@@ -116,9 +116,9 @@ class Sending
      *
      * @return \Respect\Validation\Validator
      */
-    private function getMessageRules()
+    private function getMessageRules() : \Respect\Validation\Validator
     {
-        $ids = V::arrayVal()->each(V::stringType()->notEmpty(), V::intType());
+        $ids = V::arrayVal()->each(V::stringType()->notEmpty());
 
         $tmp = V::arrayType()->each(V::keySet(
             V::key('name', V::stringType(), false),
@@ -132,7 +132,7 @@ class Sending
             V::keyOptional('payload', V::stringType()->notEmpty())
         );
 
-        return V::each(V::keySet(
+        return V::simpleArray(V::keySet(
             V::keyOptional('to', $tmp),
             V::keyOptional('cc', $tmp),
             V::keyOptional('bcc', $tmp),

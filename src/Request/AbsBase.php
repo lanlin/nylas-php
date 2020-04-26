@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/30
+ * @change 2020/04/26
  */
 trait AbsBase
 {
@@ -23,7 +23,7 @@ trait AbsBase
     /**
      * @var \GuzzleHttp\Client
      */
-    private $guzzle;
+    private Client $guzzle;
 
     // ------------------------------------------------------------------------------
 
@@ -41,17 +41,17 @@ trait AbsBase
      *
      * @var bool
      */
-    private $offDecodeError = false;
+    private bool $offDecodeError = false;
 
     // ------------------------------------------------------------------------------
 
-    private $formFiles     = [];
-    private $pathParams    = [];
-    private $jsonParams    = [];
-    private $queryParams   = [];
-    private $headerParams  = [];
-    private $bodyContents  = [];
-    private $onHeadersFunc = [];
+    private array $formFiles     = [];
+    private array $pathParams    = [];
+    private array $jsonParams    = [];
+    private array $queryParams   = [];
+    private array $headerParams  = [];
+    private array $bodyContents  = [];
+    private array $onHeadersFunc = [];
 
     // ------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ trait AbsBase
      * @param string[] $path
      * @return $this
      */
-    public function setPath(string ...$path)
+    public function setPath(string ...$path) : self
     {
         $this->pathParams = $path;
 
@@ -97,7 +97,7 @@ trait AbsBase
      * @param string|resource|\Psr\Http\Message\StreamInterface $body
      * @return $this
      */
-    public function setBody($body)
+    public function setBody($body) : self
     {
         $this->bodyContents = ['body' => $body];
 
@@ -112,7 +112,7 @@ trait AbsBase
      * @param array $query
      * @return $this
      */
-    public function setQuery(array $query)
+    public function setQuery(array $query) : self
     {
         $this->queryParams = ['query' => $query];
 
@@ -127,7 +127,7 @@ trait AbsBase
      * @param array $params
      * @return $this
      */
-    public function setFormParams(array $params)
+    public function setFormParams(array $params) : self
     {
         $this->jsonParams = ['json' => $params];
 
@@ -142,7 +142,7 @@ trait AbsBase
      * @param array $files
      * @return $this
      */
-    public function setFormFiles(array $files)
+    public function setFormFiles(array $files) : self
     {
         $this->formFiles = ['multipart' => Helper::arrayToMulti($files)];
 
@@ -157,7 +157,7 @@ trait AbsBase
      * @param array $headers
      * @return $this
      */
-    public function setHeaderParams(array $headers)
+    public function setHeaderParams(array $headers) : self
     {
         $this->headerParams = ['headers' => $headers];
 
@@ -169,7 +169,7 @@ trait AbsBase
     /**
      * @param callable $func
      */
-    public function setHeaderFunctions(callable $func)
+    public function setHeaderFunctions(callable $func) : void
     {
         $this->onHeadersFunc[] = $func;
     }
@@ -182,7 +182,7 @@ trait AbsBase
      * @param string $api
      * @return string
      */
-    private function concatApiPath(string $api)
+    private function concatApiPath(string $api) : string
     {
         return sprintf($api, ...$this->pathParams);
     }
@@ -195,7 +195,7 @@ trait AbsBase
      * @param \Exception $e
      * @return string
      */
-    private function getExceptionMsg(\Exception $e)
+    private function getExceptionMsg(\Exception $e) : string
     {
         $preExcep = $e->getPrevious();
 
@@ -254,7 +254,7 @@ trait AbsBase
         }
 
         $data = $response->getBody()->getContents();
-        $temp = json_decode($data, true);
+        $temp = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
         $errs = JSON_ERROR_NONE !== json_last_error();
 
         if ($errs && $this->offDecodeError)
@@ -276,12 +276,12 @@ trait AbsBase
     /**
      * check http status code before response body
      */
-    private function onHeadersFuncions()
+    private function onHeadersFuncions() : callable
     {
         $request = $this;
         $excpArr = Errors::StatusExceptions;
 
-        return function (ResponseInterface $response) use ($request, $excpArr)
+        return static function (ResponseInterface $response) use ($request, $excpArr)
         {
             $statusCode = $response->getStatusCode();
 
@@ -301,7 +301,7 @@ trait AbsBase
             // execute others on header functions
             foreach ($request->onHeadersFunc as $func)
             {
-                call_user_func($func, $response);
+                $func($response);
             }
         };
     }

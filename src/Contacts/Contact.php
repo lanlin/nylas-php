@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
  * @link https://docs.nylas.com/reference#contact-limitations
  *
  * @author lanlin
- * @change 2019/05/28
+ * @change 2020/04/26
  */
 class Contact
 {
@@ -24,7 +24,7 @@ class Contact
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ class Contact
      * @param array $params
      * @return array
      */
-    public function getContactsList(array $params = [])
+    public function getContactsList(array $params = []) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -70,7 +70,7 @@ class Contact
      * @param array $params
      * @return array
      */
-    public function addContact(array $params)
+    public function addContact(array $params) : array
     {
         $rules = $this->addContactRules();
 
@@ -96,13 +96,12 @@ class Contact
      * @param array $params
      * @return array
      */
-    public function updateContact(array $params)
+    public function updateContact(array $params) : array
     {
         $rules = $this->addContactRules();
+        $rules[] = V::key('id', V::stringType()->notEmpty());
 
         $accessToken = $this->options->getAccessToken();
-
-        array_push($rules,  V::key('id', V::stringType()->notEmpty()));
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -128,12 +127,12 @@ class Contact
      * @param string|array $contactId
      * @return array
      */
-    public function getContact($contactId)
+    public function getContact($contactId) : array
     {
         $contactId   = Helper::fooToArray($contactId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $contactId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -149,7 +148,7 @@ class Contact
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -168,12 +167,12 @@ class Contact
      * @param string|array $contactId
      * @return array
      */
-    public function deleteContact($contactId)
+    public function deleteContact($contactId) : array
     {
         $contactId   = Helper::fooToArray($contactId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $contactId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -189,7 +188,7 @@ class Contact
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->delete($target);
             };
@@ -207,7 +206,7 @@ class Contact
      *
      * @return array
      */
-    public function getContactGroups()
+    public function getContactGroups() : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -229,7 +228,7 @@ class Contact
      * @param array $params
      * @return array
      */
-    public function getContactPicture(array $params)
+    public function getContactPicture(array $params) : array
     {
         $downloadArr = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -250,7 +249,7 @@ class Contact
             ->setPath($item['id'])
             ->setHeaderParams($header);
 
-            $method[] = function () use ($request, $target, $sink)
+            $method[] = static function () use ($request, $target, $sink)
             {
                 return $request->getSink($target, $sink);
             };
@@ -266,7 +265,7 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function pictureRules()
+    private function pictureRules() : \Respect\Validation\Validator
     {
         $path = V::oneOf(
             V::resourceType(),
@@ -287,7 +286,7 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function getBaseRules()
+    private function getBaseRules() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
@@ -313,7 +312,7 @@ class Contact
      *
      * @return array
      */
-    private function addContactRules()
+    private function addContactRules() : array
     {
         return
         [
@@ -345,9 +344,9 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function contactEmailsRules()
+    private function contactEmailsRules() : \Respect\Validation\Validator
     {
-        return V::keyOptional('emails', V::each(V::keySet(
+        return V::keyOptional('emails', V::simpleArray(V::keySet(
             V::key('type', V::in(['work', 'personal'])),
             V::key('email', V::stringType()->notEmpty())   // a free-form string
         )));
@@ -360,11 +359,11 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function contactWebPageRules()
+    private function contactWebPageRules() : \Respect\Validation\Validator
     {
         $types = ['profile', 'blog', 'homepage', 'work'];
 
-        return V::keyOptional('web_pages', V::each(V::keySet(
+        return V::keyOptional('web_pages', V::simpleArray(V::keySet(
             V::key('type', V::in($types)),
             V::key('url', V::stringType()->notEmpty())   // a free-form string
         )));
@@ -377,7 +376,7 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function contactImAddressRules()
+    private function contactImAddressRules() : \Respect\Validation\Validator
     {
         $types =
         [
@@ -385,7 +384,7 @@ class Contact
             'skype', 'qq', 'msn', 'icq', 'jabber'
         ];
 
-        return V::keyOptional('im_addresses', V::each(V::keySet(
+        return V::keyOptional('im_addresses', V::simpleArray(V::keySet(
             V::key('type', V::in($types)),
             V::key('im_address', V::stringType()->notEmpty())  // a free-form string
         )));
@@ -398,7 +397,7 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function contactPhoneNumberRules()
+    private function contactPhoneNumberRules() : \Respect\Validation\Validator
     {
         $types =
         [
@@ -406,7 +405,7 @@ class Contact
             'home_fax', 'organization_main', 'assistant', 'radio', 'other'
         ];
 
-        return V::keyOptional('phone_numbers', V::each(V::keySet(
+        return V::keyOptional('phone_numbers', V::simpleArray(V::keySet(
             V::key('type', V::in($types)),
             V::key('number', V::stringType()->notEmpty()) // a free-form string
         )));
@@ -419,9 +418,9 @@ class Contact
      *
      * @return \Respect\Validation\Validator
      */
-    private function contactPhysicalAddressRules()
+    private function contactPhysicalAddressRules() : \Respect\Validation\Validator
     {
-        return V::keyOptional('physical_addresses', V::each(V::keySet(
+        return V::keyOptional('physical_addresses', V::simpleArray(V::keySet(
             V::key('type', V::in(['work', 'home', 'other'])),
             V::key('city', V::stringType()->notEmpty()),
             V::key('state', V::stringType()->notEmpty()),

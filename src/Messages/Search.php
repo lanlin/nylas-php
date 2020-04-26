@@ -2,7 +2,7 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/23
+ * @change 2020/04/26
  */
 class Search
 {
@@ -20,7 +20,7 @@ class Search
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class Search
      * @param string $q
      * @return array
      */
-    public function messages(string $q)
+    public function messages(string $q) : array
     {
         $params =
         [

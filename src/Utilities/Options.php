@@ -3,7 +3,7 @@
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
 use Nylas\Accounts\Account;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/18
+ * @change 2020/04/26
  */
 class Options
 {
@@ -21,42 +21,42 @@ class Options
     /**
      * @var bool
      */
-    private $debug = false;
+    private bool $debug = false;
 
     /**
      * @var bool
      */
-    private $offDecodeError = false;
+    private bool $offDecodeError = false;
 
     /**
      * @var string
      */
-    private $logFile;
+    private string $logFile;
 
     /**
      * @var string
      */
-    private $clientId;
+    private string $clientId;
 
     /**
      * @var string
      */
-    private $clientSecret;
+    private string $clientSecret;
 
     /**
      * @var string
      */
-    private $accessToken;
+    private string $accessToken;
 
     /**
      * @var string
      */
-    private $accountId;
+    private string $accountId;
 
     /**
      * @var array
      */
-    private $accountInfo;
+    private array $accountInfo;
 
     // ------------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ class Options
     /**
      * @param string $token
      */
-    public function setAccessToken(string $token)
+    public function setAccessToken(string $token) : void
     {
         $this->accessToken = $token;
 
@@ -111,7 +111,7 @@ class Options
     /**
      * @return string
      */
-    public function getAccessToken()
+    public function getAccessToken() : ?string
     {
         return $this->accessToken ?? null;
     }
@@ -121,7 +121,7 @@ class Options
     /**
      * @param string $id
      */
-    public function setAccountId(string $id)
+    public function setAccountId(string $id) : void
     {
         $this->accountId = $id;
     }
@@ -131,7 +131,7 @@ class Options
     /**
      * @return string
      */
-    public function getAccountId()
+    public function getAccountId() : ?string
     {
         return $this->accountId ?? null;
     }
@@ -141,7 +141,7 @@ class Options
     /**
      * @return string
      */
-    public function getServer()
+    public function getServer() : string
     {
         return API::LIST['server'];
     }
@@ -151,7 +151,7 @@ class Options
     /**
      * @param bool $debug
      */
-    public function setDebug(bool $debug)
+    public function setDebug(bool $debug) : void
     {
         $this->debug = $debug;
     }
@@ -161,7 +161,7 @@ class Options
     /**
      * @param string $logFile
      */
-    public function setLogFile(string $logFile)
+    public function setLogFile(string $logFile) : void
     {
         $this->logFile = $logFile;
     }
@@ -171,7 +171,7 @@ class Options
     /**
      * @param bool $off
      */
-    public function setOffDecodeError(bool $off)
+    public function setOffDecodeError(bool $off) : void
     {
         $this->offDecodeError = $off;
     }
@@ -182,7 +182,7 @@ class Options
      * @param string $clientId
      * @param string $clientSecret
      */
-    public function setClientApps(string $clientId, string $clientSecret)
+    public function setClientApps(string $clientId, string $clientSecret) : void
     {
         $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
@@ -193,7 +193,7 @@ class Options
     /**
      * @return array
      */
-    public function getClientApps()
+    public function getClientApps() : array
     {
         return
         [
@@ -207,7 +207,7 @@ class Options
     /**
      * @return array
      */
-    public function getAllOptions()
+    public function getAllOptions() : array
     {
         return
         [
@@ -227,7 +227,7 @@ class Options
     /**
      * get sync request instance
      */
-    public function getSync()
+    public function getSync() : Sync
     {
         $debug  = $this->debug;
         $server = $this->getServer();
@@ -235,7 +235,7 @@ class Options
         // when set log file
         if ($this->debug && !empty($this->logFile))
         {
-            $debug = fopen($this->logFile, 'a');
+            $debug = fopen($this->logFile, 'ab');
         }
 
         return new Sync($server, $debug, $this->offDecodeError);
@@ -246,7 +246,7 @@ class Options
     /**
      * get async request instance
      */
-    public function getAsync()
+    public function getAsync() : Async
     {
         $debug  = $this->debug;
         $server = $this->getServer();
@@ -254,7 +254,7 @@ class Options
         // when set log file
         if ($this->debug && !empty($this->logFile))
         {
-            $debug = fopen($this->logFile, 'a');
+            $debug = fopen($this->logFile, 'ab');
         }
 
         return new Async($server, $debug, $this->offDecodeError);
@@ -267,7 +267,7 @@ class Options
      *
      * @return array
      */
-    public function getAccount()
+    public function getAccount() : array
     {
         $temp =
         [

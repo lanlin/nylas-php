@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Folder
 {
@@ -21,7 +21,7 @@ class Folder
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class Folder
      *
      * @return array
      */
-    public function getFoldersList()
+    public function getFoldersList() : array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -68,7 +68,7 @@ class Folder
      * @param string $displayName
      * @return array
      */
-    public function addFolder(string $displayName = null)
+    public function addFolder(string $displayName = null) : array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -95,7 +95,7 @@ class Folder
      * @param array $params
      * @return array
      */
-    public function updateFolder(array $params)
+    public function updateFolder(array $params) : array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -130,14 +130,14 @@ class Folder
      * @param string|array $folderId
      * @return array
      */
-    public function getFolder($folderId)
+    public function getFolder($folderId) : array
     {
         Helper::checkProviderUnit($this->options, false);
 
         $folderId    = Helper::fooToArray($folderId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $folderId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -153,7 +153,7 @@ class Folder
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -172,14 +172,14 @@ class Folder
      * @param string|array $folderId
      * @return array
      */
-    public function deleteFolder($folderId)
+    public function deleteFolder($folderId) : array
     {
         Helper::checkProviderUnit($this->options, false);
 
         $folderId    = Helper::fooToArray($folderId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $folderId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -195,7 +195,7 @@ class Folder
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->delete($target);
             };

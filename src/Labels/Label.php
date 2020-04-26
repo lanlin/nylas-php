@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Label
 {
@@ -21,7 +21,7 @@ class Label
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class Label
      *
      * @return array
      */
-    public function getLabelsList()
+    public function getLabelsList() : array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -68,7 +68,7 @@ class Label
      * @param string $displayName
      * @return array
      */
-    public function addLabel(string $displayName)
+    public function addLabel(string $displayName) : array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -97,7 +97,7 @@ class Label
      * @param array $params
      * @return array
      */
-    public function updateLabel(array $params)
+    public function updateLabel(array $params) : array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -132,14 +132,14 @@ class Label
      * @param string|array $labelId
      * @return array
      */
-    public function getLabel($labelId)
+    public function getLabel($labelId) : array
     {
         Helper::checkProviderUnit($this->options, true);
 
         $labelId     = Helper::fooToArray($labelId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $labelId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -155,7 +155,7 @@ class Label
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -174,14 +174,14 @@ class Label
      * @param array $params
      * @return array
      */
-    public function deleteLabel(array $params)
+    public function deleteLabel(array $params) : array
     {
         Helper::checkProviderUnit($this->options, true);
 
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::keySet(
+        $rule = V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('display_name', V::stringType()->notEmpty())
         ));
@@ -201,7 +201,7 @@ class Label
             ->setFormParams(['display_name' => $item['display_name']])
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->delete($target);
             };

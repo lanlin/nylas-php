@@ -5,7 +5,7 @@ use Nylas\Folders\Folder;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ class Smart
     {
         Helper::checkProviderUnit($this->options, true);
 
-        V::doValidate(V::each(V::stringType()->notEmpty()), $labelIds);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelIds);
 
         $params = ['label_ids' => $labelIds];
 
@@ -313,7 +313,7 @@ class Smart
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $threadId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);

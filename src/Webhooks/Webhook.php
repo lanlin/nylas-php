@@ -2,7 +2,7 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
 
 /**

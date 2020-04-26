@@ -1,7 +1,7 @@
 <?php namespace Nylas\Request;
 
 use GuzzleHttp\Pool;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/30
+ * @change 2020/04/26
  */
 class Async
 {
@@ -34,7 +34,7 @@ class Async
      * @return PromiseInterface
      * @throws \Exception
      */
-    public function get(string $api)
+    public function get(string $api) : PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -51,7 +51,7 @@ class Async
      * @return PromiseInterface
      * @throws \Exception
      */
-    public function put(string $api)
+    public function put(string $api) : PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -68,7 +68,7 @@ class Async
      * @return PromiseInterface
      * @throws \Exception
      */
-    public function post(string $api)
+    public function post(string $api) : PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -85,7 +85,7 @@ class Async
      * @return PromiseInterface
      * @throws \Exception
      */
-    public function delete(string $api)
+    public function delete(string $api) : PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -102,7 +102,7 @@ class Async
      * @return PromiseInterface
      * @throws \Exception
      */
-    public function getStream(string $api)
+    public function getStream(string $api) : PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -121,7 +121,7 @@ class Async
      * @return PromiseInterface
      * @throws \Exception
      */
-    public function getSink(string $api, $sink)
+    public function getSink(string $api, $sink) : PromiseInterface
     {
         $rules = V::oneOf(
             V::resourceType(),
@@ -177,7 +177,7 @@ class Async
      * @param \Exception $exception
      * @return array
      */
-    private function whenFailed(\Exception $exception)
+    private function whenFailed(\Exception $exception) : array
     {
         return
         [
@@ -196,7 +196,7 @@ class Async
      * @param bool $headers
      * @return array
      */
-    private function whenSuccess(ResponseInterface $response, bool $headers = false)
+    private function whenSuccess(ResponseInterface $response, bool $headers = false) : ?array
     {
         try
         {

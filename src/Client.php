@@ -23,7 +23,7 @@ use Nylas\Exceptions\NylasException;
  * @method Webhooks\Abs Webhooks()
  *
  * @author lanlin
- * @change 2018/11/26
+ * @change 2020/04/26
  */
 class Client
 {
@@ -33,7 +33,7 @@ class Client
     /**
      * @var Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ class Client
      *
      * @return \Nylas\Utilities\Options
      */
-    public function Options()
+    public function Options() : Options
     {
         return $this->options;
     }

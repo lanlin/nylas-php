@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ use Nylas\Utilities\Validate as V;
  *
  * @info include inline image <img src="cid:file_id">
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Draft
 {
@@ -22,7 +22,7 @@ class Draft
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -41,23 +41,26 @@ class Draft
     /**
      * get drafts list
      *
-     * @param string $anyEmail
+     * @param array $anyEmail
      * @return array
      */
-    public function getDraftsList(string $anyEmail = null)
+    public function getDraftsList($anyEmail) : array
     {
-        $params = ['access_token' => $this->options->getAccessToken()];
+        $params =['access_token' => $this->options->getAccessToken()];
 
-        !empty($anyEmail) && $params['any_email'] = $anyEmail;
+        if (!empty($anyEmail))
+        {
+            $params['any_email'] = Helper::fooToArray($anyEmail);
+        }
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()->notEmpty()),
-            V::keyOptional('any_email', V::arrayVal()->each(V::email(), V::intType()))
+            V::keyOptional('any_email', V::arrayVal()->each(V::email()))
         );
 
         V::doValidate($rule, $params);
 
-        $emails = implode(',', $params['any_email'] ?? []);
+        $emails = implode(',', ($params['any_email'] ?? []));
         $header = ['Authorization' => $params['access_token']];
         $query  = empty($emails) ? [] : ['any_email' => $emails];
 
@@ -76,7 +79,7 @@ class Draft
      * @param array $params
      * @return array
      */
-    public function addDraft(array $params)
+    public function addDraft(array $params) : array
     {
         $rules = $this->getBaseRules();
 
@@ -102,7 +105,7 @@ class Draft
      * @param array $params
      * @return array
      */
-    public function updateDraft(array $params)
+    public function updateDraft(array $params) : array
     {
         $rules = $this->getUpdateRules();
 
@@ -131,12 +134,12 @@ class Draft
      * @param string|array $draftId
      * @return array
      */
-    public function getDraft($draftId)
+    public function getDraft($draftId) : array
     {
         $draftId     = Helper::fooToArray($draftId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $draftId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -152,7 +155,7 @@ class Draft
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -171,12 +174,12 @@ class Draft
      * @param array $params
      * @return array
      */
-    public function deleteDraft(array $params)
+    public function deleteDraft(array $params) : array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::keySet(
+        $rule = V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('version', V::intType()->min(0))
         ));
@@ -196,7 +199,7 @@ class Draft
             ->setFormParams(['version' => $item['version']])
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->delete($target);
             };
@@ -215,11 +218,10 @@ class Draft
      *
      * @return \Respect\Validation\Validator
      */
-    private function arrayOfString()
+    private function arrayOfString() : \Respect\Validation\Validator
     {
         return V::arrayVal()->each(
             V::stringType()->notEmpty(),
-            V::intType()
         );
     }
 
@@ -230,14 +232,13 @@ class Draft
      *
      * @return \Respect\Validation\Validator
      */
-    private function arrayOfObject()
+    private function arrayOfObject() : \Respect\Validation\Validator
     {
         return V::arrayType()->each(
             V::keySet(
                 V::key('name', V::stringType(), false),
                 V::key('email', V::email())
-            ),
-            V::intType()
+            )
         );
     }
 
@@ -248,7 +249,7 @@ class Draft
      *
      * @return array
      */
-    private function getUpdateRules()
+    private function getUpdateRules() : array
     {
         $rules = $this->getBaseRules();
 
@@ -268,7 +269,7 @@ class Draft
      *
      * @return array
      */
-    private function getBaseRules()
+    private function getBaseRules() : array
     {
         return
         [

@@ -8,7 +8,7 @@ use Nylas\Exceptions;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/21
+ * @change 2020/04/26
  */
 class Errors
 {
@@ -18,14 +18,14 @@ class Errors
     /**
      * everything is ok
      */
-    const StatusOK = 200;
+    public const StatusOK = 200;
 
     // ------------------------------------------------------------------------------
 
     /**
      * http status code to exceptions
      */
-    const StatusExceptions =
+    public const StatusExceptions =
     [
         202 => Exceptions\NotReadyException::class,
         400 => Exceptions\BadRequestException::class,

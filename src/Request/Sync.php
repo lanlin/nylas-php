@@ -1,6 +1,6 @@
 <?php namespace Nylas\Request;
 
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
 use Psr\Http\Message\StreamInterface;
 
@@ -10,7 +10,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/11/30
+ * @change 2020/04/26
  */
 class Sync
 {
@@ -135,7 +135,7 @@ class Sync
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
-    public function getStream(string $api)
+    public function getStream(string $api) : \Psr\Http\Message\ResponseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -163,7 +163,7 @@ class Sync
      * @return array
      * @throws \Exception
      */
-    public function getSink(string $api, $sink)
+    public function getSink(string $api, $sink) : array
     {
         $rules = V::oneOf(
             V::resourceType(),

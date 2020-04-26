@@ -3,7 +3,7 @@
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 use ZBateson\MailMimeParser\MailMimeParser;
 
 /**
@@ -13,7 +13,7 @@ use ZBateson\MailMimeParser\MailMimeParser;
  *
  * @info include inline image <img src="cid:file_id">
  * @author lanlin
- * @change 2018/12/18
+ * @change 2020/04/26
  */
 class Message
 {
@@ -23,7 +23,7 @@ class Message
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ class Message
      * @param array $params
      * @return array
      */
-    public function getMessagesList(array $params = [])
+    public function getMessagesList(array $params = []) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -76,7 +76,7 @@ class Message
      * @param string $messageId
      * @return \ZBateson\MailMimeParser\Message
      */
-    public function getRawMessage(string $messageId)
+    public function getRawMessage(string $messageId) : \ZBateson\MailMimeParser\Message
     {
         $rule = V::stringType()->notEmpty();
 
@@ -110,7 +110,7 @@ class Message
      * @param array $params
      * @return array
      */
-    public function updateMessage(array $params)
+    public function updateMessage(array $params) : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -120,7 +120,7 @@ class Message
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
-            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType(), V::intType()))
+            V::keyOptional('label_ids', V::arrayVal()->each(V::stringType()))
         );
 
         V::doValidate($rules, $params);
@@ -147,12 +147,12 @@ class Message
      * @param string|array $messageId
      * @return array
      */
-    public function getMessage($messageId)
+    public function getMessage($messageId) : array
     {
         $messageId   = Helper::fooToArray($messageId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $messageId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -168,7 +168,7 @@ class Message
             ->setPath($id)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
             };
@@ -187,7 +187,7 @@ class Message
      * @link https://docs.nylas.com/reference#messages-1
      * @return \Respect\Validation\Validator
      */
-    private function getMessagesRules()
+    private function getMessagesRules() : \Respect\Validation\Validator
     {
         return V::keySet(
             V::keyOptional('in', V::stringType()->notEmpty()),

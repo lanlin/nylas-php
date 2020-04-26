@@ -2,7 +2,7 @@
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Delta
 {
@@ -20,7 +20,7 @@ class Delta
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ class Delta
      *
      * @return array
      */
-    public function getLatestCursor()
+    public function getLatestCursor() : array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -63,7 +63,7 @@ class Delta
      * @param array $params
      * @return array
      */
-    public function getSetOfDeltas(array $params)
+    public function getSetOfDeltas(array $params) : array
     {
         $rules = $this->getBaseRules();
 
@@ -89,12 +89,10 @@ class Delta
      * @param array $params
      * @return array
      */
-    public function longPollingDelta(array $params)
+    public function longPollingDelta(array $params) : array
     {
-        $rules = $this->getBaseRules();
-        $times = V::key('timeout', V::intType()->min(1));
-
-        array_push($rules, $times);
+        $rules   = $this->getBaseRules();
+        $rules[] = V::key('timeout', V::intType()->min(1));
 
         $accessToken = $this->options->getAccessToken();
 
@@ -143,7 +141,7 @@ class Delta
      *
      * @return array
      */
-    private function getBaseRules()
+    private function getBaseRules() : array
     {
         $types = ['contact', 'event', 'file', 'message', 'draft', 'thread', 'folder', 'label'];
 

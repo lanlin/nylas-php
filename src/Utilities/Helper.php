@@ -8,7 +8,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/17
+ * @change 2020/04/26
  */
 class Helper
 {
@@ -21,7 +21,7 @@ class Helper
      * @param \Nylas\Utilities\Options $options
      * @return bool
      */
-    public static function isLabel(Options $options)
+    public static function isLabel(Options $options) : bool
     {
         return $options->getAccount()['organization_unit'] === 'label';
     }
@@ -35,7 +35,7 @@ class Helper
      * @param bool                     $label
      * @throws \Nylas\Exceptions\NylasException
      */
-    public static function checkProviderUnit(Options $options, bool $label = true)
+    public static function checkProviderUnit(Options $options, bool $label = true) : void
     {
         $unitType = $label ? 'label' : 'folder';
         $thisFine = $options->getAccount()['organization_unit'] === $unitType;

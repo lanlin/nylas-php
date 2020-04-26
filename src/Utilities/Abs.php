@@ -1,5 +1,6 @@
 <?php namespace Nylas\Utilities;
 
+use Nylas\Utilities\Options;
 use Nylas\Exceptions\NylasException;
 
 /**
@@ -18,7 +19,7 @@ trait Abs
     /**
      * @var Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 

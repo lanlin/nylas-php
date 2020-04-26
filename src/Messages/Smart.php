@@ -5,7 +5,7 @@ use Nylas\Folders\Folder;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validate as V;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ use Nylas\Utilities\Validate as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/18
+ * @change 2020/04/26
  */
 class Smart
 {
@@ -23,7 +23,7 @@ class Smart
     /**
      * @var \Nylas\Utilities\Options
      */
-    private $options;
+    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ class Smart
      * @param string|array $labels
      * @return array
      */
-    public function addLabels(string $messageId, $labels)
+    public function addLabels(string $messageId, $labels) : array
     {
         return $this->updateLabels($messageId, $labels);
     }
@@ -60,7 +60,7 @@ class Smart
      * @param string|array $labels
      * @return array
      */
-    public function removeLabels(string $messageId, $labels)
+    public function removeLabels(string $messageId, $labels) : array
     {
         return $this->updateLabels($messageId, [], $labels);
     }
@@ -73,7 +73,7 @@ class Smart
      * @param string $messageId
      * @return array
      */
-    public function archive(string $messageId)
+    public function archive(string $messageId) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, null, ['inbox']) :
@@ -88,7 +88,7 @@ class Smart
      * @param string $messageId
      * @return array
      */
-    public function unarchive(string $messageId)
+    public function unarchive(string $messageId) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, ['inbox'], ['archive']) :
@@ -103,7 +103,7 @@ class Smart
      * @param string $messageId
      * @return array
      */
-    public function trash(string $messageId)
+    public function trash(string $messageId) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, ['trash'], ['inbox']) :
@@ -120,7 +120,7 @@ class Smart
      * @param string $goto
      * @return array
      */
-    public function move(string $messageId, string $from, string $goto)
+    public function move(string $messageId, string $from, string $goto) : array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, [$goto], [$from]) :
@@ -135,7 +135,7 @@ class Smart
      * @param string|array $messageId
      * @return array
      */
-    public function star($messageId)
+    public function star($messageId) : array
     {
         $params = ['starred' => true];
 
@@ -150,7 +150,7 @@ class Smart
      * @param string|array $messageId
      * @return array
      */
-    public function unstar($messageId)
+    public function unstar($messageId) : array
     {
         $params = ['starred' => false];
 
@@ -165,7 +165,7 @@ class Smart
      * @param string|array $messageId
      * @return array
      */
-    public function markAsRead($messageId)
+    public function markAsRead($messageId) : array
     {
         $params = ['unread' => false];
 
@@ -180,7 +180,7 @@ class Smart
      * @param string|array $messageId
      * @return array
      */
-    public function markAsUnread($messageId)
+    public function markAsUnread($messageId) : array
     {
         $params = ['unread' => true];
 
@@ -196,7 +196,7 @@ class Smart
      * @param string $folderId
      * @return array
      */
-    public function moveToFolder($messageId, string $folderId)
+    public function moveToFolder($messageId, string $folderId) : array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -216,11 +216,11 @@ class Smart
      * @param array $labelIds
      * @return array
      */
-    public function moveToLabel($messageId, array $labelIds)
+    public function moveToLabel($messageId, array $labelIds) : array
     {
         Helper::checkProviderUnit($this->options, true);
 
-        V::doValidate(V::each(V::stringType()->notEmpty()), $labelIds);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelIds);
 
         $params = ['label_ids' => $labelIds];
 
@@ -236,7 +236,7 @@ class Smart
      * @param string $folder
      * @return array
      */
-    private function updateFolder(string $messageId, string $folder)
+    private function updateFolder(string $messageId, string $folder) : array
     {
         $folderId   = null;
         $allFolders = (new Folder($this->options))->getFoldersList();
@@ -263,7 +263,7 @@ class Smart
      * @param string|array $del
      * @return array
      */
-    private function updateLabels(string $messageId, $add = [], $del = [])
+    private function updateLabels(string $messageId, $add = [], $del = []) : array
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
@@ -276,24 +276,24 @@ class Smart
         // check all labels
         foreach($allLabels as $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $add);
-            $secB = empty($label['name']) && in_array($label['display_name'], $add);
+            $secA = !empty($label['name']) && in_array($label['name'], $add, true);
+            $secB = empty($label['name']) && in_array($label['display_name'], $add, true);
 
             if ($secA || $secB)
             {
-                array_push($tmpLabels, $label['id']);
+                $tmpLabels[] = $label['id'];
             }
         }
 
         // check current message labels
         foreach($nowLabels as $index => $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $del);
-            $secB = empty($label['name']) && in_array($label['display_name'], $del);
+            $secA = !empty($label['name']) && in_array($label['name'], $del, true);
+            $secB = empty($label['name']) && in_array($label['display_name'], $del, true);
 
             if ($secA || $secB) { continue; }
 
-            array_push($tmpLabels, $label['id']);
+            $tmpLabels[] = $label['id'];
         }
 
         return $this->moveToLabel($messageId, $tmpLabels);
@@ -308,12 +308,12 @@ class Smart
      * @param array $params
      * @return array
      */
-    private function updateOneField($messageId, array $params)
+    private function updateOneField($messageId, array $params) : array
     {
         $messageId    = Helper::fooToArray($messageId);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::each(V::stringType()->notEmpty(), V::intType());
+        $rule = V::simpleArray(V::stringType()->notEmpty());
 
         V::doValidate($rule, $messageId);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -330,7 +330,7 @@ class Smart
             ->setFormParams($params)
             ->setHeaderParams($header);
 
-            $queues[] = function () use ($request, $target)
+            $queues[] = static function () use ($request, $target)
             {
                 return $request->put($target);
             };
