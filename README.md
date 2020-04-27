@@ -4,28 +4,30 @@
 
 # Nylas PHP SDK
 
-PHP bindings for the Nylas REST API (V2.0). https://docs.nylas.com/reference</br>
+PHP bindings for the Nylas REST API (V2.1). https://docs.nylas.com/reference</br>
 I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
 
 **What's new?**</br>
 
-1. API 2.0 support</br>
+1. API 2.1 support</br>
 2. All Nylas APIs have been implemented within this SDK.</br>
-3. Chained calls and good code hints, easy to use</br>
-4. Support send & get message in raw type</br>
-5. Support async batch upload & download</br>
+3. Support send & get message in raw type</br>
+4. Support async batch upload & download</br>
    -- Contact picture download</br>
    -- File upload & download<br>
-6. The parameters that required by methods almost the same as nylas official api required.</br>
-7. Support async batch get & delete & send (since version 3.1).
+5. The parameters that required by methods almost the same as nylas official api required.</br>
+6. Support async batch get & delete & send (since version 3.1).
+7. Chained calls and good code hints, easy to use</br>
 
-`(new \Nylas\Client($options))->`![apis](media/apis.png)</br>
+<div align="center">
+  <img width="664" height="596" src="media/autocomplete.gif" />
+</div>
 
 
 ## Installation
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
-You can install it by running
+You can install it by running (PHP 7.4 required since version 4.0)
 
 ```shell
 composer require lanlin/nylas-php
@@ -54,6 +56,7 @@ $options =
     'log_file'         => dirname(__FILE__) . '/test.log',
     'account_id'       => 'your account id',
     'access_token'     => 'your access token',
+
     'client_id'        => 'your client id',        // required
     'client_secret'    => 'your client secret'     // required
     'off_decode_error' => false,                   // disable json_decode error or not, default enable.
@@ -66,8 +69,12 @@ $nylas = new Client($options);
 
 You can modify options with these methods:
 
-$nylas->Options()-></br>
-![option](media/option.png)</br>
+```php
+$nylas->Options()->
+```
+<div align="center">
+  <img width="515" height="307" src="media/options.png" />
+</div>
 
 
 ### Batch Request
@@ -144,32 +151,32 @@ For more detail, you can view the tests or the source code of validation rules f
 
 ### [Accounts](https://docs.nylas.com/reference#accounts)
 
-$nylas->Accounts()->Account()-></br>
-![accounts](media/accounts.png)</br>
-
-$nylas->Accounts()->Manage()-></br>
-![manage](media/manage.png)</br>
+```php
+$nylas->Accounts()->Account()->xxx();
+$nylas->Accounts()->Manage()->xxx();
+```
 
 
 ### [Authentication](https://docs.nylas.com/reference#authentication)
 
-$nylas->Authentication()->Hosted()-></br>
-![hosted](media/hosted.png)</br>
-
-$nylas->Authentication()->Native()-></br>
-![native](media/native.png)</br>
+```php
+$nylas->Authentication()->Hosted()->xxx();
+$nylas->Authentication()->Native()->xxx();
+```
 
 
 ### [Calendars](https://docs.nylas.com/reference#calendars)
 
-$nylas->Calendars()->Calendar()-></br>
-![calendar](media/calendar.png)</br>
+```php
+$nylas->Calendars()->Calendar()->xxx();
+```
 
 
 ### [Contacts](https://docs.nylas.com/reference#contacts-intro)
 
-$nylas->Contacts()->Contact()-></br>
-![contact](media/contact.png)</br>
+```php
+$nylas->Contacts()->Contact()->xxx();
+```
 
 ```php
 // multiple contact pictures download
@@ -192,29 +199,31 @@ $nylas->Contacts()->Contact()->getContactPicture($params);
 
 ### [Deltas](https://docs.nylas.com/reference#deltas)
 
-$nylas->Deltas()->Delta()-></br>
-![delta](media/delta.png)</br>
+```php
+$nylas->Deltas()->Delta()->xxx();
+```
 
 
 ### [Draft](https://docs.nylas.com/reference#drafts)
 
-$nylas->Drafts()->Draft()-></br>
-![draft](media/draft.png)</br>
-
-$nylas->Drafts()->Sending()-></br>
-![send-draft](media/send-draft.png)</br>
+```php
+$nylas->Drafts()->Draft()->xxx();
+$nylas->Drafts()->Sending()->xxx();
+```
 
 
 ### [Events](https://docs.nylas.com/reference#events)
 
-$nylas->Events()->Event()-></br>
-![event](media/event.png)</br>
+```php
+$nylas->Events()->Event()->xxx();
+```
 
 
 ### [Files](https://docs.nylas.com/reference#files)
 
-$nylas->Files()->File()-></br>
-![file](media/file.png)</br>
+```php
+$nylas->Files()->File()->xxx();
+```
 
 
 ```php
@@ -255,47 +264,42 @@ $nylas->Files()->File()->uploadFile($params);
 
 ### [Folders](https://docs.nylas.com/reference#folders)
 
-$nylas->Folders()->Folder()-></br>
-![folder](media/folder.png)</br>
+```php
+$nylas->Folders()->Folder()->xxx();
+```
 
 
 ### [Labels](https://docs.nylas.com/reference#labels)
 
-$nylas->Labels()->Label()-></br>
-![label](media/label.png)</br>
+```php
+$nylas->Labels()->Label()->xxx();
+```
 
 
 ### [Messages](https://docs.nylas.com/reference#messages)
 
-$nylas->Messages()->Message()-></br>
-![message](media/message.png)</br>
-
-$nylas->Messages()->Search()-></br>
-![search-message](media/search-message.png)</br>
-
-$nylas->Messages()->Sending()-></br>
-![send-message](media/send-message.png)</br>
-
-$nylas->Messages()->Smart()-></br>
-![message-smart](media/message-smart.png)</br>
+```php
+$nylas->Messages()->Message()->xxx();
+$nylas->Messages()->Search()->xxx();
+$nylas->Messages()->Sending()->xxx();
+$nylas->Messages()->Smart()->xxx();
+```
 
 
 ### [Threads](https://docs.nylas.com/reference#threads)
 
-$nylas->Threads()->Search()-></br>
-![search-thread](media/search-thread.png)</br>
-
-$nylas->Threads()->Thread()-></br>
-![thread](media/thread.png)</br>
-
-$nylas->Threads()->Smart()-></br>
-![thread-smart](media/thread-smart.png)</br>
+```php
+$nylas->Threads()->Search()->xxx();
+$nylas->Threads()->Thread()->xxx();
+$nylas->Threads()->Smart()->xxx();
+```
 
 
 ### [Webhooks](https://docs.nylas.com/reference#webhooks)
 
-$nylas->Webhooks()->Webhook()-></br>
-![webhook](media/webhook.png)</br>
+```php
+$nylas->Webhooks()->Webhook()->xxx();
+```
 
 
 ## Contributing
