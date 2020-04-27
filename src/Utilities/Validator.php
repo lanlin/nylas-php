@@ -1,10 +1,10 @@
 <?php namespace Nylas\Utilities;
 
+use finfo;
 use Nylas\Exceptions\NylasException;
 use Respect\Validation\Factory;
 use Respect\Validation\Rules\AllOf;
 use Respect\Validation\Validatable;
-use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Exceptions\NestedValidationException;
 
 /**
@@ -70,7 +70,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator hexRgbColor()
  * @method static Validator iban()
  * @method static Validator identical($value)
- * @method static Validator image(\finfo $fileInfo = null)
+ * @method static Validator image(finfo $fileInfo = null)
  * @method static Validator imei()
  * @method static Validator in($haystack, bool $compareIdentical = false)
  * @method static Validator infinite()
@@ -162,79 +162,12 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator xdigit(string ...$additionalChars)
  * @method static Validator yes($useLocale = false)
  * @method static Validator zend($validator, array $params = null)
- * @method static Validator sf(Constraint $constraint, ValidatorInterface $validator = null)
  *
  * @author lanlin
  * @change 2020/04/26
  */
 class Validator extends AllOf
 {
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * {@inheritDoc}
-     */
-    public function check($input): void
-    {
-        try
-        {
-            parent::check($input);
-        }
-        catch (ValidationException $exception)
-        {
-            if ($this->template && \count($this->getRules()) === 1)
-            {
-                $exception->updateTemplate($this->template);
-            }
-
-            throw $exception;
-        }
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * Creates a new Validator instance with a rule that was called on the static method.
-     *
-     * @param  string   $ruleName
-     * @param  mixed[]  $arguments
-     *
-     * @return \Nylas\Utilities\Validator
-     * @throws \Respect\Validation\Exceptions\ComponentException
-     */
-    public static function __callStatic(string $ruleName, array $arguments): self
-    {
-        return self::create()->__call($ruleName, $arguments);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * Create a new rule by the name of the method and adds the rule to the chain.
-     *
-     * @param  string   $ruleName
-     * @param  mixed[]  $arguments
-     *
-     * @return \Nylas\Utilities\Validator
-     * @throws \Respect\Validation\Exceptions\ComponentException
-     */
-    public function __call(string $ruleName, array $arguments): self
-    {
-        $this->addRule(Factory::getDefaultInstance()->rule($ruleName, $arguments));
-
-        return $this;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * Create instance validator.
-     */
-    public static function create(): self
-    {
-        return new self();
-    }
 
     // ------------------------------------------------------------------------------
 
@@ -280,6 +213,48 @@ class Validator extends AllOf
             self::each($referenceValidator),
             self::call('array_keys', self::each(self::intType()))
         );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Create a new rule by the name of the method and adds the rule to the chain.
+     *
+     * @param  string   $ruleName
+     * @param  mixed[]  $arguments
+     * @return self
+     */
+    public function __call(string $ruleName, array $arguments): self
+    {
+        $this->addRule(Factory::getDefaultInstance()->rule($ruleName, $arguments));
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Creates a new Validator instance with a rule that was called on the static method.
+     *
+     * @param  string   $ruleName
+     * @param  mixed[]  $arguments
+     * @return self
+     */
+    public static function __callStatic(string $ruleName, array $arguments): self
+    {
+        return self::create()->__call($ruleName, $arguments);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * create instance
+     *
+     * @return static
+     */
+    private static function create() : self
+    {
+        return new self();
     }
 
     // ------------------------------------------------------------------------------
