@@ -24,10 +24,10 @@ I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in futur
 </div>
 
 
-## Installation
+## Installation (PHP 7.4 required since version 4.0)
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
-You can install it by running (PHP 7.4 required since version 4.0)
+You can install it by running
 
 ```shell
 composer require lanlin/nylas-php
