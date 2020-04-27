@@ -40,4 +40,37 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
+    public function testGetTokenInfo() : void
+    {
+        $data = self::$api->Accounts()->Manage()->getTokenInfo();
+
+        $this->assertArrayHasKey('state', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testGetApplication() : void
+    {
+        $data = self::$api->Accounts()->Manage()->getApplication();
+
+        $this->assertArrayHasKey('application_name', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testUpdateApplication() : void
+    {
+        $param =
+        [
+            'application_name' => 'test_'.time(),
+            'redirect_uris' => ['http://www.test-nylas-test.com']
+        ];
+
+        $data = self::$api->Accounts()->Manage()->updateApplication($param);
+
+        $this->assertArrayHasKey('application_name', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
 }

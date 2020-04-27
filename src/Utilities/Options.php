@@ -94,6 +94,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * set access token
+     *
      * @param string $token
      */
     public function setAccessToken(string $token) : void
@@ -109,6 +111,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get access token
+     *
      * @return string
      */
     public function getAccessToken() : ?string
@@ -119,6 +123,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * set account id
+     *
      * @param string $id
      */
     public function setAccountId(string $id) : void
@@ -129,6 +135,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get account id
+     *
      * @return string
      */
     public function getAccountId() : ?string
@@ -139,6 +147,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get server
+     *
      * @return string
      */
     public function getServer() : string
@@ -149,6 +159,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * enable/disable debug
+     *
      * @param bool $debug
      */
     public function setDebug(bool $debug) : void
@@ -159,6 +171,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * set log file
+     *
      * @param string $logFile
      */
     public function setLogFile(string $logFile) : void
@@ -169,6 +183,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * enable/disable decode error (true => close, false => open)
+     *
      * @param bool $off
      */
     public function setOffDecodeError(bool $off) : void
@@ -179,6 +195,18 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get decode error set
+     */
+    public function getOffDecodeError() : bool
+    {
+        return $this->offDecodeError;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set client id & secret
+     *
      * @param string $clientId
      * @param string $clientSecret
      */
@@ -191,6 +219,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get client id & secret
+     *
      * @return array
      */
     public function getClientApps() : array
@@ -205,6 +235,8 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get all configure options
+     *
      * @return array
      */
     public function getAllOptions() : array
@@ -226,6 +258,8 @@ class Options
 
     /**
      * get sync request instance
+     *
+     * @return \Nylas\Request\Sync
      */
     public function getSync() : Sync
     {
@@ -245,6 +279,8 @@ class Options
 
     /**
      * get async request instance
+     *
+     * @return \Nylas\Request\Async
      */
     public function getAsync() : Async
     {

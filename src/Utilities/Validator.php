@@ -272,8 +272,10 @@ class Validator extends AllOf
      * @param  \Respect\Validation\Validatable  $referenceValidator
      * @return self
      */
-    public static function simpleArray(Validatable $referenceValidator) : self
+    public static function simpleArray(Validatable $referenceValidator = null) : self
     {
+        $referenceValidator = $referenceValidator ?? self::stringType()->notEmpty();
+
         return self::allOf(
             self::each($referenceValidator),
             self::call('array_keys', self::each(self::intType()))

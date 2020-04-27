@@ -7,7 +7,7 @@
  *
  * @link https://changelog.nylas.com/
  * @link https://docs.nylas.com/reference#api-changelog
- * @version 2.0 (2018-09-01)
+ * @version 2.1 (2020/04/27)
  *
  * @author lanlin
  * @change 2020/04/26
@@ -33,6 +33,8 @@ class API
 
         // Accounts
         'account'            => '/account',
+        'manageApp'          => '/a/%s',
+        'tokenInfo'          => '/a/%s/accounts/%s/token-info',
         'ipAddresses'        => '/a/%s/accounts/%s/ip_addresses',
         'listAnAccount'      => '/a/%s/accounts/%s',
         'listAllAccounts'    => '/a/%s/accounts',
@@ -48,7 +50,7 @@ class API
         'messages'    => '/messages',
         'oneMessage'  => '/messages/%s',
 
-        // Folders
+        // Folders (new PUT folder)
         'folders'     => '/folders',
         'oneFolder'   => '/folders/%s',
 
@@ -88,8 +90,8 @@ class API
         'searchMessages' => '/messages/search',
 
         // Webhooks
-        'webhooks'    => '/webhooks',
-        'oneWebhook'  => '/webhooks/%s',
+        'Webhooks'   => '/a/%s/webhooks',
+        'oneWebhook' => '/a/%s/webhooks/%s',
 
         // Deltas
         'delta'              => '/delta',

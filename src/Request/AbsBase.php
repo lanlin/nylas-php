@@ -254,7 +254,7 @@ trait AbsBase
         }
 
         $data = $response->getBody()->getContents();
-        $temp = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        $temp = json_decode($data, true, 512);
         $errs = JSON_ERROR_NONE !== json_last_error();
 
         if ($errs && $this->offDecodeError)

@@ -11,7 +11,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2018/12/20
+ * @change 2020/04/27
  */
 class Webhook
 {
@@ -114,7 +114,15 @@ class Webhook
      */
     public function parseNotification(string $data) : array
     {
-        $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        $data = json_decode($data, true, 512);
+        $errs = JSON_ERROR_NONE !== json_last_error();
+
+        // when not close the decode error
+        if ($errs && !$this->options->getOffDecodeError())
+        {
+            $msg = 'Unable to parse response body into JSON: ';
+            throw new NylasException($msg . json_last_error());
+        }
 
         // check deltas
         if (!isset($data['deltas']))
@@ -181,6 +189,108 @@ class Webhook
         ->setPath($params['client_id'], $params['id'])
         ->setHeaderParams($header)
         ->get(API::LIST['oneWebhook']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * create a webhook
+     *
+     * @param array $data
+     * @return array
+     */
+    public function createWebhook(array $data) : array
+    {
+        $params = $this->options->getClientApps();
+
+        $rulesA = V::keySet(
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_secret', V::stringType()->notEmpty())
+        );
+
+        $rulesB = V::keySet(
+            V::key('state', V::in(['active', 'inactive'])),
+            V::key('triggers', V::simpleArray()),
+            V::key('callback_url', V::url())
+        );
+
+        V::doValidate($rulesA, $params);
+        V::doValidate($rulesB, $data);
+
+        $header = ['Authorization' => $params['client_secret']];
+
+        return $this->options
+            ->getSync()
+            ->setPath($params['client_id'])
+            ->setFormParams($data)
+            ->setHeaderParams($header)
+            ->post(API::LIST['webhooks']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * update webhook state
+     *
+     * @param  string  $webhookId
+     * @param  bool    $enable
+     * @return array
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function updateWebhook(string $webhookId, bool $enable = true) : array
+    {
+        $params = $this->options->getClientApps();
+
+        $params['id'] = $webhookId;
+
+        $rules = V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_secret', V::stringType()->notEmpty())
+        );
+
+        V::doValidate($rules, $params);
+
+        $state  = $enable ? 'active' : 'inactive';
+        $header = ['Authorization' => $params['client_secret']];
+
+        return $this->options
+            ->getSync()
+            ->setPath($params['client_id'], $params['id'])
+            ->setFormParams(compact('state'))
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneWebhook']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * update webhook state
+     *
+     * @param  string  $webhookId
+     * @throws \Nylas\Exceptions\NylasException
+     */
+    public function deleteWebhook(string $webhookId) : void
+    {
+        $params = $this->options->getClientApps();
+
+        $params['id'] = $webhookId;
+
+        $rules = V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_secret', V::stringType()->notEmpty())
+        );
+
+        V::doValidate($rules, $params);
+
+        $header = ['Authorization' => $params['client_secret']];
+
+        $this->options
+            ->getSync()
+            ->setPath($params['client_id'], $params['id'])
+            ->setHeaderParams($header)
+            ->delete(API::LIST['oneWebhook']);
     }
 
     // ------------------------------------------------------------------------------

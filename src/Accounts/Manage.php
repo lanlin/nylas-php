@@ -103,12 +103,11 @@ class Manage
     /**
      * get account info
      *
-     * @param string $accountId
      * @return array
      */
-    public function getAccountInfo(string $accountId = null) : array
+    public function getAccountInfo() : array
     {
-        $accountId = $accountId ?? $this->options->getAccountId();
+        $accountId = $this->options->getAccountId();
 
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -125,12 +124,11 @@ class Manage
     /**
      * re-active account
      *
-     * @param string $accountId
      * @return array
      */
-    public function reactiveAccount(string $accountId = null) : array
+    public function reactiveAccount() : array
     {
-        $accountId = $accountId ?? $this->options->getAccountId();
+        $accountId = $this->options->getAccountId();
 
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -147,12 +145,11 @@ class Manage
     /**
      * cancel account
      *
-     * @param string $accountId
      * @return array
      */
-    public function cancelAccount(string $accountId = null) : array
+    public function cancelAccount() : array
     {
-        $accountId = $accountId ?? $this->options->getAccountId();
+        $accountId = $this->options->getAccountId();
 
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -181,6 +178,77 @@ class Manage
         ->setPath($client['client_id'])
         ->setHeaderParams($header)
         ->get(API::LIST['ipAddresses']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get information about an account's access_token
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getTokenInfo() : array
+    {
+        $accountId = $this->options->getAccountId();
+
+        $client = $this->options->getClientApps();
+        $header = ['Authorization' => $client['client_secret']];
+
+        return $this->options
+            ->getSync()
+            ->setPath($client['client_id'], $accountId)
+            ->setHeaderParams($header)
+            ->get(API::LIST['tokenInfo']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get information about a Nylas application
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getApplication() : array
+    {
+        $client = $this->options->getClientApps();
+        $header = ['Authorization' => $client['client_secret']];
+
+        return $this->options
+            ->getSync()
+            ->setPath($client['client_id'])
+            ->setHeaderParams($header)
+            ->get(API::LIST['manageApp']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * update details of a Nylas application
+     *
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     */
+    public function updateApplication(array $params) : array
+    {
+        $rules = V::keySet(
+            V::keyOptional('application_name', V::stringType()->notEmpty()),
+            V::key('redirect_uris', V::simpleArray(V::url())),
+        );
+
+        V::doValidate($rules, $params);
+
+        $client = $this->options->getClientApps();
+        $header = ['Authorization' => $client['client_secret']];
+
+        return $this->options
+            ->getSync()
+            ->setPath($client['client_id'])
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['manageApp']);
     }
 
     // ------------------------------------------------------------------------------
