@@ -319,7 +319,7 @@ class Contact
             V::keyOptional('given_name', V::stringType()->notEmpty()),
             V::keyOptional('middle_name', V::stringType()->notEmpty()),
             V::keyOptional('surname', V::stringType()->notEmpty()),
-            V::keyOptional('birthday', V::date('c')),
+            V::keyOptional('birthday', V::date('Y-m-d')),
             V::keyOptional('suffix', V::stringType()->notEmpty()),
             V::keyOptional('nickname', V::stringType()->notEmpty()),
 

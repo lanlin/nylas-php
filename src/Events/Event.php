@@ -350,13 +350,13 @@ class Event
      */
     private function timeRules() : \Nylas\Utilities\Validator
     {
-        return V::oneOf(
+        return V::anyOf(
 
             // time
             V::keySet(V::key('time', V::timestampType())),
 
             // date
-            V::keySet(V::key('date', V::date('c'))),
+            V::keySet(V::key('date', V::date('Y-m-d'))),
 
             // timespan
             V::keySet(
@@ -366,8 +366,8 @@ class Event
 
             // date span
             V::keySet(
-                V::key('end_date', V::date('c')),
-                V::key('start_date', V::date('c'))
+                V::key('end_date', V::date('Y-m-d')),
+                V::key('start_date', V::date('Y-m-d'))
             )
         );
     }
