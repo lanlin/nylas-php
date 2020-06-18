@@ -11,12 +11,17 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/18
  */
 class Options
 {
 
     // ------------------------------------------------------------------------------
+
+    /**
+     * @var mixed
+     */
+    private $logFile;
 
     /**
      * @var bool
@@ -27,11 +32,6 @@ class Options
      * @var bool
      */
     private bool $offDecodeError = false;
-
-    /**
-     * @var string
-     */
-    private string $logFile;
 
     /**
      * @var string
@@ -69,7 +69,7 @@ class Options
     {
         $rules = V::keySet(
             V::key('debug', V::boolType(), false),
-            V::key('log_file', V::stringType()->notEmpty(), false),
+            V::key('log_file', $this->getLogFileRule(), false),
             V::key('account_id', V::stringType()->notEmpty(), false),
             V::key('access_token', V::stringType()->notEmpty(), false),
             V::key('off_decode_error', V::boolType(), false),
@@ -173,10 +173,12 @@ class Options
     /**
      * set log file
      *
-     * @param string $logFile
+     * @param mixed $logFile
      */
-    public function setLogFile(string $logFile) : void
+    public function setLogFile($logFile) : void
     {
+        V::doValidate($this->getLogFileRule(), $logFile);
+
         $this->logFile = $logFile;
     }
 
@@ -263,14 +265,9 @@ class Options
      */
     public function getSync() : Sync
     {
-        $debug  = $this->debug;
         $server = $this->getServer();
 
-        // when set log file
-        if ($this->debug && !empty($this->logFile))
-        {
-            $debug = fopen($this->logFile, 'ab');
-        }
+        $debug = $this->getLoggerHandler();
 
         return new Sync($server, $debug, $this->offDecodeError);
     }
@@ -284,14 +281,9 @@ class Options
      */
     public function getAsync() : Async
     {
-        $debug  = $this->debug;
         $server = $this->getServer();
 
-        // when set log file
-        if ($this->debug && !empty($this->logFile))
-        {
-            $debug = fopen($this->logFile, 'ab');
-        }
+        $debug = $this->getLoggerHandler();
 
         return new Async($server, $debug, $this->offDecodeError);
     }
@@ -319,6 +311,44 @@ class Options
         ];
 
         return array_merge($temp, $this->accountInfo);
+    }
+
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get log file rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function getLogFileRule(): V
+    {
+        return V::oneOf(
+            V::resourceType(),
+            V::stringType()->notEmpty()
+        );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get logger handler
+     *
+     * @return mixed
+     */
+    private function getLoggerHandler()
+    {
+        switch (true)
+        {
+            case is_string($this->logFile):
+            return fopen($this->logFile, 'ab');
+
+            case is_resource($this->logFile):
+            return $this->logFile;
+
+            default:
+            return $this->debug;
+        }
     }
 
     // ------------------------------------------------------------------------------
