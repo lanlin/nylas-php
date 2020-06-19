@@ -177,7 +177,9 @@ class Options
      */
     public function setLogFile($logFile) : void
     {
-        V::doValidate($this->getLogFileRule(), $logFile);
+        if ($logFile !== null) {
+            V::doValidate($this->getLogFileRule(), $logFile);
+        }
 
         $this->logFile = $logFile;
     }
