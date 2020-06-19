@@ -97,7 +97,6 @@ return \PhpCsFixer\Config::create()->setRules([
      ]],
 ])
 ->setFinder(\PhpCsFixer\Finder::create()
-    ->setRiskyAllowed(true)
     ->exclude('verdor')
     ->in(__DIR__)
 );
