@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,13 +9,14 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class HostedTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetOAuthAuthorize() : void
+    public function testGetOAuthAuthorize(): void
     {
         $params =
         [
@@ -24,9 +27,8 @@ class HostedTest extends Abs
 
         $data = self::$api->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
 
-        $this->assertTrue(is_string($data));
+        $this->assertTrue(\is_string($data));
     }
 
     // ------------------------------------------------------------------------------
-
 }

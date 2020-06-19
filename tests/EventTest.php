@@ -1,4 +1,8 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
+
+use Exception;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,22 +11,23 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class EventTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetEventList() : void
+    public function testGetEventList(): void
     {
         $data = self::$api->Events()->Event()->getEventsList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetEvent() : void
+    public function testGetEvent(): void
     {
         $params = ['id' => 'ejom4k3o5qor5ooyh8yx7hgbw'];
 
@@ -33,12 +38,12 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddEvent() : void
+    public function testAddEvent(): void
     {
         $params =
         [
             'calendar_id' => '1fskeosmvaffwuffq774enx5p',
-            'when'        => ['time' => time()],
+            'when'        => ['time' => \time()],
             'title'       => 'nothing...',
         ];
 
@@ -49,12 +54,12 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateEvent() : void
+    public function testUpdateEvent(): void
     {
         $params =
         [
             'id'      => '47137b6urkg0cf738o7is2aa3',
-            'when'    => ['time' => time()]
+            'when'    => ['time' => \time()],
         ];
 
         $data = self::$api->Events()->Event()->updateEvent($params);
@@ -64,7 +69,7 @@ class EventTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteDraft() : void
+    public function testDeleteDraft(): void
     {
         $params =
         [
@@ -76,7 +81,7 @@ class EventTest extends Abs
             $back = true;
             self::$api->Events()->Event()->deleteEvent($params);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             $back = false;
         }
@@ -85,5 +90,4 @@ class EventTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

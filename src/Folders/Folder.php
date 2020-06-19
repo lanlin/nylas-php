@@ -1,4 +1,6 @@
-<?php namespace Nylas\Folders;
+<?php
+
+namespace Nylas\Folders;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -15,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Folder
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -42,7 +43,7 @@ class Folder
      *
      * @return array
      */
-    public function getFoldersList() : array
+    public function getFoldersList(): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -55,9 +56,9 @@ class Folder
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setHeaderParams($header)
-        ->get(API::LIST['folders']);
+            ->getSync()
+            ->setHeaderParams($header)
+            ->get(API::LIST['folders']);
     }
 
     // ------------------------------------------------------------------------------
@@ -66,9 +67,10 @@ class Folder
      * add folder
      *
      * @param string $displayName
+     *
      * @return array
      */
-    public function addFolder(string $displayName = null) : array
+    public function addFolder(?string $displayName = null): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -81,10 +83,10 @@ class Folder
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['folders']);
+            ->getSync()
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['folders']);
     }
 
     // ------------------------------------------------------------------------------
@@ -93,9 +95,10 @@ class Folder
      * update folder
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateFolder(array $params) : array
+    public function updateFolder(array $params): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -115,11 +118,11 @@ class Folder
         unset($params['id']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneFolder']);
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneFolder']);
     }
 
     // ------------------------------------------------------------------------------
@@ -128,9 +131,10 @@ class Folder
      * get folder
      *
      * @param mixed $folderId string|string[]
+     *
      * @return array
      */
-    public function getFolder($folderId) : array
+    public function getFolder($folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -149,9 +153,9 @@ class Folder
         foreach ($folderId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -170,9 +174,10 @@ class Folder
      * delete folder
      *
      * @param mixed $folderId string|string[]
+     *
      * @return array
      */
-    public function deleteFolder($folderId) : array
+    public function deleteFolder($folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -191,9 +196,9 @@ class Folder
         foreach ($folderId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -207,5 +212,4 @@ class Folder
     }
 
     // ------------------------------------------------------------------------------
-
 }

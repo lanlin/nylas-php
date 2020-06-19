@@ -1,5 +1,8 @@
-<?php namespace NylasTest;
+<?php
 
+namespace NylasTest;
+
+use Exception;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -8,22 +11,23 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class FolderTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetFolderList() : void
+    public function testGetFolderList(): void
     {
         $data = self::$api->Folders()->Folder()->getFoldersList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFolder() : void
+    public function testGetFolder(): void
     {
         $id = 'ejom4k3o5qor5ooyh8yx7hgbw';
 
@@ -34,9 +38,9 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddFolder() : void
+    public function testAddFolder(): void
     {
-        $name = 'test_folder'.uniqid();
+        $name = 'test_folder'.\uniqid();
 
         $data = self::$api->Folders()->Folder()->addFolder($name);
 
@@ -45,12 +49,12 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateFolder() : void
+    public function testUpdateFolder(): void
     {
         $params =
         [
             'id'           => '47137b6urkg0cf738o7is2aa3',
-            'display_name' => 'woo---'
+            'display_name' => 'woo---',
         ];
 
         $data = self::$api->Folders()->Folder()->updateFolder($params);
@@ -60,7 +64,7 @@ class FolderTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteFolder() : void
+    public function testDeleteFolder(): void
     {
         $id = '47137b6urkg0cf738o7is2aa3';
 
@@ -69,7 +73,7 @@ class FolderTest extends Abs
             $back = true;
             self::$api->Folders()->Folder()->deleteFolder($id);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             $back = false;
         }
@@ -78,5 +82,4 @@ class FolderTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

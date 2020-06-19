@@ -1,4 +1,6 @@
-<?php namespace Nylas\Authentication;
+<?php
+
+namespace Nylas\Authentication;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
@@ -14,7 +16,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Native
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -22,7 +23,7 @@ class Native
      */
     private array $providers =
     [
-        'gmail', 'yahoo', 'exchange', 'outlook', 'imap', 'icloud', 'hotmail', 'aol'
+        'gmail', 'yahoo', 'exchange', 'outlook', 'imap', 'icloud', 'hotmail', 'aol',
     ];
 
     // ------------------------------------------------------------------------------
@@ -50,9 +51,10 @@ class Native
      * connect token
      *
      * @param string $code
+     *
      * @return array
      */
-    public function postConnectToken(string $code) : array
+    public function postConnectToken(string $code): array
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
@@ -61,9 +63,9 @@ class Native
         $params['code'] = $code;
 
         return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->post(API::LIST['connectToken']);
+            ->getSync()
+            ->setFormParams($params)
+            ->post(API::LIST['connectToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -72,9 +74,10 @@ class Native
      * connect authorize
      *
      * @param array $params
+     *
      * @return array
      */
-    public function postConnectAuthorize(array $params) : array
+    public function postConnectAuthorize(array $params): array
     {
         $setting = $this->settingsRules($params);
 
@@ -92,9 +95,9 @@ class Native
         V::doValidate($rules, $params);
 
         return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->post(API::LIST['connectAuthorize']);
+            ->getSync()
+            ->setFormParams($params)
+            ->post(API::LIST['connectAuthorize']);
     }
 
     // ------------------------------------------------------------------------------
@@ -103,9 +106,10 @@ class Native
      * validate settings params
      *
      * @param array $params
+     *
      * @return \Nylas\Utilities\Validator
      */
-    private function settingsRules(array $params) : \Nylas\Utilities\Validator
+    private function settingsRules(array $params): V
     {
         $provider = $params['provider'] ?? 'imap';
 
@@ -117,7 +121,9 @@ class Native
             case 'hotmail': return $this->knownProviderRule();
 
             case 'imap':     return $this->imapProviderRule();
+
             case 'gmail':    return $this->gmailProviderRule();
+
             case 'exchange': return $this->exchangeProviderRule();
 
             default: return $this->imapProviderRule();
@@ -129,7 +135,7 @@ class Native
     /**
      * @return \Nylas\Utilities\Validator
      */
-    private function knownProviderRule() : \Nylas\Utilities\Validator
+    private function knownProviderRule(): V
     {
         return V::keySet(V::key('password', V::stringType()->notEmpty()));
     }
@@ -141,7 +147,7 @@ class Native
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function gmailProviderRule() : \Nylas\Utilities\Validator
+    private function gmailProviderRule(): V
     {
         return V::keySet(
             V::key('google_client_id', V::stringType()->notEmpty()),
@@ -157,7 +163,7 @@ class Native
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function exchangeProviderRule() : \Nylas\Utilities\Validator
+    private function exchangeProviderRule(): V
     {
         return V::keySet(
             V::key('username', V::stringType()->notEmpty()),
@@ -173,14 +179,13 @@ class Native
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function imapProviderRule() : \Nylas\Utilities\Validator
+    private function imapProviderRule(): V
     {
         return V::keySet(
             V::key('imap_host', V::stringType()->notEmpty()),
             V::key('imap_port', V::stringType()->notEmpty()),
             V::key('imap_username', V::stringType()->notEmpty()),
             V::key('imap_password', V::stringType()->notEmpty()),
-
             V::key('smtp_host', V::stringType()->notEmpty()),
             V::key('smtp_port', V::stringType()->notEmpty()),
             V::key('smtp_username', V::stringType()->notEmpty()),
@@ -190,5 +195,4 @@ class Native
     }
 
     // ------------------------------------------------------------------------------
-
 }

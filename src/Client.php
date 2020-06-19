@@ -1,4 +1,6 @@
-<?php namespace Nylas;
+<?php
+
+namespace Nylas;
 
 use Nylas\Utilities\Options;
 use Nylas\Exceptions\NylasException;
@@ -8,26 +10,25 @@ use Nylas\Exceptions\NylasException;
  * Nylas Client
  * ----------------------------------------------------------------------------------
  *
- * @method Accounts\Abs Accounts()
+ * @method Accounts\Abs       Accounts()
  * @method Authentication\Abs Authentication()
- * @method Calendars\Abs Calendars()
- * @method Contacts\Abs Contacts()
- * @method Deltas\Abs Deltas()
- * @method Drafts\Abs Drafts()
- * @method Events\Abs Events()
- * @method Files\Abs Files()
- * @method Folders\Abs Folders()
- * @method Labels\Abs Labels()
- * @method Messages\Abs Messages()
- * @method Threads\Abs Threads()
- * @method Webhooks\Abs Webhooks()
+ * @method Calendars\Abs      Calendars()
+ * @method Contacts\Abs       Contacts()
+ * @method Deltas\Abs         Deltas()
+ * @method Drafts\Abs         Drafts()
+ * @method Events\Abs         Events()
+ * @method Files\Abs          Files()
+ * @method Folders\Abs        Folders()
+ * @method Labels\Abs         Labels()
+ * @method Messages\Abs       Messages()
+ * @method Threads\Abs        Threads()
+ * @method Webhooks\Abs       Webhooks()
  *
  * @author lanlin
  * @change 2020/04/26
  */
 class Client
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -41,15 +42,15 @@ class Client
      * Client constructor.
      *
      * @param array $options
-     * [
-     *     'debug'            => bool,
-     *     'log_file'         => 'log file path',
-     *     'account_id'       => '',
-     *     'access_token'     => '',
-     *     'client_id'        => 'required',
-     *     'client_secret'    => 'required',
-     *     'off_decode_error' => bool,
-     * ]
+     *                       [
+     *                       'debug'            => bool,
+     *                       'log_file'         => 'log file path',
+     *                       'account_id'       => '',
+     *                       'access_token'     => '',
+     *                       'client_id'        => 'required',
+     *                       'client_secret'    => 'required',
+     *                       'off_decode_error' => bool,
+     *                       ]
      */
     public function __construct(array $options)
     {
@@ -59,30 +60,19 @@ class Client
     // ------------------------------------------------------------------------------
 
     /**
-     * get options instance for setting options
-     *
-     * @return \Nylas\Utilities\Options
-     */
-    public function Options() : Options
-    {
-        return $this->options;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * call nylas apis
      *
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @return object
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): object
     {
-        $apiClass = __NAMESPACE__ .'\\'. ucfirst($name) . '\\Abs';
+        $apiClass = __NAMESPACE__.'\\'.\ucfirst($name).'\\Abs';
 
         // check class exists
-        if (!class_exists($apiClass))
+        if (!\class_exists($apiClass))
         {
             throw new NylasException("class {$apiClass} not found!");
         }
@@ -92,4 +82,15 @@ class Client
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * get options instance for setting options
+     *
+     * @return \Nylas\Utilities\Options
+     */
+    public function Options(): Options
+    {
+        return $this->options;
+    }
+
+    // ------------------------------------------------------------------------------
 }

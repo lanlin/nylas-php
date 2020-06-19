@@ -1,4 +1,8 @@
-<?php namespace Nylas\Exceptions;
+<?php
+
+namespace Nylas\Exceptions;
+
+use Exception;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -8,7 +12,7 @@
  * @author lanlin
  * @change 2020/04/26
  */
-class NylasException extends \Exception
+class NylasException extends Exception
 {
     protected $code = 999;
 

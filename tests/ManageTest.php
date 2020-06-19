@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,13 +9,14 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class ManageTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountList() : void
+    public function testGetAccountList(): void
     {
         $data = self::$api->Accounts()->Manage()->getAccountsList();
 
@@ -22,7 +25,7 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountInfo() : void
+    public function testGetAccountInfo(): void
     {
         $data = self::$api->Accounts()->Manage()->getAccountInfo();
 
@@ -31,7 +34,7 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testReactiveAccount() : void
+    public function testReactiveAccount(): void
     {
         $data = self::$api->Accounts()->Manage()->reactiveAccount();
 
@@ -40,7 +43,7 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetTokenInfo() : void
+    public function testGetTokenInfo(): void
     {
         $data = self::$api->Accounts()->Manage()->getTokenInfo();
 
@@ -49,7 +52,7 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetApplication() : void
+    public function testGetApplication(): void
     {
         $data = self::$api->Accounts()->Manage()->getApplication();
 
@@ -58,12 +61,12 @@ class ManageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateApplication() : void
+    public function testUpdateApplication(): void
     {
         $param =
         [
-            'application_name' => 'test_'.time(),
-            'redirect_uris' => ['http://www.test-nylas-test.com']
+            'application_name' => 'test_'.\time(),
+            'redirect_uris'    => ['http://www.test-nylas-test.com'],
         ];
 
         $data = self::$api->Accounts()->Manage()->updateApplication($param);
@@ -72,5 +75,4 @@ class ManageTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

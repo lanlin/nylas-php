@@ -1,4 +1,6 @@
-<?php namespace Nylas\Drafts;
+<?php
+
+namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -15,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Sending
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -41,9 +42,10 @@ class Sending
      * send draft
      *
      * @param array $params
+     *
      * @return array
      */
-    public function sendDraft(array $params) : array
+    public function sendDraft(array $params): array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -63,9 +65,9 @@ class Sending
         foreach ($params as $item)
         {
             $request = $this->options
-            ->getAsync()
-            ->setFormParams($item)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setFormParams($item)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -80,5 +82,4 @@ class Sending
     }
 
     // ------------------------------------------------------------------------------
-
 }

@@ -1,4 +1,8 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
+
+use Exception;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,22 +11,23 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class DraftTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetDraftList() : void
+    public function testGetDraftList(): void
     {
         $data = self::$api->Drafts()->Draft()->getDraftsList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetDraft() : void
+    public function testGetDraft(): void
     {
         $id = 'c5m5em1s3jd2ggsttf2zayzre';
 
@@ -33,12 +38,12 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddDraft() : void
+    public function testAddDraft(): void
     {
         $params =
         [
             'subject' => 'loving you',
-            'to'      => [['name' => '', 'email' => 'test@test.com']]
+            'to'      => [['name' => '', 'email' => 'test@test.com']],
         ];
 
         $data = self::$api->Drafts()->Draft()->addDraft($params);
@@ -48,14 +53,14 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateDraft() : void
+    public function testUpdateDraft(): void
     {
         $params =
         [
             'id'      => '70dwlz4bfstk68pc4c0ae5rxw',
             'version' => 4,
             'subject' => 'loving - you!!!',
-            'to'      => [['name' => 'zhang san', 'email' => 'test@test.com']]
+            'to'      => [['name' => 'zhang san', 'email' => 'test@test.com']],
         ];
 
         $data = self::$api->Drafts()->Draft()->updateDraft($params);
@@ -65,12 +70,12 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteDraft() : void
+    public function testDeleteDraft(): void
     {
         $params =
         [
             'id'      => '70dwlz4bfstk68pc4c0ae5rxw',
-            'version' => 5
+            'version' => 5,
         ];
 
         try
@@ -78,7 +83,7 @@ class DraftTest extends Abs
             $back = true;
             self::$api->Drafts()->Draft()->deleteDraft($params);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             $back = false;
         }
@@ -88,12 +93,12 @@ class DraftTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSending() : void
+    public function testSending(): void
     {
         $params =
         [
             'subject' => 'loving you',
-            'to'      => [['name' => '', 'email' => 'test@test.com']]
+            'to'      => [['name' => '', 'email' => 'test@test.com']],
         ];
 
         $draft = self::$api->Drafts()->Draft()->addDraft($params);
@@ -110,5 +115,4 @@ class DraftTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

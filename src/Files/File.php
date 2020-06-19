@@ -1,4 +1,6 @@
-<?php namespace Nylas\Files;
+<?php
+
+namespace Nylas\Files;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -16,7 +18,6 @@ use Psr\Http\Message\StreamInterface;
  */
 class File
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -42,9 +43,10 @@ class File
      * get files list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getFilesList(array $params = []) : array
+    public function getFilesList(array $params = []): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -61,10 +63,10 @@ class File
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setQuery($params)
-        ->setHeaderParams($header)
-        ->get(API::LIST['files']);
+            ->getSync()
+            ->setQuery($params)
+            ->setHeaderParams($header)
+            ->get(API::LIST['files']);
     }
 
     // ------------------------------------------------------------------------------
@@ -73,9 +75,10 @@ class File
      * get file infos (not download file)
      *
      * @param mixed $fileId string|string[]
+     *
      * @return array
      */
-    public function getFileInfo($fileId) : array
+    public function getFileInfo($fileId): array
     {
         $fileId      = Helper::fooToArray($fileId);
         $accessToken = $this->options->getAccessToken();
@@ -92,9 +95,9 @@ class File
         foreach ($fileId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -113,9 +116,10 @@ class File
      * delete file
      *
      * @param mixed $fileId string|string[]
+     *
      * @return array
      */
-    public function deleteFile($fileId) : array
+    public function deleteFile($fileId): array
     {
         $fileId      = Helper::fooToArray($fileId);
         $accessToken = $this->options->getAccessToken();
@@ -132,9 +136,9 @@ class File
         foreach ($fileId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -153,9 +157,10 @@ class File
      * upload file (support multiple upload)
      *
      * @param array $file
+     *
      * @return array
      */
-    public function uploadFile(array $file) : array
+    public function uploadFile(array $file): array
     {
         $fileUploads = Helper::arrayToMulti($file);
         $accessToken = $this->options->getAccessToken();
@@ -171,15 +176,15 @@ class File
         {
             $item['name'] = 'file';
 
-            if (is_string($item['contents']) && file_exists($item['contents']))
+            if (\is_string($item['contents']) && \file_exists($item['contents']))
             {
-                $item['contents'] = fopen($item['contents'], 'rb');
+                $item['contents'] = \fopen($item['contents'], 'rb');
             }
 
             $request = $this->options
-            ->getAsync()
-            ->setFormFiles($item)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setFormFiles($item)
+                ->setHeaderParams($header);
 
             $upload[] = static function () use ($request, $target)
             {
@@ -198,9 +203,10 @@ class File
      * download file (support multiple download)
      *
      * @param array $params
+     *
      * @return array
      */
-    public function downloadFile(array $params) : array
+    public function downloadFile(array $params): array
     {
         $downloadArr = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -217,9 +223,9 @@ class File
             $sink = $item['path'];
 
             $request = $this->options
-            ->getAsync()
-            ->setPath($item['id'])
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($item['id'])
+                ->setHeaderParams($header);
 
             $method[] = static function () use ($request, $target, $sink)
             {
@@ -239,7 +245,7 @@ class File
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function downloadRules() : \Nylas\Utilities\Validator
+    private function downloadRules(): V
     {
         $path = V::oneOf(
             V::resourceType(),
@@ -260,12 +266,11 @@ class File
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function multipartRules() : \Nylas\Utilities\Validator
+    private function multipartRules(): V
     {
         return V::simpleArray(V::keyset(
             V::key('headers', V::arrayType(), false),
             V::key('filename', V::stringType()->length(1, null), false),
-
             V::key('contents', V::oneOf(
                 V::resourceType(),
                 V::stringType()->notEmpty(),
@@ -281,20 +286,21 @@ class File
      *
      * @param array $files
      * @param array $pools
+     *
      * @return array
      */
-    private function concatUploadInfos(array $files, array $pools) : array
+    private function concatUploadInfos(array $files, array $pools): array
     {
         foreach ($files as $index => &$item)
         {
             if (isset($pools[$index]['error']))
             {
-                $item = array_merge($item, $pools[$index]);
+                $item = \array_merge($item, $pools[$index]);
             }
 
             if (isset($pools[$index][0]))
             {
-                $item = array_merge($item, $pools[$index][0]);
+                $item = \array_merge($item, $pools[$index][0]);
             }
         }
 
@@ -308,9 +314,10 @@ class File
      *
      * @param array $params
      * @param array $pools
+     *
      * @return array
      */
-    private function concatDownloadInfos(array $params, array $pools) : array
+    private function concatDownloadInfos(array $params, array $pools): array
     {
         $data = [];
 
@@ -318,7 +325,7 @@ class File
         {
             if (isset($pools[$index]['error']))
             {
-                $item = array_merge($item, $pools[$index]);
+                $item = \array_merge($item, $pools[$index]);
             }
 
             if (isset($pools[$index]['Content-Disposition'][0]))
@@ -326,7 +333,7 @@ class File
                 $str = $pools[$index]['Content-Disposition'][0];
 
                 $item['size']     = $pools[$index]['Content-Length'][0];
-                $item['filename'] = str_replace('attachment; filename=', '', $str);
+                $item['filename'] = \str_replace('attachment; filename=', '', $str);
             }
 
             $data[$item['id']] = $item;
@@ -336,5 +343,4 @@ class File
     }
 
     // ------------------------------------------------------------------------------
-
 }

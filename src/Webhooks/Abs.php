@@ -1,4 +1,6 @@
-<?php namespace Nylas\Webhooks;
+<?php
+
+namespace Nylas\Webhooks;
 
 use Nylas\Utilities\Abs as AbsTrait;
 
@@ -14,11 +16,9 @@ use Nylas\Utilities\Abs as AbsTrait;
  */
 class Abs
 {
-
     // ------------------------------------------------------------------------------
 
     use AbsTrait;
 
     // ------------------------------------------------------------------------------
-
 }

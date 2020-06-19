@@ -1,12 +1,15 @@
-<?php namespace Nylas\Utilities;
+<?php
+
+namespace Nylas\Utilities;
 
 /**
  * ----------------------------------------------------------------------------------
  * Nylas RESTFul API List
  * ----------------------------------------------------------------------------------
  *
- * @link https://changelog.nylas.com/
- * @link https://docs.nylas.com/reference#api-changelog
+ * @see https://changelog.nylas.com/
+ * @see https://docs.nylas.com/reference#api-changelog
+ *
  * @version 2.1 (2020/04/27)
  *
  * @author lanlin
@@ -14,7 +17,6 @@
  */
 class API
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -100,7 +102,5 @@ class API
         'deltaLatestCursor'  => '/delta/latest_cursor',
     ];
 
-
     // ------------------------------------------------------------------------------
-
 }

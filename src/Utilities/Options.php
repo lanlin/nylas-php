@@ -1,4 +1,6 @@
-<?php namespace Nylas\Utilities;
+<?php
+
+namespace Nylas\Utilities;
 
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
@@ -15,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Options
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -73,7 +74,6 @@ class Options
             V::key('account_id', V::stringType()->notEmpty(), false),
             V::key('access_token', V::stringType()->notEmpty(), false),
             V::key('off_decode_error', V::boolType(), false),
-
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('client_secret', V::stringType()->notEmpty())
         );
@@ -98,11 +98,14 @@ class Options
      *
      * @param string $token
      */
-    public function setAccessToken(string $token) : void
+    public function setAccessToken(string $token): void
     {
         $this->accessToken = $token;
 
-        if (!$token) { return; }
+        if (!$token)
+        {
+            return;
+        }
 
         // cache account info
         $this->accountInfo = (new Account($this))->getAccount();
@@ -115,7 +118,7 @@ class Options
      *
      * @return string
      */
-    public function getAccessToken() : ?string
+    public function getAccessToken(): ?string
     {
         return $this->accessToken ?? null;
     }
@@ -127,7 +130,7 @@ class Options
      *
      * @param string $id
      */
-    public function setAccountId(string $id) : void
+    public function setAccountId(string $id): void
     {
         $this->accountId = $id;
     }
@@ -139,7 +142,7 @@ class Options
      *
      * @return string
      */
-    public function getAccountId() : ?string
+    public function getAccountId(): ?string
     {
         return $this->accountId ?? null;
     }
@@ -151,7 +154,7 @@ class Options
      *
      * @return string
      */
-    public function getServer() : string
+    public function getServer(): string
     {
         return API::LIST['server'];
     }
@@ -163,7 +166,7 @@ class Options
      *
      * @param bool $debug
      */
-    public function setDebug(bool $debug) : void
+    public function setDebug(bool $debug): void
     {
         $this->debug = $debug;
     }
@@ -175,9 +178,10 @@ class Options
      *
      * @param mixed $logFile
      */
-    public function setLogFile($logFile) : void
+    public function setLogFile($logFile): void
     {
-        if ($logFile !== null) {
+        if (null !== $logFile)
+        {
             V::doValidate($this->getLogFileRule(), $logFile);
         }
 
@@ -191,7 +195,7 @@ class Options
      *
      * @param bool $off
      */
-    public function setOffDecodeError(bool $off) : void
+    public function setOffDecodeError(bool $off): void
     {
         $this->offDecodeError = $off;
     }
@@ -201,7 +205,7 @@ class Options
     /**
      * get decode error set
      */
-    public function getOffDecodeError() : bool
+    public function getOffDecodeError(): bool
     {
         return $this->offDecodeError;
     }
@@ -214,7 +218,7 @@ class Options
      * @param string $clientId
      * @param string $clientSecret
      */
-    public function setClientApps(string $clientId, string $clientSecret) : void
+    public function setClientApps(string $clientId, string $clientSecret): void
     {
         $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
@@ -227,7 +231,7 @@ class Options
      *
      * @return array
      */
-    public function getClientApps() : array
+    public function getClientApps(): array
     {
         return
         [
@@ -243,7 +247,7 @@ class Options
      *
      * @return array
      */
-    public function getAllOptions() : array
+    public function getAllOptions(): array
     {
         return
         [
@@ -265,7 +269,7 @@ class Options
      *
      * @return \Nylas\Request\Sync
      */
-    public function getSync() : Sync
+    public function getSync(): Sync
     {
         $server = $this->getServer();
 
@@ -281,7 +285,7 @@ class Options
      *
      * @return \Nylas\Request\Async
      */
-    public function getAsync() : Async
+    public function getAsync(): Async
     {
         $server = $this->getServer();
 
@@ -297,7 +301,7 @@ class Options
      *
      * @return array
      */
-    public function getAccount() : array
+    public function getAccount(): array
     {
         $temp =
         [
@@ -312,9 +316,8 @@ class Options
             'organization_unit' => '',
         ];
 
-        return array_merge($temp, $this->accountInfo);
+        return \array_merge($temp, $this->accountInfo);
     }
-
 
     // ------------------------------------------------------------------------------
 
@@ -342,10 +345,10 @@ class Options
     {
         switch (true)
         {
-            case is_string($this->logFile):
-            return fopen($this->logFile, 'ab');
+            case \is_string($this->logFile):
+            return \fopen($this->logFile, 'ab');
 
-            case is_resource($this->logFile):
+            case \is_resource($this->logFile):
             return $this->logFile;
 
             default:
@@ -354,5 +357,4 @@ class Options
     }
 
     // ------------------------------------------------------------------------------
-
 }

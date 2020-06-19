@@ -1,4 +1,6 @@
-<?php namespace Nylas\Events;
+<?php
+
+namespace Nylas\Events;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -10,14 +12,13 @@ use Nylas\Utilities\Validator as V;
  * Nylas Events
  * ----------------------------------------------------------------------------------
  *
- * @link https://docs.nylas.com/reference#event-limitations
+ * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
  * @change 2020/04/26
  */
 class Event
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -43,9 +44,10 @@ class Event
      * get events list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getEventsList(array $params = []) : array
+    public function getEventsList(array $params = []): array
     {
         $rules = $this->getBaseRules();
 
@@ -57,10 +59,10 @@ class Event
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setQuery($params)
-        ->setHeaderParams($header)
-        ->get(API::LIST['events']);
+            ->getSync()
+            ->setQuery($params)
+            ->setHeaderParams($header)
+            ->get(API::LIST['events']);
     }
 
     // ------------------------------------------------------------------------------
@@ -69,9 +71,10 @@ class Event
      * add event
      *
      * @param array $params
+     *
      * @return array
      */
-    public function addEvent(array $params) : array
+    public function addEvent(array $params): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -85,11 +88,11 @@ class Event
         unset($params['notify_participants']);
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['events']);
+            ->getSync()
+            ->setQuery($query)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['events']);
     }
 
     // ------------------------------------------------------------------------------
@@ -98,9 +101,10 @@ class Event
      * update event
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateEvent(array $params) : array
+    public function updateEvent(array $params): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -115,12 +119,12 @@ class Event
         unset($params['id'], $params['notify_participants']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setQuery($query)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneEvent']);
+            ->getSync()
+            ->setPath($path)
+            ->setQuery($query)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneEvent']);
     }
 
     // ------------------------------------------------------------------------------
@@ -129,6 +133,7 @@ class Event
      * rsvping
      *
      * @param array $params
+     *
      * @return mixed
      */
     public function rsvping(array $params)
@@ -154,11 +159,11 @@ class Event
         unset($params['notify_participants']);
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['oneEvent']);
+            ->getSync()
+            ->setQuery($query)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['oneEvent']);
     }
 
     // ------------------------------------------------------------------------------
@@ -167,15 +172,16 @@ class Event
      * get event
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getEvent(array $params) : array
+    public function getEvent(array $params): array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
         $temps = [V::key('id', V::stringType()->notEmpty())];
-        $rules = array_merge($temps, $this->getBaseRules());
+        $rules = \array_merge($temps, $this->getBaseRules());
 
         V::doValidate(V::keySet(...$rules), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
@@ -190,10 +196,10 @@ class Event
             unset($item['id']);
 
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setFormParams($item)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setFormParams($item)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -213,9 +219,10 @@ class Event
      * delete event
      *
      * @param array $params
+     *
      * @return array
      */
-    public function deleteEvent(array $params) : array
+    public function deleteEvent(array $params): array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -238,10 +245,10 @@ class Event
             $query = isset($item[$notify]) ? [$notify => $item[$notify]] : [];
 
             $request = $this->options
-            ->getAsync()
-            ->setPath($item['id'])
-            ->setQuery($query)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($item['id'])
+                ->setQuery($query)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -262,7 +269,7 @@ class Event
      *
      * @return array
      */
-    private function getBaseRules() : array
+    private function getBaseRules(): array
     {
         return
         [
@@ -280,7 +287,7 @@ class Event
             V::keyOptional('ends_after', V::timestampType()),
             V::keyOptional('ends_before', V::timestampType()),
             V::keyOptional('start_after', V::timestampType()),
-            V::keyOptional('start_before', V::timestampType())
+            V::keyOptional('start_before', V::timestampType()),
         ];
     }
 
@@ -291,18 +298,16 @@ class Event
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function updateEventRules() : \Nylas\Utilities\Validator
+    private function updateEventRules(): V
     {
         return V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-
             V::keyOptional('when', $this->timeRules()),
             V::keyOptional('busy', V::boolType()),
             V::keyOptional('title', V::stringType()->notEmpty()),
             V::keyOptional('location', V::stringType()->notEmpty()),
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
-
             V::keyOptional('participants', V::simpleArray(V::keySet(
                 V::key('email', V::email()),
                 V::key('status', V::stringType()),
@@ -319,19 +324,17 @@ class Event
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function addEventRules() : \Nylas\Utilities\Validator
+    private function addEventRules(): V
     {
         return V::keySet(
             V::key('when', $this->timeRules()),
             V::key('calendar_id', V::stringType()->notEmpty()),
-
             V::keyOptional('busy', V::boolType()),
             V::keyOptional('title', V::stringType()->notEmpty()),
             V::keyOptional('location', V::stringType()->notEmpty()),
             V::keyOptional('recurrence', V::arrayType()),
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
-
             V::keyOptional('participants', V::simpleArray(V::keySet(
                 V::key('email', V::email()),
                 V::key('status', V::stringType()),
@@ -348,7 +351,7 @@ class Event
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function timeRules() : \Nylas\Utilities\Validator
+    private function timeRules(): V
     {
         return V::anyOf(
 
@@ -373,5 +376,4 @@ class Event
     }
 
     // ------------------------------------------------------------------------------
-
 }

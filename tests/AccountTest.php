@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,13 +9,14 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class AccountTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetAccount() : void
+    public function testGetAccount(): void
     {
         $data = self::$api->Accounts()->Account()->getAccount();
 
@@ -21,5 +24,4 @@ class AccountTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

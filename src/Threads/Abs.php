@@ -1,4 +1,6 @@
-<?php namespace Nylas\Threads;
+<?php
+
+namespace Nylas\Threads;
 
 use Nylas\Utilities\Abs as AbsTrait;
 
@@ -7,7 +9,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method Smart Smart()
+ * @method Smart  Smart()
  * @method Search Search()
  * @method Thread Thread()
  *
@@ -16,11 +18,9 @@ use Nylas\Utilities\Abs as AbsTrait;
  */
 class Abs
 {
-
     // ------------------------------------------------------------------------------
 
     use AbsTrait;
 
     // ------------------------------------------------------------------------------
-
 }

@@ -1,4 +1,8 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
+
+use Throwable;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,27 +11,28 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class WebhookTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhookList() : void
+    public function testGetWebhookList(): void
     {
         $data = self::$api->Webhooks()->Webhook()->getWebhookList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testCreateWebhook() : void
+    public function testCreateWebhook(): void
     {
         $para =
         [
             'state'        => 'inactive',
-            'triggers'     => ['message.opened'] ,
+            'triggers'     => ['message.opened'],
             'callback_url' => 'http://www.test-nylas-api.com',
         ];
 
@@ -41,7 +46,7 @@ class WebhookTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateWebhook($id) : void
+    public function testUpdateWebhook($id): void
     {
         $data = self::$api->Webhooks()->Webhook()->updateWebhook($id);
 
@@ -50,7 +55,7 @@ class WebhookTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhook($id) : void
+    public function testGetWebhook($id): void
     {
         $data = self::$api->Webhooks()->Webhook()->getWebhook($id);
 
@@ -59,19 +64,18 @@ class WebhookTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteWebhook($id) : void
+    public function testDeleteWebhook($id): void
     {
         try
         {
             self::$api->Webhooks()->Webhook()->deleteWebhook($id);
             $this->assertTrue(true);
         }
-        catch (\Throwable $e)
+        catch (Throwable $e)
         {
             $this->assertTrue(false);
         }
     }
 
     // ------------------------------------------------------------------------------
-
 }

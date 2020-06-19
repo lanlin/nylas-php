@@ -1,4 +1,6 @@
-<?php namespace Nylas\Drafts;
+<?php
+
+namespace Nylas\Drafts;
 
 use Nylas\Utilities\Abs as AbsTrait;
 
@@ -7,7 +9,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method Draft Draft()
+ * @method Draft   Draft()
  * @method Sending Sending()
  *
  * @author lanlin
@@ -15,11 +17,9 @@ use Nylas\Utilities\Abs as AbsTrait;
  */
 class Abs
 {
-
     // ------------------------------------------------------------------------------
 
     use AbsTrait;
 
     // ------------------------------------------------------------------------------
-
 }

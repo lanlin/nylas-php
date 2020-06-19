@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,22 +9,23 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class MessageTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetMessagesList() : void
+    public function testGetMessagesList(): void
     {
         $data = self::$api->Messages()->Message()->getMessagesList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetMessage() : void
+    public function testGetMessage(): void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
@@ -33,23 +36,23 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetRawMessage() : void
+    public function testGetRawMessage(): void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
         $data = self::$api->Messages()->Message()->getRawMessage($id);
 
-        $this->assertTrue(is_object($data));
+        $this->assertTrue(\is_object($data));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateMessage() : void
+    public function testUpdateMessage(): void
     {
         $params =
         [
             'id'     => 'eyhcafxtzkke6tfsdo9g92utb',
-            'unread' => false
+            'unread' => false,
         ];
 
         $data = self::$api->Messages()->Message()->updateMessage($params);
@@ -59,23 +62,23 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSearchMessage() : void
+    public function testSearchMessage(): void
     {
         $q = '测试';
 
         $data = self::$api->Messages()->Search()->messages($q);
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testSendMessage() : void
+    public function testSendMessage(): void
     {
         $params =
         [
             'to'      => [['email' => 'test@test.com']],
-            'subject' => 'this is for test'
+            'subject' => 'this is for test',
         ];
 
         $data = self::$api->Messages()->Sending()->sendDirectly($params);
@@ -85,7 +88,7 @@ class MessageTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSendRaw() : void
+    public function testSendRaw(): void
     {
         $content = '';
 
@@ -95,5 +98,4 @@ class MessageTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

@@ -1,5 +1,8 @@
-<?php namespace Nylas\Accounts;
+<?php
 
+namespace Nylas\Accounts;
+
+use Exception;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
@@ -14,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Manage
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -40,9 +42,10 @@ class Manage
      * get accounts list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getAccountsList(array $params = []) : array
+    public function getAccountsList(array $params = []): array
     {
         $rules = V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
@@ -61,11 +64,11 @@ class Manage
         ];
 
         return $this->options
-        ->getSync()
-        ->setPath($client['client_id'])
-        ->setQuery($pagination)
-        ->setHeaderParams($header)
-        ->get(API::LIST['listAllAccounts']);
+            ->getSync()
+            ->setPath($client['client_id'])
+            ->setQuery($pagination)
+            ->setHeaderParams($header)
+            ->get(API::LIST['listAllAccounts']);
     }
 
     // ------------------------------------------------------------------------------
@@ -74,9 +77,10 @@ class Manage
      * revoke all tokens
      *
      * @param array $params
+     *
      * @return array
      */
-    public function revokeAllTokens(array $params = []) : array
+    public function revokeAllTokens(array $params = []): array
     {
         $rules = V::keySet(
             V::keyOptional('keep_access_token', V::stringType()->notEmpty())
@@ -91,11 +95,11 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($client['client_id'], $accountId)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['revokeAllTokens']);
+            ->getSync()
+            ->setPath($client['client_id'], $accountId)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['revokeAllTokens']);
     }
 
     // ------------------------------------------------------------------------------
@@ -105,7 +109,7 @@ class Manage
      *
      * @return array
      */
-    public function getAccountInfo() : array
+    public function getAccountInfo(): array
     {
         $accountId = $this->options->getAccountId();
 
@@ -113,10 +117,10 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($client['client_id'], $accountId)
-        ->setHeaderParams($header)
-        ->get(API::LIST['listAnAccount']);
+            ->getSync()
+            ->setPath($client['client_id'], $accountId)
+            ->setHeaderParams($header)
+            ->get(API::LIST['listAnAccount']);
     }
 
     // ------------------------------------------------------------------------------
@@ -126,7 +130,7 @@ class Manage
      *
      * @return array
      */
-    public function reactiveAccount() : array
+    public function reactiveAccount(): array
     {
         $accountId = $this->options->getAccountId();
 
@@ -134,10 +138,10 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($client['client_id'], $accountId)
-        ->setHeaderParams($header)
-        ->post(API::LIST['reactiveAnAccount']);
+            ->getSync()
+            ->setPath($client['client_id'], $accountId)
+            ->setHeaderParams($header)
+            ->post(API::LIST['reactiveAnAccount']);
     }
 
     // ------------------------------------------------------------------------------
@@ -147,7 +151,7 @@ class Manage
      *
      * @return array
      */
-    public function cancelAccount() : array
+    public function cancelAccount(): array
     {
         $accountId = $this->options->getAccountId();
 
@@ -155,10 +159,10 @@ class Manage
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($client['client_id'], $accountId)
-        ->setHeaderParams($header)
-        ->post(API::LIST['cancelAnAccount']);
+            ->getSync()
+            ->setPath($client['client_id'], $accountId)
+            ->setHeaderParams($header)
+            ->post(API::LIST['cancelAnAccount']);
     }
 
     // ------------------------------------------------------------------------------
@@ -168,16 +172,16 @@ class Manage
      *
      * @return array
      */
-    public function getIpAddresses() : array
+    public function getIpAddresses(): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($client['client_id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['ipAddresses']);
+            ->getSync()
+            ->setPath($client['client_id'])
+            ->setHeaderParams($header)
+            ->get(API::LIST['ipAddresses']);
     }
 
     // ------------------------------------------------------------------------------
@@ -185,10 +189,11 @@ class Manage
     /**
      * get information about an account's access_token
      *
+     * @throws Exception
+     *
      * @return array
-     * @throws \Exception
      */
-    public function getTokenInfo() : array
+    public function getTokenInfo(): array
     {
         $accountId = $this->options->getAccountId();
 
@@ -207,10 +212,11 @@ class Manage
     /**
      * get information about a Nylas application
      *
+     * @throws Exception
+     *
      * @return array
-     * @throws \Exception
      */
-    public function getApplication() : array
+    public function getApplication(): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -228,10 +234,12 @@ class Manage
      * update details of a Nylas application
      *
      * @param array $params
+     *
+     * @throws Exception
+     *
      * @return array
-     * @throws \Exception
      */
-    public function updateApplication(array $params) : array
+    public function updateApplication(array $params): array
     {
         $rules = V::keySet(
             V::keyOptional('application_name', V::stringType()->notEmpty()),
@@ -252,5 +260,4 @@ class Manage
     }
 
     // ------------------------------------------------------------------------------
-
 }

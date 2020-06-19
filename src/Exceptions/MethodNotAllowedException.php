@@ -1,4 +1,6 @@
-<?php namespace Nylas\Exceptions;
+<?php
+
+namespace Nylas\Exceptions;
 
 /**
  * ----------------------------------------------------------------------------------

@@ -1,4 +1,8 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
+
+use Exception;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,22 +11,23 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class LabelTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetLabelList() : void
+    public function testGetLabelList(): void
     {
         $data = self::$api->Labels()->Label()->getLabelsList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetLabel() : void
+    public function testGetLabel(): void
     {
         $id = 'aenlhdgl3o55sc37a6fxjgjmo';
 
@@ -33,9 +38,9 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testAddLabel() : void
+    public function testAddLabel(): void
     {
-        $name = 'test_label' . uniqid();
+        $name = 'test_label'.\uniqid();
 
         $data = self::$api->Labels()->Label()->addLabel($name);
 
@@ -44,12 +49,12 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateLabel() : void
+    public function testUpdateLabel(): void
     {
         $params =
         [
             'id'           => 'aenlhdgl3o55sc37a6fxjgjmo',
-            'display_name' => 'woo' . uniqid()
+            'display_name' => 'woo'.\uniqid(),
         ];
 
         $data = self::$api->Labels()->Label()->updateLabel($params);
@@ -59,21 +64,20 @@ class LabelTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteLabel() : void
+    public function testDeleteLabel(): void
     {
-
-        $name = 'test_label' . uniqid();
+        $name = 'test_label'.\uniqid();
         $data = self::$api->Labels()->Label()->addLabel($name);
 
-        $params['id'] = $data['id'];
-        $params['display_name'] = 'wooTTT' . uniqid();
+        $params['id']           = $data['id'];
+        $params['display_name'] = 'wooTTT'.\uniqid();
 
         try
         {
             $back = true;
             self::$api->Labels()->Label()->deleteLabel($params);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             $back = false;
         }
@@ -82,5 +86,4 @@ class LabelTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

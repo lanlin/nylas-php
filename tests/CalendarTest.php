@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,13 +9,14 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class CalendarTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetOAuthAuthorize() : void
+    public function testGetOAuthAuthorize(): void
     {
         $params =
         [
@@ -27,7 +30,7 @@ class CalendarTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetCalendar() : void
+    public function testGetCalendar(): void
     {
         $id = 'f0yci053ovp2tit18hwemup33';
 
@@ -37,5 +40,4 @@ class CalendarTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

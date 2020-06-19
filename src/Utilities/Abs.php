@@ -1,6 +1,7 @@
-<?php namespace Nylas\Utilities;
+<?php
 
-use Nylas\Utilities\Options;
+namespace Nylas\Utilities;
+
 use Nylas\Exceptions\NylasException;
 
 /**
@@ -13,7 +14,6 @@ use Nylas\Exceptions\NylasException;
  */
 trait Abs
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -39,17 +39,18 @@ trait Abs
      * call nylas apis
      *
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @return object
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): object
     {
-        $nmSpace  = trim(get_class($this), 'Abs');
-        $nmSpace  = trim($nmSpace, '\\');
-        $subClass = $nmSpace .'\\'. ucfirst($name);
+        $nmSpace  = \trim(\get_class($this), 'Abs');
+        $nmSpace  = \trim($nmSpace, '\\');
+        $subClass = $nmSpace.'\\'.\ucfirst($name);
 
         // check class exists
-        if (!class_exists($subClass))
+        if (!\class_exists($subClass))
         {
             throw new NylasException("class {$subClass} not found!");
         }
@@ -58,5 +59,4 @@ trait Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

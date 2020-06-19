@@ -1,4 +1,6 @@
-<?php namespace Nylas\Contacts;
+<?php
+
+namespace Nylas\Contacts;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -11,14 +13,13 @@ use Psr\Http\Message\StreamInterface;
  * Nylas Contacts
  * ----------------------------------------------------------------------------------
  *
- * @link https://docs.nylas.com/reference#contact-limitations
+ * @see https://docs.nylas.com/reference#contact-limitations
  *
  * @author lanlin
  * @change 2020/04/26
  */
 class Contact
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -44,9 +45,10 @@ class Contact
      * get contacts list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getContactsList(array $params = []) : array
+    public function getContactsList(array $params = []): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -56,10 +58,10 @@ class Contact
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setQuery($params)
-        ->setHeaderParams($header)
-        ->get(API::LIST['contacts']);
+            ->getSync()
+            ->setQuery($params)
+            ->setHeaderParams($header)
+            ->get(API::LIST['contacts']);
     }
 
     // ------------------------------------------------------------------------------
@@ -68,9 +70,10 @@ class Contact
      * add contact
      *
      * @param array $params
+     *
      * @return array
      */
-    public function addContact(array $params) : array
+    public function addContact(array $params): array
     {
         $rules = $this->addContactRules();
 
@@ -82,10 +85,10 @@ class Contact
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['contacts']);
+            ->getSync()
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['contacts']);
     }
 
     // ------------------------------------------------------------------------------
@@ -94,11 +97,12 @@ class Contact
      * update contact
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateContact(array $params) : array
+    public function updateContact(array $params): array
     {
-        $rules = $this->addContactRules();
+        $rules   = $this->addContactRules();
         $rules[] = V::key('id', V::stringType()->notEmpty());
 
         $accessToken = $this->options->getAccessToken();
@@ -112,11 +116,11 @@ class Contact
         unset($params['id']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneContact']);
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneContact']);
     }
 
     // ------------------------------------------------------------------------------
@@ -125,9 +129,10 @@ class Contact
      * get contact
      *
      * @param mixed $contactId string|string[]
+     *
      * @return array
      */
-    public function getContact($contactId) : array
+    public function getContact($contactId): array
     {
         $contactId   = Helper::fooToArray($contactId);
         $accessToken = $this->options->getAccessToken();
@@ -144,9 +149,9 @@ class Contact
         foreach ($contactId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -165,9 +170,10 @@ class Contact
      * delete contact
      *
      * @param mixed $contactId string|string[]
+     *
      * @return array
      */
-    public function deleteContact($contactId) : array
+    public function deleteContact($contactId): array
     {
         $contactId   = Helper::fooToArray($contactId);
         $accessToken = $this->options->getAccessToken();
@@ -184,9 +190,9 @@ class Contact
         foreach ($contactId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -206,7 +212,7 @@ class Contact
      *
      * @return array
      */
-    public function getContactGroups() : array
+    public function getContactGroups(): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -215,9 +221,9 @@ class Contact
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setHeaderParams($header)
-        ->get(API::LIST['contactsGroups']);
+            ->getSync()
+            ->setHeaderParams($header)
+            ->get(API::LIST['contactsGroups']);
     }
 
     // ------------------------------------------------------------------------------
@@ -226,9 +232,10 @@ class Contact
      * get contact picture file (support multiple download)
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getContactPicture(array $params) : array
+    public function getContactPicture(array $params): array
     {
         $downloadArr = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -245,9 +252,9 @@ class Contact
             $sink = $item['path'];
 
             $request = $this->options
-            ->getAsync()
-            ->setPath($item['id'])
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($item['id'])
+                ->setHeaderParams($header);
 
             $method[] = static function () use ($request, $target, $sink)
             {
@@ -265,7 +272,7 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function pictureRules() : \Nylas\Utilities\Validator
+    private function pictureRules(): V
     {
         $path = V::oneOf(
             V::resourceType(),
@@ -286,18 +293,16 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function getBaseRules() : \Nylas\Utilities\Validator
+    private function getBaseRules(): V
     {
         return V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
-
             V::keyOptional('email', V::email()),
             V::keyOptional('state', V::stringType()->notEmpty()),
             V::keyOptional('group', V::stringType()->notEmpty()),
             V::keyOptional('source', V::stringType()->notEmpty()),
             V::keyOptional('country', V::stringType()->notEmpty()),
-
             V::keyOptional('recurse', V::boolType()),
             V::keyOptional('postal_code', V::stringType()->notEmpty()),
             V::keyOptional('phone_number', V::stringType()->notEmpty()),
@@ -312,7 +317,7 @@ class Contact
      *
      * @return array
      */
-    private function addContactRules() : array
+    private function addContactRules(): array
     {
         return
         [
@@ -344,7 +349,7 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function contactEmailsRules() : \Nylas\Utilities\Validator
+    private function contactEmailsRules(): V
     {
         return V::keyOptional('emails', V::simpleArray(V::keySet(
             V::key('type', V::in(['work', 'personal'])),
@@ -359,7 +364,7 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function contactWebPageRules() : \Nylas\Utilities\Validator
+    private function contactWebPageRules(): V
     {
         $types = ['profile', 'blog', 'homepage', 'work'];
 
@@ -376,12 +381,12 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function contactImAddressRules() : \Nylas\Utilities\Validator
+    private function contactImAddressRules(): V
     {
         $types =
         [
             'gtalk', 'aim', 'yahoo', 'lync',
-            'skype', 'qq', 'msn', 'icq', 'jabber'
+            'skype', 'qq', 'msn', 'icq', 'jabber',
         ];
 
         return V::keyOptional('im_addresses', V::simpleArray(V::keySet(
@@ -397,12 +402,12 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function contactPhoneNumberRules() : \Nylas\Utilities\Validator
+    private function contactPhoneNumberRules(): V
     {
         $types =
         [
             'business', 'home', 'mobile', 'pager', 'business_fax',
-            'home_fax', 'organization_main', 'assistant', 'radio', 'other'
+            'home_fax', 'organization_main', 'assistant', 'radio', 'other',
         ];
 
         return V::keyOptional('phone_numbers', V::simpleArray(V::keySet(
@@ -418,7 +423,7 @@ class Contact
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function contactPhysicalAddressRules() : \Nylas\Utilities\Validator
+    private function contactPhysicalAddressRules(): V
     {
         return V::keyOptional('physical_addresses', V::simpleArray(V::keySet(
             V::key('type', V::in(['work', 'home', 'other'])),
@@ -431,5 +436,4 @@ class Contact
     }
 
     // ------------------------------------------------------------------------------
-
 }

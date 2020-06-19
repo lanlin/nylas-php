@@ -1,4 +1,6 @@
-<?php namespace Nylas\Utilities;
+<?php
+
+namespace Nylas\Utilities;
 
 use Nylas\Exceptions;
 
@@ -12,7 +14,6 @@ use Nylas\Exceptions;
  */
 class Errors
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -47,5 +48,4 @@ class Errors
     ];
 
     // ------------------------------------------------------------------------------
-
 }

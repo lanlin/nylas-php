@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,22 +9,23 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class ThreadTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetThreadList() : void
+    public function testGetThreadList(): void
     {
         $data = self::$api->Threads()->Thread()->getThreadsList();
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetThread() : void
+    public function testGetThread(): void
     {
         $id = '7ax24gg39w06rqosrda5dtw4w';
 
@@ -33,12 +36,12 @@ class ThreadTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateThread() : void
+    public function testUpdateThread(): void
     {
         $params =
         [
             'id'     => '7ax24gg39w06rqosrda5dtw4w',
-            'unread' => true
+            'unread' => true,
         ];
 
         $data = self::$api->Threads()->Thread()->updateThread($params);
@@ -48,15 +51,14 @@ class ThreadTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testSearchThread() : void
+    public function testSearchThread(): void
     {
         $q = 'test@test.com';
 
         $data = self::$api->Threads()->Search()->threads($q);
 
-        $this->assertTrue(count($data) > 0);
+        $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
-
 }

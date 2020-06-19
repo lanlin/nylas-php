@@ -5,3 +5,4 @@ phpunit.xml
 .idea
 srcOld/
 composer.lock
+.php_cs.cache

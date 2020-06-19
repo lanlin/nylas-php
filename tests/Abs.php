@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 use Nylas\Client;
 use PHPUnit\Framework\TestCase;
@@ -10,10 +12,11 @@ use PHPUnit\Framework\TestCase;
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class Abs extends TestCase
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -26,23 +29,22 @@ class Abs extends TestCase
     /**
      * init client instance
      */
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
         $options =
         [
             'debug'         => true,
-            'log_file'      => __DIR__. '/test.log',
+            'log_file'      => __DIR__.'/test.log',
             'account_id'    => 'your account id',
             'access_token'  => 'your access token',
             'client_id'     => 'your client id',
-            'client_secret' => 'your client secret'
+            'client_secret' => 'your client secret',
         ];
 
         self::$api = new Client($options);
     }
 
     // ------------------------------------------------------------------------------
-
 }

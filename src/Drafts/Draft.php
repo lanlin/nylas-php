@@ -1,4 +1,6 @@
-<?php namespace Nylas\Drafts;
+<?php
+
+namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -11,12 +13,12 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @info include inline image <img src="cid:file_id">
+ *
  * @author lanlin
  * @change 2020/04/26
  */
 class Draft
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -41,10 +43,11 @@ class Draft
     /**
      * get drafts list
      *
-     * @param array $anyEmail
+     * @param mixed $anyEmail string|string[]
+     *
      * @return array
      */
-    public function getDraftsList($anyEmail) : array
+    public function getDraftsList($anyEmail): array
     {
         $params =['access_token' => $this->options->getAccessToken()];
 
@@ -60,15 +63,15 @@ class Draft
 
         V::doValidate($rule, $params);
 
-        $emails = implode(',', ($params['any_email'] ?? []));
+        $emails = \implode(',', ($params['any_email'] ?? []));
         $header = ['Authorization' => $params['access_token']];
         $query  = empty($emails) ? [] : ['any_email' => $emails];
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->setHeaderParams($header)
-        ->get(API::LIST['drafts']);
+            ->getSync()
+            ->setQuery($query)
+            ->setHeaderParams($header)
+            ->get(API::LIST['drafts']);
     }
 
     // ------------------------------------------------------------------------------
@@ -77,9 +80,10 @@ class Draft
      * add draft
      *
      * @param array $params
+     *
      * @return array
      */
-    public function addDraft(array $params) : array
+    public function addDraft(array $params): array
     {
         $rules = $this->getBaseRules();
 
@@ -91,10 +95,10 @@ class Draft
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['drafts']);
+            ->getSync()
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['drafts']);
     }
 
     // ------------------------------------------------------------------------------
@@ -103,9 +107,10 @@ class Draft
      * update draft
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateDraft(array $params) : array
+    public function updateDraft(array $params): array
     {
         $rules = $this->getUpdateRules();
 
@@ -119,11 +124,11 @@ class Draft
         unset($params['id']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneDraft']);
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneDraft']);
     }
 
     // ------------------------------------------------------------------------------
@@ -132,9 +137,10 @@ class Draft
      * get draft
      *
      * @param mixed $draftId string|string[]
+     *
      * @return array
      */
-    public function getDraft($draftId) : array
+    public function getDraft($draftId): array
     {
         $draftId     = Helper::fooToArray($draftId);
         $accessToken = $this->options->getAccessToken();
@@ -151,9 +157,9 @@ class Draft
         foreach ($draftId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -172,9 +178,10 @@ class Draft
      * delete draft
      *
      * @param array $params
+     *
      * @return array
      */
-    public function deleteDraft(array $params) : array
+    public function deleteDraft(array $params): array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -194,10 +201,10 @@ class Draft
         foreach ($params as $item)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($item['id'])
-            ->setFormParams(['version' => $item['version']])
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($item['id'])
+                ->setFormParams(['version' => $item['version']])
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -218,7 +225,7 @@ class Draft
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function arrayOfString() : \Nylas\Utilities\Validator
+    private function arrayOfString(): V
     {
         return V::simpleArray(V::stringType()->notEmpty());
     }
@@ -230,7 +237,7 @@ class Draft
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function arrayOfObject() : \Nylas\Utilities\Validator
+    private function arrayOfObject(): V
     {
         return V::simpleArray(
             V::keySet(
@@ -247,17 +254,17 @@ class Draft
      *
      * @return array
      */
-    private function getUpdateRules() : array
+    private function getUpdateRules(): array
     {
         $rules = $this->getBaseRules();
 
         $update =
         [
             V::key('id', V::stringType()->notEmpty()),
-            V::key('version', V::intType()->min(0))
+            V::key('version', V::intType()->min(0)),
         ];
 
-        return array_merge($rules, $update);
+        return \array_merge($rules, $update);
     }
 
     // ------------------------------------------------------------------------------
@@ -267,7 +274,7 @@ class Draft
      *
      * @return array
      */
-    private function getBaseRules() : array
+    private function getBaseRules(): array
     {
         return
         [
@@ -279,10 +286,9 @@ class Draft
 
             V::keyOptional('file_ids', $this->arrayOfString()),
             V::keyOptional('subject', V::stringType()),
-            V::keyOptional('body', V::stringType())
+            V::keyOptional('body', V::stringType()),
         ];
     }
 
     // ------------------------------------------------------------------------------
-
 }

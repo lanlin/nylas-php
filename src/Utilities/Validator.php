@@ -1,10 +1,12 @@
-<?php namespace Nylas\Utilities;
+<?php
+
+namespace Nylas\Utilities;
 
 use finfo;
-use Nylas\Exceptions\NylasException;
 use Respect\Validation\Factory;
 use Respect\Validation\Rules\AllOf;
 use Respect\Validation\Validatable;
+use Nylas\Exceptions\NylasException;
 use Respect\Validation\Exceptions\NestedValidationException;
 
 /**
@@ -168,60 +170,14 @@ use Respect\Validation\Exceptions\NestedValidationException;
  */
 class Validator extends AllOf
 {
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * timestamp
-     *
-     * @return self
-     */
-    public static function timestampType() : self
-    {
-        return self::intType()->min(strtotime('1971-1-1'));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * optional key
-     *
-     * @param string                          $reference
-     * @param \Respect\Validation\Validatable $referenceValidator
-     * @return self
-     */
-    public static function keyOptional(string $reference, Validatable $referenceValidator) : self
-    {
-        $rules = self::oneOf(self::nullType(), $referenceValidator);
-
-        return self::key($reference, $rules, false);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * check if a simple array
-     *
-     * @param  \Respect\Validation\Validatable  $referenceValidator
-     * @return self
-     */
-    public static function simpleArray(Validatable $referenceValidator = null) : self
-    {
-        $referenceValidator = $referenceValidator ?? self::stringType()->notEmpty();
-
-        return self::allOf(
-            self::each($referenceValidator),
-            self::call('array_keys', self::each(self::intType()))
-        );
-    }
-
     // ------------------------------------------------------------------------------
 
     /**
      * Create a new rule by the name of the method and adds the rule to the chain.
      *
-     * @param  string   $ruleName
-     * @param  mixed[]  $arguments
+     * @param string  $ruleName
+     * @param mixed[] $arguments
+     *
      * @return self
      */
     public function __call(string $ruleName, array $arguments): self
@@ -236,8 +192,9 @@ class Validator extends AllOf
     /**
      * Creates a new Validator instance with a rule that was called on the static method.
      *
-     * @param  string   $ruleName
-     * @param  mixed[]  $arguments
+     * @param string  $ruleName
+     * @param mixed[] $arguments
+     *
      * @return self
      */
     public static function __callStatic(string $ruleName, array $arguments): self
@@ -248,13 +205,49 @@ class Validator extends AllOf
     // ------------------------------------------------------------------------------
 
     /**
-     * create instance
+     * timestamp
      *
-     * @return static
+     * @return self
      */
-    private static function create() : self
+    public static function timestampType(): self
     {
-        return new self();
+        return self::intType()->min(\strtotime('1971-1-1'));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * optional key
+     *
+     * @param string                          $reference
+     * @param \Respect\Validation\Validatable $referenceValidator
+     *
+     * @return self
+     */
+    public static function keyOptional(string $reference, Validatable $referenceValidator): self
+    {
+        $rules = self::oneOf(self::nullType(), $referenceValidator);
+
+        return self::key($reference, $rules, false);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check if a simple array
+     *
+     * @param \Respect\Validation\Validatable $referenceValidator
+     *
+     * @return self
+     */
+    public static function simpleArray(?Validatable $referenceValidator = null): self
+    {
+        $referenceValidator = $referenceValidator ?? self::stringType()->notEmpty();
+
+        return self::allOf(
+            self::each($referenceValidator),
+            self::call('array_keys', self::each(self::intType()))
+        );
     }
 
     // ------------------------------------------------------------------------------
@@ -263,11 +256,11 @@ class Validator extends AllOf
      * nylas doing validate
      *
      * @param Validatable $validatable
-     * @param mixed $input
-     * @return void
+     * @param mixed       $input
+     *
      * @throws \Nylas\Exceptions\NylasException
      */
-    public static function doValidate(Validatable $validatable, $input) : void
+    public static function doValidate(Validatable $validatable, $input): void
     {
         try
         {
@@ -281,4 +274,15 @@ class Validator extends AllOf
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * create instance
+     *
+     * @return static
+     */
+    private static function create(): self
+    {
+        return new self();
+    }
+
+    // ------------------------------------------------------------------------------
 }

@@ -1,6 +1,5 @@
 <?php
 
-define('ROOT', __DIR__);
+\define('ROOT', __DIR__);
 
-require ROOT . '/vendor/autoload.php';
-
+require ROOT.'/vendor/autoload.php';

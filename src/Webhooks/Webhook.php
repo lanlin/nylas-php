@@ -1,4 +1,6 @@
-<?php namespace Nylas\Webhooks;
+<?php
+
+namespace Nylas\Webhooks;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
@@ -15,7 +17,6 @@ use Nylas\Exceptions\NylasException;
  */
 class Webhook
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -42,13 +43,16 @@ class Webhook
      *
      * TIPS: you'd better use the output method from your framework.
      */
-    public function echoChallenge() : void
+    public function echoChallenge(): void
     {
         $chanllenge = $_GET['chanllenge'] ?? null;
 
-        if (empty($chanllenge)) { return; }
+        if (empty($chanllenge))
+        {
+            return;
+        }
 
-        header('Content-Type: text/html; charset=utf-8', true, 200);
+        \header('Content-Type: text/html; charset=utf-8', true, 200);
 
         die($chanllenge);
     }
@@ -59,22 +63,22 @@ class Webhook
      * get notification & parse it
      *
      * @return array
-     * [
-     *     date        => Timestamp when the change occurred
-     *     type	       => The trigger for this notification
-     *     object	   => The changed object type
-     *     object_data => Contains the changed object's object type, account_id,
-     *                    object id and an attributes sub-object
-     * ]
+     *               [
+     *               date        => Timestamp when the change occurred
+     *               type	       => The trigger for this notification
+     *               object	   => The changed object type
+     *               object_data => Contains the changed object's object type, account_id,
+     *               object id and an attributes sub-object
+     *               ]
      */
-    public function getNotification() : array
+    public function getNotification(): array
     {
         $code = $_SERVER['HTTP_X_NYLAS_SIGNATURE'] ?? '';
-        $data = file_get_contents('php://input');
+        $data = \file_get_contents('php://input');
         $vrif = $this->xSignatureVerification($code, $data);
 
         // check if valid
-        if($vrif === false)
+        if (false === $vrif)
         {
             throw new NylasException('not a valid nylas request');
         }
@@ -88,17 +92,18 @@ class Webhook
     /**
      * webhook X-Nylas-Signature header verification
      *
-     * @link https://docs.nylas.com/reference#receiving-notifications
+     * @see https://docs.nylas.com/reference#receiving-notifications
      *
      * @param string $code
      * @param string $data
+     *
      * @return bool
      */
-    public function xSignatureVerification(string $code, string $data) : bool
+    public function xSignatureVerification(string $code, string $data): bool
     {
         $conf = $this->options->getClientApps();
 
-        $hash = hash_hmac('sha256', $data, $conf['client_secret']);
+        $hash = \hash_hmac('sha256', $data, $conf['client_secret']);
 
         return $code === $hash;
     }
@@ -109,19 +114,22 @@ class Webhook
      * parse notification data
      *
      * @param string $data
-     * @return array
+     *
      * @throws \Nylas\Exceptions\NylasException
+     *
+     * @return array
      */
-    public function parseNotification(string $data) : array
+    public function parseNotification(string $data): array
     {
-        $data = json_decode($data, true, 512);
-        $errs = JSON_ERROR_NONE !== json_last_error();
+        $data = \json_decode($data, true, 512);
+        $errs = JSON_ERROR_NONE !== \json_last_error();
 
         // when not close the decode error
         if ($errs && !$this->options->getOffDecodeError())
         {
             $msg = 'Unable to parse response body into JSON: ';
-            throw new NylasException($msg . json_last_error());
+
+            throw new NylasException($msg.\json_last_error());
         }
 
         // check deltas
@@ -140,7 +148,7 @@ class Webhook
      *
      * @return array
      */
-    public function getWebhookList() : array
+    public function getWebhookList(): array
     {
         $params = $this->options->getClientApps();
 
@@ -154,10 +162,10 @@ class Webhook
         $header = ['Authorization' => $params['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($params['client_id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['webhooks']);
+            ->getSync()
+            ->setPath($params['client_id'])
+            ->setHeaderParams($header)
+            ->get(API::LIST['webhooks']);
     }
 
     // ------------------------------------------------------------------------------
@@ -166,9 +174,10 @@ class Webhook
      * get webhook list
      *
      * @param string $webhookId
+     *
      * @return array
      */
-    public function getWebhook(string $webhookId) : array
+    public function getWebhook(string $webhookId): array
     {
         $params = $this->options->getClientApps();
 
@@ -185,10 +194,10 @@ class Webhook
         $header = ['Authorization' => $params['client_secret']];
 
         return $this->options
-        ->getSync()
-        ->setPath($params['client_id'], $params['id'])
-        ->setHeaderParams($header)
-        ->get(API::LIST['oneWebhook']);
+            ->getSync()
+            ->setPath($params['client_id'], $params['id'])
+            ->setHeaderParams($header)
+            ->get(API::LIST['oneWebhook']);
     }
 
     // ------------------------------------------------------------------------------
@@ -197,9 +206,10 @@ class Webhook
      * create a webhook
      *
      * @param array $data
+     *
      * @return array
      */
-    public function createWebhook(array $data) : array
+    public function createWebhook(array $data): array
     {
         $params = $this->options->getClientApps();
 
@@ -232,12 +242,14 @@ class Webhook
     /**
      * update webhook state
      *
-     * @param  string  $webhookId
-     * @param  bool    $enable
-     * @return array
+     * @param string $webhookId
+     * @param bool   $enable
+     *
      * @throws \Nylas\Exceptions\NylasException
+     *
+     * @return array
      */
-    public function updateWebhook(string $webhookId, bool $enable = true) : array
+    public function updateWebhook(string $webhookId, bool $enable = true): array
     {
         $params = $this->options->getClientApps();
 
@@ -257,7 +269,7 @@ class Webhook
         return $this->options
             ->getSync()
             ->setPath($params['client_id'], $params['id'])
-            ->setFormParams(compact('state'))
+            ->setFormParams(\compact('state'))
             ->setHeaderParams($header)
             ->put(API::LIST['oneWebhook']);
     }
@@ -267,10 +279,11 @@ class Webhook
     /**
      * update webhook state
      *
-     * @param  string  $webhookId
+     * @param string $webhookId
+     *
      * @throws \Nylas\Exceptions\NylasException
      */
-    public function deleteWebhook(string $webhookId) : void
+    public function deleteWebhook(string $webhookId): void
     {
         $params = $this->options->getClientApps();
 
@@ -294,5 +307,4 @@ class Webhook
     }
 
     // ------------------------------------------------------------------------------
-
 }

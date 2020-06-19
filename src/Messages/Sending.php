@@ -1,4 +1,6 @@
-<?php namespace Nylas\Messages;
+<?php
+
+namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -16,7 +18,6 @@ use Psr\Http\Message\StreamInterface;
  */
 class Sending
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -42,9 +43,10 @@ class Sending
      * send message directly
      *
      * @param array $params
+     *
      * @return array
      */
-    public function sendDirectly(array $params) : array
+    public function sendDirectly(array $params): array
     {
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
@@ -59,9 +61,9 @@ class Sending
         foreach ($params as $item)
         {
             $request = $this->options
-            ->getAsync()
-            ->setFormParams($item)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setFormParams($item)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -79,8 +81,10 @@ class Sending
      *
      * Suggest: use zend-mail for raw message
      *
-     * @link https://docs.zendframework.com/zend-mail/
-     * @param string|resource|\Psr\Http\Message\StreamInterface $content
+     * @see https://docs.zendframework.com/zend-mail/
+     *
+     * @param \Psr\Http\Message\StreamInterface|resource|string $content
+     *
      * @return mixed
      */
     public function sendRawMIME($content)
@@ -99,14 +103,14 @@ class Sending
         $header =
         [
             'Content-Type'  => 'message/rfc822',
-            'Authorization' => $accessToken
+            'Authorization' => $accessToken,
         ];
 
         return $this->options
-        ->getSync()
-        ->setBody($content)
-        ->setHeaderParams($header)
-        ->post(API::LIST['sending']);
+            ->getSync()
+            ->setBody($content)
+            ->setHeaderParams($header)
+            ->post(API::LIST['sending']);
     }
 
     // ------------------------------------------------------------------------------
@@ -116,7 +120,7 @@ class Sending
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function getMessageRules() : \Nylas\Utilities\Validator
+    private function getMessageRules(): V
     {
         $ids = V::simpleArray(V::stringType()->notEmpty());
 
@@ -139,7 +143,6 @@ class Sending
             V::keyOptional('from', $tmp),
             V::keyOptional('reply_to', $tmp),
             V::keyOptional('reply_to_message_id', V::stringType()->notEmpty()),
-
             V::keyOptional('body', V::stringType()->notEmpty()),
             V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('file_ids', $ids),
@@ -148,5 +151,4 @@ class Sending
     }
 
     // ------------------------------------------------------------------------------
-
 }

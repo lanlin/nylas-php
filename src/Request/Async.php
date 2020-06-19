@@ -1,11 +1,14 @@
-<?php namespace Nylas\Request;
+<?php
 
+namespace Nylas\Request;
+
+use Exception;
 use GuzzleHttp\Pool;
 use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
-use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Promise\PromiseInterface;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -17,12 +20,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Async
 {
-
     // ------------------------------------------------------------------------------
 
-    /**
-     * base trait
-     */
+    // base trait
     use AbsBase;
 
     // ------------------------------------------------------------------------------
@@ -31,10 +31,12 @@ class Async
      * get request async
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return PromiseInterface
-     * @throws \Exception
      */
-    public function get(string $api) : PromiseInterface
+    public function get(string $api): PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -48,10 +50,12 @@ class Async
      * put request async
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return PromiseInterface
-     * @throws \Exception
      */
-    public function put(string $api) : PromiseInterface
+    public function put(string $api): PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -65,10 +69,12 @@ class Async
      * post request async
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return PromiseInterface
-     * @throws \Exception
      */
-    public function post(string $api) : PromiseInterface
+    public function post(string $api): PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -82,10 +88,12 @@ class Async
      * delete request async
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return PromiseInterface
-     * @throws \Exception
      */
-    public function delete(string $api) : PromiseInterface
+    public function delete(string $api): PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -99,14 +107,16 @@ class Async
      * get request & return body stream without preloaded
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return PromiseInterface
-     * @throws \Exception
      */
-    public function getStream(string $api) : PromiseInterface
+    public function getStream(string $api): PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
-        $options = array_merge($options, ['stream' => true]);
+        $options = \array_merge($options, ['stream' => true]);
 
         return $this->guzzle->getAsync($apiPath, $options);
     }
@@ -116,12 +126,14 @@ class Async
     /**
      * get request & save body to some where
      *
-     * @param string $api
-     * @param string|resource|\Psr\Http\Message\StreamInterface $sink
+     * @param string                                            $api
+     * @param \Psr\Http\Message\StreamInterface|resource|string $sink
+     *
+     * @throws Exception
+     *
      * @return PromiseInterface
-     * @throws \Exception
      */
-    public function getSink(string $api, $sink) : PromiseInterface
+    public function getSink(string $api, $sink): PromiseInterface
     {
         $rules = V::oneOf(
             V::resourceType(),
@@ -132,7 +144,7 @@ class Async
         V::doValidate($rules, $sink);
 
         $options = $this->concatOptions();
-        $options = array_merge($options, ['sink' => $sink]);
+        $options = \array_merge($options, ['sink' => $sink]);
         $apiPath = $this->concatApiPath($api);
 
         return $this->guzzle->getAsync($apiPath, $options);
@@ -144,14 +156,15 @@ class Async
      * pool for requests
      *
      * @param array $funcs
-     * @param bool $headers
+     * @param bool  $headers
+     *
      * @return mixed
      */
     public function pool(array $funcs, bool $headers = false)
     {
         foreach ($funcs as $func)
         {
-            if (!is_callable($func))
+            if (!\is_callable($func))
             {
                 throw new NylasException('callable function required.');
             }
@@ -174,16 +187,17 @@ class Async
     /**
      * parse data when failed
      *
-     * @param \Exception $exception
+     * @param Exception $exception
+     *
      * @return array
      */
-    private function whenFailed(\Exception $exception) : array
+    private function whenFailed(Exception $exception): array
     {
         return
         [
             'error'     => true,
             'message'   => $this->getExceptionMsg($exception),
-            'exception' => $exception
+            'exception' => $exception,
         ];
     }
 
@@ -193,26 +207,26 @@ class Async
      * parse data when success
      *
      * @param ResponseInterface $response
-     * @param bool $headers
+     * @param bool              $headers
+     *
      * @return array
      */
-    private function whenSuccess(ResponseInterface $response, bool $headers = false) : ?array
+    private function whenSuccess(ResponseInterface $response, bool $headers = false): ?array
     {
         try
         {
             return $this->parseResponse($response, $headers);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             return
             [
                 'error'     => true,
                 'message'   => $e->getMessage(),
-                'exception' => $e
+                'exception' => $e,
             ];
         }
     }
 
     // ------------------------------------------------------------------------------
-
 }

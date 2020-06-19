@@ -1,4 +1,6 @@
-<?php namespace Nylas\Messages;
+<?php
+
+namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -12,12 +14,12 @@ use ZBateson\MailMimeParser\MailMimeParser;
  * ----------------------------------------------------------------------------------
  *
  * @info include inline image <img src="cid:file_id">
+ *
  * @author lanlin
  * @change 2020/04/26
  */
 class Message
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -43,9 +45,10 @@ class Message
      * get messages list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getMessagesList(array $params = []) : array
+    public function getMessagesList(array $params = []): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -58,14 +61,14 @@ class Message
             'offset' => $params['offset'] ?? 0,
         ];
 
-        $query  = array_merge($params, $query);
+        $query  = \array_merge($params, $query);
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->setHeaderParams($header)
-        ->get(API::LIST['messages']);
+            ->getSync()
+            ->setQuery($query)
+            ->setHeaderParams($header)
+            ->get(API::LIST['messages']);
     }
 
     // ------------------------------------------------------------------------------
@@ -74,9 +77,10 @@ class Message
      * get raw message info
      *
      * @param string $messageId
+     *
      * @return \ZBateson\MailMimeParser\Message
      */
-    public function getRawMessage(string $messageId) : \ZBateson\MailMimeParser\Message
+    public function getRawMessage(string $messageId): \ZBateson\MailMimeParser\Message
     {
         $rule = V::stringType()->notEmpty();
 
@@ -88,14 +92,14 @@ class Message
         $header =
         [
             'Accept'        => 'message/rfc822',        // RFC-2822 message object
-            'Authorization' => $accessToken
+            'Authorization' => $accessToken,
         ];
 
         $rawStream = $this->options
-        ->getSync()
-        ->setPath($messageId)
-        ->setHeaderParams($header)
-        ->getStream(API::LIST['oneMessage']);
+            ->getSync()
+            ->setPath($messageId)
+            ->setHeaderParams($header)
+            ->getStream(API::LIST['oneMessage']);
 
         // parse mime data
         // @link https://github.com/zbateson/mail-mime-parser
@@ -108,15 +112,15 @@ class Message
      * update message status & flags
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateMessage(array $params) : array
+    public function updateMessage(array $params): array
     {
         $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
@@ -132,11 +136,11 @@ class Message
         unset($params['id']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneMessage']);
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
@@ -145,9 +149,10 @@ class Message
      * get message info
      *
      * @param mixed $messageId string|string[]
+     *
      * @return array
      */
-    public function getMessage($messageId) : array
+    public function getMessage($messageId): array
     {
         $messageId   = Helper::fooToArray($messageId);
         $accessToken = $this->options->getAccessToken();
@@ -164,9 +169,9 @@ class Message
         foreach ($messageId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -184,10 +189,11 @@ class Message
     /**
      * get messages list filter rules
      *
-     * @link https://docs.nylas.com/reference#messages-1
+     * @see https://docs.nylas.com/reference#messages-1
+     *
      * @return \Nylas\Utilities\Validator
      */
-    private function getMessagesRules() : \Nylas\Utilities\Validator
+    private function getMessagesRules(): V
     {
         return V::keySet(
             V::keyOptional('in', V::stringType()->notEmpty()),
@@ -198,11 +204,9 @@ class Message
             V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('any_email', V::stringType()->notEmpty()),
             V::keyOptional('thread_id', V::stringType()->notEmpty()),
-
             V::keyOptional('received_after', V::timestampType()),
             V::keyOptional('received_before', V::timestampType()),
             V::keyOptional('has_attachment', V::boolType()),
-
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
@@ -213,5 +217,4 @@ class Message
     }
 
     // ------------------------------------------------------------------------------
-
 }

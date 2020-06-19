@@ -1,4 +1,6 @@
-<?php namespace Nylas\Authentication;
+<?php
+
+namespace Nylas\Authentication;
 
 use Nylas\Utilities\Abs as AbsTrait;
 
@@ -15,11 +17,9 @@ use Nylas\Utilities\Abs as AbsTrait;
  */
 class Abs
 {
-
     // ------------------------------------------------------------------------------
 
     use AbsTrait;
 
     // ------------------------------------------------------------------------------
-
 }

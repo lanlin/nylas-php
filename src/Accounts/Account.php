@@ -1,4 +1,6 @@
-<?php namespace Nylas\Accounts;
+<?php
+
+namespace Nylas\Accounts;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
@@ -14,7 +16,6 @@ use Nylas\Authentication\Hosted;
  */
 class Account
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -41,7 +42,7 @@ class Account
      *
      * @return array
      */
-    public function cancelAccount() : array
+    public function cancelAccount(): array
     {
         return (new Hosted($this->options))->postOAuthRevoke();
     }
@@ -53,18 +54,17 @@ class Account
      *
      * @return array
      */
-    public function getAccount() : array
+    public function getAccount(): array
     {
         $accessToken = $this->options->getAccessToken();
 
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setHeaderParams($header)
-        ->get(API::LIST['account']);
+            ->getSync()
+            ->setHeaderParams($header)
+            ->get(API::LIST['account']);
     }
 
     // ------------------------------------------------------------------------------
-
 }

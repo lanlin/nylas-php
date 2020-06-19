@@ -1,8 +1,10 @@
-<?php namespace Nylas\Threads;
+<?php
+
+namespace Nylas\Threads;
 
 use Nylas\Labels\Label;
-use Nylas\Folders\Folder;
 use Nylas\Utilities\API;
+use Nylas\Folders\Folder;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
@@ -17,7 +19,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Smart
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -43,10 +44,11 @@ class Smart
      * add labels to thread
      *
      * @param string $threadId
-     * @param mixed $labels string|string[]
+     * @param mixed  $labels   string|string[]
+     *
      * @return array
      */
-    public function addLabels(string $threadId, $labels) : array
+    public function addLabels(string $threadId, $labels): array
     {
         return $this->updateLabels($threadId, $labels);
     }
@@ -57,10 +59,11 @@ class Smart
      * remove labels from thread
      *
      * @param string $threadId
-     * @param mixed $labels string|string[]
+     * @param mixed  $labels   string|string[]
+     *
      * @return array
      */
-    public function removeLabels(string $threadId, $labels) : array
+    public function removeLabels(string $threadId, $labels): array
     {
         return $this->updateLabels($threadId, null, $labels);
     }
@@ -71,9 +74,10 @@ class Smart
      * archive thread
      *
      * @param string $threadId
+     *
      * @return array
      */
-    public function archive(string $threadId) : array
+    public function archive(string $threadId): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, null, ['inbox']) :
@@ -86,9 +90,10 @@ class Smart
      * unarchive thread
      *
      * @param string $threadId
+     *
      * @return array
      */
-    public function unarchive(string $threadId) : array
+    public function unarchive(string $threadId): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, ['inbox'], ['archive']) :
@@ -101,9 +106,10 @@ class Smart
      * move thread to trash
      *
      * @param string $threadId
+     *
      * @return array
      */
-    public function trash(string $threadId) : array
+    public function trash(string $threadId): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, ['trash'], ['inbox']) :
@@ -118,9 +124,10 @@ class Smart
      * @param string $threadId
      * @param string $from
      * @param string $goto
+     *
      * @return array
      */
-    public function move(string $threadId, string $from, string $goto) : array
+    public function move(string $threadId, string $from, string $goto): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($threadId, [$goto], [$from]) :
@@ -133,9 +140,10 @@ class Smart
      * set thread to start
      *
      * @param mixed $threadId string|string[]
+     *
      * @return array
      */
-    public function star($threadId) : array
+    public function star($threadId): array
     {
         $params = ['starred' => true];
 
@@ -148,9 +156,10 @@ class Smart
      * set thread to un-star
      *
      * @param mixed $threadId string|string[]
+     *
      * @return array
      */
-    public function unstar($threadId) : array
+    public function unstar($threadId): array
     {
         $params = ['starred' => false];
 
@@ -163,9 +172,10 @@ class Smart
      * mark thread as read
      *
      * @param mixed $threadId string|string[]
+     *
      * @return array
      */
-    public function markAsRead($threadId) : array
+    public function markAsRead($threadId): array
     {
         $params = ['unread' => false];
 
@@ -178,9 +188,10 @@ class Smart
      * mark thread as unread
      *
      * @param mixed $threadId string|string[]
+     *
      * @return array
      */
-    public function markAsUnread($threadId) : array
+    public function markAsUnread($threadId): array
     {
         $params = ['unread' => true];
 
@@ -192,11 +203,12 @@ class Smart
     /**
      * move thread to folder by id
      *
-     * @param mixed $threadId string|string[]
+     * @param mixed  $threadId string|string[]
      * @param string $folderId
+     *
      * @return array
      */
-    public function moveToFolder($threadId, string $folderId) : array
+    public function moveToFolder($threadId, string $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -214,9 +226,10 @@ class Smart
      *
      * @param mixed $threadId string|string[]
      * @param array $labelIds
+     *
      * @return array
      */
-    public function moveToLabel($threadId, array $labelIds) : array
+    public function moveToLabel($threadId, array $labelIds): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -234,9 +247,10 @@ class Smart
      *
      * @param string $threadId
      * @param string $folder
+     *
      * @return array
      */
-    private function updateFolder(string $threadId, string $folder) : array
+    private function updateFolder(string $threadId, string $folder): array
     {
         $folderId   = null;
         $allFolders = (new Folder($this->options))->getFoldersList();
@@ -259,11 +273,12 @@ class Smart
      * update thread labels (update with name or display name)
      *
      * @param string $threadId
-     * @param mixed $add string|string[]
-     * @param mixed $del string|string[]
+     * @param mixed  $add      string|string[]
+     * @param mixed  $del      string|string[]
+     *
      * @return array
      */
-    private function updateLabels(string $threadId, $add = [], $del = []) : array
+    private function updateLabels(string $threadId, $add = [], $del = []): array
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
@@ -274,10 +289,10 @@ class Smart
         $del = Helper::fooToArray($del);
 
         // check all labels
-        foreach($allLabels as $label)
+        foreach ($allLabels as $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $add, true);
-            $secB = empty($label['name']) && in_array($label['display_name'], $add, true);
+            $secA = !empty($label['name']) && \in_array($label['name'], $add, true);
+            $secB = empty($label['name'])  && \in_array($label['display_name'], $add, true);
 
             if ($secA || $secB)
             {
@@ -286,12 +301,15 @@ class Smart
         }
 
         // check current thread labels
-        foreach($nowLabels as $index => $label)
+        foreach ($nowLabels as $index => $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $del, true);
-            $secB = empty($label['name']) && in_array($label['display_name'], $del, true);
+            $secA = !empty($label['name']) && \in_array($label['name'], $del, true);
+            $secB = empty($label['name'])  && \in_array($label['display_name'], $del, true);
 
-            if ($secA || $secB) { continue; }
+            if ($secA || $secB)
+            {
+                continue;
+            }
 
             $tmpLabels[] = $label['id'];
         }
@@ -306,9 +324,10 @@ class Smart
      *
      * @param mixed $threadId string|string[]
      * @param array $params
+     *
      * @return array
      */
-    private function updateOneField($threadId, array $params) : array
+    private function updateOneField($threadId, array $params): array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
@@ -325,10 +344,10 @@ class Smart
         foreach ($threadId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setFormParams($params)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setFormParams($params)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -342,5 +361,4 @@ class Smart
     }
 
     // ------------------------------------------------------------------------------
-
 }

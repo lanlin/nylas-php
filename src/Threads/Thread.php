@@ -1,4 +1,6 @@
-<?php namespace Nylas\Threads;
+<?php
+
+namespace Nylas\Threads;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -15,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Thread
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -41,9 +42,10 @@ class Thread
      * get threads list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getThreadsList(array $params = []) : array
+    public function getThreadsList(array $params = []): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -56,14 +58,14 @@ class Thread
             'offset' => $params['offset'] ?? 0,
         ];
 
-        $query  = array_merge($params, $query);
+        $query  = \array_merge($params, $query);
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->setHeaderParams($header)
-        ->get(API::LIST['threads']);
+            ->getSync()
+            ->setQuery($query)
+            ->setHeaderParams($header)
+            ->get(API::LIST['threads']);
     }
 
     // ------------------------------------------------------------------------------
@@ -72,15 +74,15 @@ class Thread
      * update thread
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateThread(array $params) : array
+    public function updateThread(array $params): array
     {
         $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
@@ -96,11 +98,11 @@ class Thread
         unset($params['id']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneThread']);
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneThread']);
     }
 
     // ------------------------------------------------------------------------------
@@ -109,9 +111,10 @@ class Thread
      * get thread info
      *
      * @param mixed $threadId string|string[]
+     *
      * @return array
      */
-    public function getThread($threadId) : array
+    public function getThread($threadId): array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
@@ -128,9 +131,9 @@ class Thread
         foreach ($threadId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -148,10 +151,11 @@ class Thread
     /**
      * get threads list filter rules
      *
-     * @link https://docs.nylas.com/reference#get-threads
+     * @see https://docs.nylas.com/reference#get-threads
+     *
      * @return \Nylas\Utilities\Validator
      */
-    private function getThreadsRules() : V
+    private function getThreadsRules(): V
     {
         return V::keySet(
             V::keyOptional('in', V::stringType()->notEmpty()),
@@ -161,12 +165,10 @@ class Thread
             V::keyOptional('bcc', V::email()),
             V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('any_email', V::stringType()->notEmpty()),
-
             V::keyOptional('started_after', V::timestampType()),
             V::keyOptional('started_before', V::timestampType()),
             V::keyOptional('last_message_after', V::timestampType()),
             V::keyOptional('last_message_before', V::timestampType()),
-
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
@@ -177,5 +179,4 @@ class Thread
     }
 
     // ------------------------------------------------------------------------------
-
 }

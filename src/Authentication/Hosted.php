@@ -1,4 +1,6 @@
-<?php namespace Nylas\Authentication;
+<?php
+
+namespace Nylas\Authentication;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
@@ -14,7 +16,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Hosted
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -40,9 +41,10 @@ class Hosted
      * get oauth authorize url
      *
      * @param array $params
+     *
      * @return string
      */
-    public function getOAuthAuthorizeUrl(array $params) : string
+    public function getOAuthAuthorizeUrl(array $params): string
     {
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
@@ -58,14 +60,14 @@ class Hosted
         V::doValidate($rules, $params);
 
         // @link https://docs.nylas.com/docs/how-to-use-selective-sync
-        $params['scopes']        = $params['scopes'] ?? 'calendar,email,contacts';
+        $params['scopes']        = $params['scopes']        ?? 'calendar,email,contacts';
         $params['response_type'] = $params['response_type'] ?? 'code';
 
-        $query = http_build_query($params, null, '&', PHP_QUERY_RFC3986);
+        $query = \http_build_query($params, null, '&', PHP_QUERY_RFC3986);
 
-        $apiUrl = trim($this->options->getServer(), '/') . API::LIST['oAuthAuthorize'];
+        $apiUrl = \trim($this->options->getServer(), '/').API::LIST['oAuthAuthorize'];
 
-        return trim($apiUrl, '/') .'?'. $query;
+        return \trim($apiUrl, '/').'?'.$query;
     }
 
     // ------------------------------------------------------------------------------
@@ -74,9 +76,10 @@ class Hosted
      * post oauth token
      *
      * @param string $code
+     *
      * @return array
      */
-    public function postOAuthToken(string $code) : array
+    public function postOAuthToken(string $code): array
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
@@ -85,12 +88,12 @@ class Hosted
         $params['code'] = $code;
 
         $query = ['grant_type' => 'authorization_code'];
-        $query = array_merge($query, $params);
+        $query = \array_merge($query, $params);
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->post(API::LIST['oAuthToken']);
+            ->getSync()
+            ->setQuery($query)
+            ->post(API::LIST['oAuthToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -100,7 +103,7 @@ class Hosted
      *
      * @return array
      */
-    public function postOAuthRevoke() : array
+    public function postOAuthRevoke(): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -109,11 +112,10 @@ class Hosted
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setHeaderParams($header)
-        ->post(API::LIST['oAuthRevoke']);
+            ->getSync()
+            ->setHeaderParams($header)
+            ->post(API::LIST['oAuthRevoke']);
     }
 
     // ------------------------------------------------------------------------------
-
 }

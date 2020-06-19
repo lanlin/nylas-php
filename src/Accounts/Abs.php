@@ -1,4 +1,6 @@
-<?php namespace Nylas\Accounts;
+<?php
+
+namespace Nylas\Accounts;
 
 use Nylas\Utilities\Abs as AbsTrait;
 
@@ -8,18 +10,16 @@ use Nylas\Utilities\Abs as AbsTrait;
  * ----------------------------------------------------------------------------------
  *
  * @method Account Account()
- * @method Manage Manage()
+ * @method Manage  Manage()
  *
  * @author lanlin
  * @change 2020/04/26
  */
 class Abs
 {
-
     // ------------------------------------------------------------------------------
 
     use AbsTrait;
 
     // ------------------------------------------------------------------------------
-
 }

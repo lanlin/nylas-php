@@ -1,5 +1,8 @@
-<?php namespace Nylas\Request;
+<?php
 
+namespace Nylas\Request;
+
+use Exception;
 use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
 use Psr\Http\Message\StreamInterface;
@@ -14,12 +17,9 @@ use Psr\Http\Message\StreamInterface;
  */
 class Sync
 {
-
     // ------------------------------------------------------------------------------
 
-    /**
-     * base trait
-     */
+    // base trait
     use AbsBase;
 
     // ------------------------------------------------------------------------------
@@ -28,8 +28,10 @@ class Sync
      * get request sync
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return mixed
-     * @throws \Exception
      */
     public function get(string $api)
     {
@@ -40,7 +42,7 @@ class Sync
         {
             $response = $this->guzzle->get($apiPath, $options);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new NylasException($this->getExceptionMsg($e));
         }
@@ -54,8 +56,10 @@ class Sync
      * put request sync
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return mixed
-     * @throws \Exception
      */
     public function put(string $api)
     {
@@ -66,7 +70,7 @@ class Sync
         {
             $response = $this->guzzle->put($apiPath, $options);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new NylasException($this->getExceptionMsg($e));
         }
@@ -80,8 +84,10 @@ class Sync
      * post request sync
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return mixed
-     * @throws \Exception
      */
     public function post(string $api)
     {
@@ -92,7 +98,7 @@ class Sync
         {
             $response = $this->guzzle->post($apiPath, $options);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new NylasException($this->getExceptionMsg($e));
         }
@@ -106,8 +112,10 @@ class Sync
      * delete request sync
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return mixed
-     * @throws \Exception
      */
     public function delete(string $api)
     {
@@ -118,7 +126,7 @@ class Sync
         {
             $response = $this->guzzle->delete($apiPath, $options);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new NylasException($this->getExceptionMsg($e));
         }
@@ -132,20 +140,22 @@ class Sync
      * get request & return body stream without preloaded
      *
      * @param string $api
+     *
+     * @throws Exception
+     *
      * @return \Psr\Http\Message\ResponseInterface
-     * @throws \Exception
      */
-    public function getStream(string $api) : \Psr\Http\Message\ResponseInterface
+    public function getStream(string $api): \Psr\Http\Message\ResponseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
-        $options = array_merge($options, ['stream' => true]);
+        $options = \array_merge($options, ['stream' => true]);
 
         try
         {
             $response = $this->guzzle->get($apiPath, $options);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new NylasException($this->getExceptionMsg($e));
         }
@@ -158,12 +168,14 @@ class Sync
     /**
      * get request & save body to some where
      *
-     * @param string $api
-     * @param string|resource|\Psr\Http\Message\StreamInterface $sink
+     * @param string                                            $api
+     * @param \Psr\Http\Message\StreamInterface|resource|string $sink
+     *
+     * @throws Exception
+     *
      * @return array
-     * @throws \Exception
      */
-    public function getSink(string $api, $sink) : array
+    public function getSink(string $api, $sink): array
     {
         $rules = V::oneOf(
             V::resourceType(),
@@ -174,14 +186,14 @@ class Sync
         V::doValidate($rules, $sink);
 
         $options = $this->concatOptions();
-        $options = array_merge($options, ['sink' => $sink]);
+        $options = \array_merge($options, ['sink' => $sink]);
         $apiPath = $this->concatApiPath($api);
 
         try
         {
             $response = $this->guzzle->get($apiPath, $options);
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new NylasException($this->getExceptionMsg($e));
         }
@@ -190,5 +202,4 @@ class Sync
     }
 
     // ------------------------------------------------------------------------------
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Nylas\Utilities;
+<?php
+
+namespace Nylas\Utilities;
 
 use Nylas\Exceptions\NylasException;
 
@@ -12,18 +14,18 @@ use Nylas\Exceptions\NylasException;
  */
 class Helper
 {
-
     // ------------------------------------------------------------------------------
 
     /**
      * check email provider unit is label
      *
      * @param \Nylas\Utilities\Options $options
+     *
      * @return bool
      */
-    public static function isLabel(Options $options) : bool
+    public static function isLabel(Options $options): bool
     {
-        return $options->getAccount()['organization_unit'] === 'label';
+        return 'label' === $options->getAccount()['organization_unit'];
     }
 
     // ------------------------------------------------------------------------------
@@ -33,14 +35,18 @@ class Helper
      *
      * @param \Nylas\Utilities\Options $options
      * @param bool                     $label
+     *
      * @throws \Nylas\Exceptions\NylasException
      */
-    public static function checkProviderUnit(Options $options, bool $label = true) : void
+    public static function checkProviderUnit(Options $options, bool $label = true): void
     {
         $unitType = $label ? 'label' : 'folder';
         $thisFine = $options->getAccount()['organization_unit'] === $unitType;
 
-        if ($thisFine) { return; }
+        if ($thisFine)
+        {
+            return;
+        }
 
         throw new NylasException("your organization unit not match to {$unitType}");
     }
@@ -51,9 +57,10 @@ class Helper
      * convert assoc array to multi
      *
      * @param array $arr
+     *
      * @return array
      */
-    public static function arrayToMulti(array $arr) : array
+    public static function arrayToMulti(array $arr): array
     {
         return self::isAssoc($arr) ? [$arr] : $arr;
     }
@@ -64,13 +71,17 @@ class Helper
      * check if assoc array
      *
      * @param array $arr
+     *
      * @return bool
      */
-    public static function isAssoc(array $arr) : bool
+    public static function isAssoc(array $arr): bool
     {
         foreach ($arr as $key => $value)
         {
-            if (is_string($key)) { return true; }
+            if (\is_string($key))
+            {
+                return true;
+            }
         }
 
         return false;
@@ -82,15 +93,19 @@ class Helper
      * something foo to array
      *
      * @param $foo
+     *
      * @return array
      */
-    public static function fooToArray($foo) : array
+    public static function fooToArray($foo): array
     {
-        if (!$foo) { return []; }
+        if (!$foo)
+        {
+            return [];
+        }
 
-        $temp = is_array($foo) ? $foo : [$foo];
+        $temp = \is_array($foo) ? $foo : [$foo];
 
-        return array_values(array_unique($temp));
+        return \array_values(\array_unique($temp));
     }
 
     // ------------------------------------------------------------------------------
@@ -98,19 +113,26 @@ class Helper
     /**
      * pickup element from inside array
      *
-     * @param  array  $data
-     * @param  string $key
+     * @param array  $data
+     * @param string $key
+     *
      * @return array
      */
-    public static function generateArray(array $data, string $key = 'id') : array
+    public static function generateArray(array $data, string $key = 'id'): array
     {
         $temp = [];
 
-        if (!count($data)) { return $temp; }
+        if (!\count($data))
+        {
+            return $temp;
+        }
 
         foreach ($data as $val)
         {
-            if (empty($val[$key])) { continue; }
+            if (empty($val[$key]))
+            {
+                continue;
+            }
 
             $temp[] = $val[$key];
         }
@@ -125,9 +147,10 @@ class Helper
      *
      * @param array $params
      * @param array $pools
+     *
      * @return array
      */
-    public static function concatPoolInfos(array $params, array $pools) : array
+    public static function concatPoolInfos(array $params, array $pools): array
     {
         $data = [];
 
@@ -138,7 +161,7 @@ class Helper
             // merge with pool data
             if (isset($pools[$index]))
             {
-                $item = array_merge($item, $pools[$index]);
+                $item = \array_merge($item, $pools[$index]);
             }
 
             $data[$id] = $item;
@@ -148,5 +171,4 @@ class Helper
     }
 
     // ------------------------------------------------------------------------------
-
 }

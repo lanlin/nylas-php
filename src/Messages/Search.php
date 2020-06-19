@@ -1,4 +1,6 @@
-<?php namespace Nylas\Messages;
+<?php
+
+namespace Nylas\Messages;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
@@ -14,7 +16,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Search
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -40,9 +41,10 @@ class Search
      * search messages list
      *
      * @param string $q
+     *
      * @return array
      */
-    public function messages(string $q) : array
+    public function messages(string $q): array
     {
         $params =
         [
@@ -61,12 +63,11 @@ class Search
         $header = ['Authorization' => $params['access_token']];
 
         return $this->options
-        ->getSync()
-        ->setQuery($query)
-        ->setHeaderParams($header)
-        ->get(API::LIST['searchMessages']);
+            ->getSync()
+            ->setQuery($query)
+            ->setHeaderParams($header)
+            ->get(API::LIST['searchMessages']);
     }
 
     // ------------------------------------------------------------------------------
-
 }

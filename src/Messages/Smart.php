@@ -1,8 +1,10 @@
-<?php namespace Nylas\Messages;
+<?php
+
+namespace Nylas\Messages;
 
 use Nylas\Labels\Label;
-use Nylas\Folders\Folder;
 use Nylas\Utilities\API;
+use Nylas\Folders\Folder;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
@@ -17,7 +19,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Smart
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -43,10 +44,11 @@ class Smart
      * add labels to message
      *
      * @param string $messageId
-     * @param mixed $labels string|string[]
+     * @param mixed  $labels    string|string[]
+     *
      * @return array
      */
-    public function addLabels(string $messageId, $labels) : array
+    public function addLabels(string $messageId, $labels): array
     {
         return $this->updateLabels($messageId, $labels);
     }
@@ -57,10 +59,11 @@ class Smart
      * remove labels from message
      *
      * @param string $messageId
-     * @param mixed $labels string|string[]
+     * @param mixed  $labels    string|string[]
+     *
      * @return array
      */
-    public function removeLabels(string $messageId, $labels) : array
+    public function removeLabels(string $messageId, $labels): array
     {
         return $this->updateLabels($messageId, [], $labels);
     }
@@ -71,9 +74,10 @@ class Smart
      * archive message
      *
      * @param string $messageId
+     *
      * @return array
      */
-    public function archive(string $messageId) : array
+    public function archive(string $messageId): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, null, ['inbox']) :
@@ -86,9 +90,10 @@ class Smart
      * unarchive message
      *
      * @param string $messageId
+     *
      * @return array
      */
-    public function unarchive(string $messageId) : array
+    public function unarchive(string $messageId): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, ['inbox'], ['archive']) :
@@ -101,9 +106,10 @@ class Smart
      * move message to trash
      *
      * @param string $messageId
+     *
      * @return array
      */
-    public function trash(string $messageId) : array
+    public function trash(string $messageId): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, ['trash'], ['inbox']) :
@@ -118,9 +124,10 @@ class Smart
      * @param string $messageId
      * @param string $from
      * @param string $goto
+     *
      * @return array
      */
-    public function move(string $messageId, string $from, string $goto) : array
+    public function move(string $messageId, string $from, string $goto): array
     {
         return Helper::isLabel($this->options) ?
         $this->updateLabels($messageId, [$goto], [$from]) :
@@ -133,9 +140,10 @@ class Smart
      * set message to start
      *
      * @param mixed $messageId string|string[]
+     *
      * @return array
      */
-    public function star($messageId) : array
+    public function star($messageId): array
     {
         $params = ['starred' => true];
 
@@ -148,9 +156,10 @@ class Smart
      * set message to un-star
      *
      * @param mixed $messageId string|string[]
+     *
      * @return array
      */
-    public function unstar($messageId) : array
+    public function unstar($messageId): array
     {
         $params = ['starred' => false];
 
@@ -163,9 +172,10 @@ class Smart
      * mark message as read
      *
      * @param mixed $messageId string|string[]
+     *
      * @return array
      */
-    public function markAsRead($messageId) : array
+    public function markAsRead($messageId): array
     {
         $params = ['unread' => false];
 
@@ -178,9 +188,10 @@ class Smart
      * mark message as unread
      *
      * @param mixed $messageId string|string[]
+     *
      * @return array
      */
-    public function markAsUnread($messageId) : array
+    public function markAsUnread($messageId): array
     {
         $params = ['unread' => true];
 
@@ -192,11 +203,12 @@ class Smart
     /**
      * move message to folder by id
      *
-     * @param mixed $messageId string|string[]
+     * @param mixed  $messageId string|string[]
      * @param string $folderId
+     *
      * @return array
      */
-    public function moveToFolder($messageId, string $folderId) : array
+    public function moveToFolder($messageId, string $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -214,9 +226,10 @@ class Smart
      *
      * @param mixed $messageId string|string[]
      * @param array $labelIds
+     *
      * @return array
      */
-    public function moveToLabel($messageId, array $labelIds) : array
+    public function moveToLabel($messageId, array $labelIds): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -234,9 +247,10 @@ class Smart
      *
      * @param string $messageId
      * @param string $folder
+     *
      * @return array
      */
-    private function updateFolder(string $messageId, string $folder) : array
+    private function updateFolder(string $messageId, string $folder): array
     {
         $folderId   = null;
         $allFolders = (new Folder($this->options))->getFoldersList();
@@ -259,11 +273,12 @@ class Smart
      * update message labels
      *
      * @param string $messageId
-     * @param mixed $add string|string[]
-     * @param mixed $del string|string[]
+     * @param mixed  $add       string|string[]
+     * @param mixed  $del       string|string[]
+     *
      * @return array
      */
-    private function updateLabels(string $messageId, $add = [], $del = []) : array
+    private function updateLabels(string $messageId, $add = [], $del = []): array
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
@@ -274,10 +289,10 @@ class Smart
         $del = Helper::fooToArray($del);
 
         // check all labels
-        foreach($allLabels as $label)
+        foreach ($allLabels as $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $add, true);
-            $secB = empty($label['name']) && in_array($label['display_name'], $add, true);
+            $secA = !empty($label['name']) && \in_array($label['name'], $add, true);
+            $secB = empty($label['name'])  && \in_array($label['display_name'], $add, true);
 
             if ($secA || $secB)
             {
@@ -286,12 +301,15 @@ class Smart
         }
 
         // check current message labels
-        foreach($nowLabels as $index => $label)
+        foreach ($nowLabels as $index => $label)
         {
-            $secA = !empty($label['name']) && in_array($label['name'], $del, true);
-            $secB = empty($label['name']) && in_array($label['display_name'], $del, true);
+            $secA = !empty($label['name']) && \in_array($label['name'], $del, true);
+            $secB = empty($label['name'])  && \in_array($label['display_name'], $del, true);
 
-            if ($secA || $secB) { continue; }
+            if ($secA || $secB)
+            {
+                continue;
+            }
 
             $tmpLabels[] = $label['id'];
         }
@@ -306,12 +324,13 @@ class Smart
      *
      * @param mixed $messageId string|string[]
      * @param array $params
+     *
      * @return array
      */
-    private function updateOneField($messageId, array $params) : array
+    private function updateOneField($messageId, array $params): array
     {
         $messageId    = Helper::fooToArray($messageId);
-        $accessToken = $this->options->getAccessToken();
+        $accessToken  = $this->options->getAccessToken();
 
         $rule = V::simpleArray(V::stringType()->notEmpty());
 
@@ -325,10 +344,10 @@ class Smart
         foreach ($messageId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setFormParams($params)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setFormParams($params)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -342,5 +361,4 @@ class Smart
     }
 
     // ------------------------------------------------------------------------------
-
 }

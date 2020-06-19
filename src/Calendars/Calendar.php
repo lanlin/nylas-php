@@ -1,4 +1,6 @@
-<?php namespace Nylas\Calendars;
+<?php
+
+namespace Nylas\Calendars;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -15,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Calendar
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -41,9 +42,10 @@ class Calendar
      * get calendars list
      *
      * @param array $params
+     *
      * @return array
      */
-    public function getCalendarsList(array $params = []) : array
+    public function getCalendarsList(array $params = []): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -59,10 +61,10 @@ class Calendar
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setQuery($params)
-        ->setHeaderParams($header)
-        ->get(API::LIST['calendars']);
+            ->getSync()
+            ->setQuery($params)
+            ->setHeaderParams($header)
+            ->get(API::LIST['calendars']);
     }
 
     // ------------------------------------------------------------------------------
@@ -71,9 +73,10 @@ class Calendar
      * get calendar
      *
      * @param mixed $calendarId string|string[]
+     *
      * @return array
      */
-    public function getCalendar($calendarId) : array
+    public function getCalendar($calendarId): array
     {
         $calendarId  = Helper::fooToArray($calendarId);
         $accessToken = $this->options->getAccessToken();
@@ -90,9 +93,9 @@ class Calendar
         foreach ($calendarId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -106,5 +109,4 @@ class Calendar
     }
 
     // ------------------------------------------------------------------------------
-
 }

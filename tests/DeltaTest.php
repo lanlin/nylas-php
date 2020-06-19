@@ -1,4 +1,6 @@
-<?php namespace NylasTest;
+<?php
+
+namespace NylasTest;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -7,13 +9,14 @@
  *
  * @update lanlin
  * @change 2020/04/26
+ *
+ * @internal
  */
 class DeltaTest extends Abs
 {
-
     // ------------------------------------------------------------------------------
 
-    public function testGetLatestCursor() : void
+    public function testGetLatestCursor(): void
     {
         $data = self::$api->Deltas()->Delta()->getLatestCursor();
 
@@ -22,12 +25,12 @@ class DeltaTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testGetSetOfDeltas() : void
+    public function testGetSetOfDeltas(): void
     {
         $params =
         [
             'cursor'         => '4whx9f0r544dwd07ipymrj7a1',
-            'exclude_types'  => 'message'
+            'exclude_types'  => 'message',
         ];
 
         $data = self::$api->Deltas()->Delta()->getSetOfDeltas($params);
@@ -37,13 +40,13 @@ class DeltaTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testLongPollingDelta() : void
+    public function testLongPollingDelta(): void
     {
         $params =
         [
             'cursor'         => '4whx9f0r544dwd07ipymrj7a1',
             'timeout'        => 20,
-            'exclude_types'  => 'message'
+            'exclude_types'  => 'message',
         ];
 
         $data = self::$api->Deltas()->Delta()->longPollingDelta($params);
@@ -53,12 +56,12 @@ class DeltaTest extends Abs
 
     // ------------------------------------------------------------------------------
 
-    public function testStreamingDelta() : void
+    public function testStreamingDelta(): void
     {
         $params =
         [
             'cursor'         => '4whx9f0r544dwd07ipymrj7a1',
-            'exclude_types'  => 'message'
+            'exclude_types'  => 'message',
         ];
 
         $data = self::$api->Deltas()->Delta()->streamingDelta($params);
@@ -67,5 +70,4 @@ class DeltaTest extends Abs
     }
 
     // ------------------------------------------------------------------------------
-
 }

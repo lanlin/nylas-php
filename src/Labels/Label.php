@@ -1,4 +1,6 @@
-<?php namespace Nylas\Labels;
+<?php
+
+namespace Nylas\Labels;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
@@ -15,7 +17,6 @@ use Nylas\Utilities\Validator as V;
  */
 class Label
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -42,7 +43,7 @@ class Label
      *
      * @return array
      */
-    public function getLabelsList() : array
+    public function getLabelsList(): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -55,9 +56,9 @@ class Label
         $header = ['Authorization' => $accessToken];
 
         return $this->options
-        ->getSync()
-        ->setHeaderParams($header)
-        ->get(API::LIST['labels']);
+            ->getSync()
+            ->setHeaderParams($header)
+            ->get(API::LIST['labels']);
     }
 
     // ------------------------------------------------------------------------------
@@ -66,9 +67,10 @@ class Label
      * add label
      *
      * @param string $displayName
+     *
      * @return array
      */
-    public function addLabel(string $displayName) : array
+    public function addLabel(string $displayName): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -83,10 +85,10 @@ class Label
         $params = ['display_name'  => $displayName];
 
         return $this->options
-        ->getSync()
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->post(API::LIST['labels']);
+            ->getSync()
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['labels']);
     }
 
     // ------------------------------------------------------------------------------
@@ -95,9 +97,10 @@ class Label
      * update label
      *
      * @param array $params
+     *
      * @return array
      */
-    public function updateLabel(array $params) : array
+    public function updateLabel(array $params): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -117,11 +120,11 @@ class Label
         unset($params['id']);
 
         return $this->options
-        ->getSync()
-        ->setPath($path)
-        ->setFormParams($params)
-        ->setHeaderParams($header)
-        ->put(API::LIST['oneLabel']);
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneLabel']);
     }
 
     // ------------------------------------------------------------------------------
@@ -130,9 +133,10 @@ class Label
      * get label
      *
      * @param mixed $labelId string|string[]
+     *
      * @return array
      */
-    public function getLabel($labelId) : array
+    public function getLabel($labelId): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -151,9 +155,9 @@ class Label
         foreach ($labelId as $id)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($id)
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -172,9 +176,10 @@ class Label
      * delete label
      *
      * @param array $params
+     *
      * @return array
      */
-    public function deleteLabel(array $params) : array
+    public function deleteLabel(array $params): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -196,10 +201,10 @@ class Label
         foreach ($params as $item)
         {
             $request = $this->options
-            ->getAsync()
-            ->setPath($item['id'])
-            ->setFormParams(['display_name' => $item['display_name']])
-            ->setHeaderParams($header);
+                ->getAsync()
+                ->setPath($item['id'])
+                ->setFormParams(['display_name' => $item['display_name']])
+                ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)
             {
@@ -214,5 +219,4 @@ class Label
     }
 
     // ------------------------------------------------------------------------------
-
 }
