@@ -43,7 +43,7 @@ class Smart
      * add labels to thread
      *
      * @param string $threadId
-     * @param string|array $labels
+     * @param mixed $labels string|string[]
      * @return array
      */
     public function addLabels(string $threadId, $labels) : array
@@ -57,7 +57,7 @@ class Smart
      * remove labels from thread
      *
      * @param string $threadId
-     * @param string|array $labels
+     * @param mixed $labels string|string[]
      * @return array
      */
     public function removeLabels(string $threadId, $labels) : array
@@ -132,7 +132,7 @@ class Smart
     /**
      * set thread to start
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @return array
      */
     public function star($threadId) : array
@@ -147,7 +147,7 @@ class Smart
     /**
      * set thread to un-star
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @return array
      */
     public function unstar($threadId) : array
@@ -162,7 +162,7 @@ class Smart
     /**
      * mark thread as read
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @return array
      */
     public function markAsRead($threadId) : array
@@ -177,7 +177,7 @@ class Smart
     /**
      * mark thread as unread
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @return array
      */
     public function markAsUnread($threadId) : array
@@ -192,7 +192,7 @@ class Smart
     /**
      * move thread to folder by id
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @param string $folderId
      * @return array
      */
@@ -212,7 +212,7 @@ class Smart
     /**
      * move thread to labels by id
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @param array $labelIds
      * @return array
      */
@@ -259,8 +259,8 @@ class Smart
      * update thread labels (update with name or display name)
      *
      * @param string $threadId
-     * @param string|array $add
-     * @param string|array $del
+     * @param mixed $add string|string[]
+     * @param mixed $del string|string[]
      * @return array
      */
     private function updateLabels(string $threadId, $add = [], $del = []) : array
@@ -304,7 +304,7 @@ class Smart
     /**
      * update the specific field of thread
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @param array $params
      * @return array
      */

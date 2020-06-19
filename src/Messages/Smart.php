@@ -43,7 +43,7 @@ class Smart
      * add labels to message
      *
      * @param string $messageId
-     * @param string|array $labels
+     * @param mixed $labels string|string[]
      * @return array
      */
     public function addLabels(string $messageId, $labels) : array
@@ -57,7 +57,7 @@ class Smart
      * remove labels from message
      *
      * @param string $messageId
-     * @param string|array $labels
+     * @param mixed $labels string|string[]
      * @return array
      */
     public function removeLabels(string $messageId, $labels) : array
@@ -132,7 +132,7 @@ class Smart
     /**
      * set message to start
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @return array
      */
     public function star($messageId) : array
@@ -147,7 +147,7 @@ class Smart
     /**
      * set message to un-star
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @return array
      */
     public function unstar($messageId) : array
@@ -162,7 +162,7 @@ class Smart
     /**
      * mark message as read
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @return array
      */
     public function markAsRead($messageId) : array
@@ -177,7 +177,7 @@ class Smart
     /**
      * mark message as unread
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @return array
      */
     public function markAsUnread($messageId) : array
@@ -192,7 +192,7 @@ class Smart
     /**
      * move message to folder by id
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @param string $folderId
      * @return array
      */
@@ -212,7 +212,7 @@ class Smart
     /**
      * move message to labels by id
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @param array $labelIds
      * @return array
      */
@@ -259,8 +259,8 @@ class Smart
      * update message labels
      *
      * @param string $messageId
-     * @param string|array $add
-     * @param string|array $del
+     * @param mixed $add string|string[]
+     * @param mixed $del string|string[]
      * @return array
      */
     private function updateLabels(string $messageId, $add = [], $del = []) : array
@@ -304,7 +304,7 @@ class Smart
     /**
      * update the specific field of message
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @param array $params
      * @return array
      */

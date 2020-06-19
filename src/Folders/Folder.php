@@ -127,7 +127,7 @@ class Folder
     /**
      * get folder
      *
-     * @param string|array $folderId
+     * @param mixed $folderId string|string[]
      * @return array
      */
     public function getFolder($folderId) : array
@@ -169,7 +169,7 @@ class Folder
     /**
      * delete folder
      *
-     * @param string|array $folderId
+     * @param mixed $folderId string|string[]
      * @return array
      */
     public function deleteFolder($folderId) : array

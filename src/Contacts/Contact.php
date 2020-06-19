@@ -124,7 +124,7 @@ class Contact
     /**
      * get contact
      *
-     * @param string|array $contactId
+     * @param mixed $contactId string|string[]
      * @return array
      */
     public function getContact($contactId) : array
@@ -164,7 +164,7 @@ class Contact
     /**
      * delete contact
      *
-     * @param string|array $contactId
+     * @param mixed $contactId string|string[]
      * @return array
      */
     public function deleteContact($contactId) : array

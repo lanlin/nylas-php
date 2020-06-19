@@ -72,7 +72,7 @@ class File
     /**
      * get file infos (not download file)
      *
-     * @param string|array $fileId
+     * @param mixed $fileId string|string[]
      * @return array
      */
     public function getFileInfo($fileId) : array
@@ -112,7 +112,7 @@ class File
     /**
      * delete file
      *
-     * @param string|array $fileId
+     * @param mixed $fileId string|string[]
      * @return array
      */
     public function deleteFile($fileId) : array

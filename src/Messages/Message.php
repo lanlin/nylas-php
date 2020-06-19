@@ -144,7 +144,7 @@ class Message
     /**
      * get message info
      *
-     * @param string|array $messageId
+     * @param mixed $messageId string|string[]
      * @return array
      */
     public function getMessage($messageId) : array

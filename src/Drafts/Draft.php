@@ -131,7 +131,7 @@ class Draft
     /**
      * get draft
      *
-     * @param string|array $draftId
+     * @param mixed $draftId string|string[]
      * @return array
      */
     public function getDraft($draftId) : array

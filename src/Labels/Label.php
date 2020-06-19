@@ -129,7 +129,7 @@ class Label
     /**
      * get label
      *
-     * @param string|array $labelId
+     * @param mixed $labelId string|string[]
      * @return array
      */
     public function getLabel($labelId) : array

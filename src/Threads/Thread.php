@@ -108,7 +108,7 @@ class Thread
     /**
      * get thread info
      *
-     * @param string|array $threadId
+     * @param mixed $threadId string|string[]
      * @return array
      */
     public function getThread($threadId) : array

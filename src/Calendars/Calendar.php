@@ -70,7 +70,7 @@ class Calendar
     /**
      * get calendar
      *
-     * @param string|array $calendarId
+     * @param mixed $calendarId string|string[]
      * @return array
      */
     public function getCalendar($calendarId) : array

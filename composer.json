@@ -26,5 +26,8 @@
         "psr-4": {
             "NylasTest\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --configuration tests/phpunit.xml"
     }
 }
