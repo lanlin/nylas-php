@@ -307,6 +307,11 @@ $nylas->Webhooks()->Webhook()->xxx();
 For more usage demos, please view the tests.</br>
 Please feel free to use it and send me a pull request if you fix anything or add a feature, though.</br>
 
+### Launching the tests
+
+1. Initialise composer dependency ´composer install´
+1. Add your info in ´tests/Abs.php´
+1. Launch the test with ´vendor/bin/phpunit tests´
 
 ## License
 
