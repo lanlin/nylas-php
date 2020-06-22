@@ -7,6 +7,9 @@
 PHP bindings for the Nylas REST API (V2.1). https://docs.nylas.com/reference</br>
 I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
 
+![PHP Composer](https://github.com/lanlin/nylas-php/workflows/PHP%20Composer/badge.svg?branch=master)
+![Code Reformat](https://github.com/lanlin/nylas-php/workflows/Code%20Reformat/badge.svg?branch=master)
+
 **What's new?**</br>
 
 1. API 2.1 support</br>
