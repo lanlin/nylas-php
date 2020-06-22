@@ -283,6 +283,7 @@ class Draft
             V::keyOptional('bcc', $this->arrayOfObject()),
             V::keyOptional('from', $this->arrayOfObject()),
             V::keyOptional('reply_to', $this->arrayOfObject()),
+            V::keyOptional('reply_to_message_id', V::stringType()->notEmpty()),
 
             V::keyOptional('file_ids', $this->arrayOfString()),
             V::keyOptional('subject', V::stringType()),
