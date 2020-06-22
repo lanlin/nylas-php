@@ -19,7 +19,7 @@ jobs:
       uses: shivammathur/setup-php@2.3.0
       with:
         php-version: '7.4'
-      tools: php-cs-fixer
+        tools: php-cs-fixer
 
     - name: Code Reformatting...
       run: php-cs-fixer fix -v ./ --allow-risky=yes --config=./.php_cs
