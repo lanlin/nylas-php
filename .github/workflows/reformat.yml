@@ -1,4 +1,4 @@
-name: PHP Reformat
+name: Reformat
 
 on:
   push:
@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.ACTION_TOKEN }}
@@ -24,7 +25,7 @@ jobs:
       run: php-cs-fixer fix -v ./ --allow-risky=yes --config=./.php_cs
 
     - name: Commit Reformated Code
-    - uses: stefanzweifel/git-auto-commit-action@v4
+      uses: stefanzweifel/git-auto-commit-action@v4
       with:
         branch: ${{ github.head_ref }}
         commit_message: Apply php-cs-fixer changes
