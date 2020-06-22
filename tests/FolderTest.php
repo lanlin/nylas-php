@@ -22,7 +22,7 @@ class FolderTest extends Abs
     {
         $data = self::$api->Folders()->Folder()->getFoldersList();
 
-        $this->assertTrue(\count($data) > 0);
+        $this->assertIsArray($data);
     }
 
     // ------------------------------------------------------------------------------

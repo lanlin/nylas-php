@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 class Sync
 {
@@ -44,7 +44,7 @@ class Sync
         }
         catch (Exception $e)
         {
-            throw new NylasException($this->getExceptionMsg($e));
+            throw new NylasException($e);
         }
 
         return $this->parseResponse($response, false);
@@ -72,7 +72,7 @@ class Sync
         }
         catch (Exception $e)
         {
-            throw new NylasException($this->getExceptionMsg($e));
+            throw new NylasException($e);
         }
 
         return $this->parseResponse($response, false);
@@ -100,7 +100,7 @@ class Sync
         }
         catch (Exception $e)
         {
-            throw new NylasException($this->getExceptionMsg($e));
+            throw new NylasException($e);
         }
 
         return $this->parseResponse($response, false);
@@ -128,7 +128,7 @@ class Sync
         }
         catch (Exception $e)
         {
-            throw new NylasException($this->getExceptionMsg($e));
+            throw new NylasException($e);
         }
 
         return $this->parseResponse($response, false);
@@ -157,7 +157,7 @@ class Sync
         }
         catch (Exception $e)
         {
-            throw new NylasException($this->getExceptionMsg($e));
+            throw new NylasException($e);
         }
 
         return $this->parseResponse($response, false);
@@ -195,7 +195,7 @@ class Sync
         }
         catch (Exception $e)
         {
-            throw new NylasException($this->getExceptionMsg($e));
+            throw new NylasException($e);
         }
 
         return $this->parseResponse($response, true);

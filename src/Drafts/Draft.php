@@ -241,8 +241,8 @@ class Draft
     {
         return V::simpleArray(
             V::keySet(
-                V::key('name', V::stringType(), false),
-                V::key('email', V::email())
+                V::key('email', V::email()),
+                V::key('name', V::stringType(), false)
             )
         );
     }

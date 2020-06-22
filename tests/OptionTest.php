@@ -11,9 +11,12 @@ use Nylas\Exceptions\NylasException;
  */
 class OptionTest extends TestCase
 {
+    // ------------------------------------------------------------------------------
+
     public function testMinimalRequirementOption(): void
     {
-        $optionsData = [
+        $optionsData =
+        [
             'client_id'     => \uniqid(),
             'client_secret' => \uniqid(),
         ];
@@ -22,9 +25,12 @@ class OptionTest extends TestCase
         $this->assertSame($optionsData, $options->getClientApps());
     }
 
+    // ------------------------------------------------------------------------------
+
     public function testMissingRequirementOption(): void
     {
-        $optionsData = [
+        $optionsData =
+        [
             'client_id' => \uniqid(),
         ];
 
@@ -32,9 +38,12 @@ class OptionTest extends TestCase
         new Options($optionsData);
     }
 
+    // ------------------------------------------------------------------------------
+
     public function testOptions(): void
     {
-        $optionsData = [
+        $optionsData =
+        [
             'debug'            => true,
             'log_file'         => 'foo',
             'client_id'        => \uniqid(),
@@ -51,4 +60,6 @@ class OptionTest extends TestCase
 
         $this->assertSame($optionsData, $data);
     }
+
+    // ------------------------------------------------------------------------------
 }

@@ -20,7 +20,7 @@ class ManageTest extends Abs
     {
         $data = self::$api->Accounts()->Manage()->getAccountsList();
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertIsArray($data);
     }
 
     // ------------------------------------------------------------------------------

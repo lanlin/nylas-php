@@ -1,8 +1,7 @@
-vendor/
-build/
-phpunit.xml
-.DS_Store
 .idea
-srcOld/
+.DS_Store
 composer.lock
 .php_cs.cache
+vendor/
+/tests/*.log
+/tests/README.md

@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 class Sending
 {
@@ -50,12 +50,7 @@ class Sending
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::simpleArray(V::keySet(
-            V::key('version', V::intType()->min(0)),
-            V::key('draft_id', V::stringType()->notEmpty())
-        ));
-
-        V::doValidate($rule, $params);
+        V::doValidate($this->getDraftRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
@@ -79,6 +74,29 @@ class Sending
         $pools = $this->options->getAsync()->pool($queues, false);
 
         return Helper::concatPoolInfos($dftId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get rules for draf
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function getDraftRules(): V
+    {
+        $tracking =  V::keySet(
+            V::key('links', V::boolType()),
+            V::key('opens', V::boolType()),
+            V::key('thread_replies', V::boolType()),
+            V::key('payload', V::stringType()->notEmpty(), false)
+        );
+
+        return V::simpleArray(V::keySet(
+            V::key('version', V::intType()->min(0)),
+            V::key('draft_id', V::stringType()->notEmpty()),
+            V::key('tracking', $tracking, false)
+        ));
     }
 
     // ------------------------------------------------------------------------------

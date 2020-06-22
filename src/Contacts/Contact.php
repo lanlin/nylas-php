@@ -333,6 +333,7 @@ class Contact
             V::keyOptional('manager_name', V::stringType()->notEmpty()),
             V::keyOptional('office_location', V::stringType()->notEmpty()),
             V::keyOptional('notes', V::stringType()->notEmpty()),
+            V::keyOptional('group', V::stringType()->notEmpty()),
 
             $this->contactEmailsRules(),            // emails
             $this->contactWebPageRules(),           // web_pages

@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 trait AbsBase
 {
@@ -154,11 +154,20 @@ trait AbsBase
     /**
      * set header params
      *
+     * @see https://docs.nylas.com/docs/using-access-tokens
+     *
      * @param array $headers
      * @return $this
      */
     public function setHeaderParams(array $headers) : self
     {
+        if (!empty($headers['Authorization']))
+        {
+            $encoded = \base64_encode("{$headers['Authorization']}:");
+
+            $headers['Authorization'] = "Basic {$encoded}";
+        }
+
         $this->headerParams = ['headers' => $headers];
 
         return $this;
@@ -265,7 +274,7 @@ trait AbsBase
         if ($errs)
         {
             $msg = 'Unable to parse response body into JSON: ';
-            throw new NylasException($msg . json_last_error());
+            throw new NylasException(null, $msg . json_last_error());
         }
 
         return $temp ?? [];

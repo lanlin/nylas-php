@@ -1,0 +1,29 @@
+<phpunit
+  backupGlobals="true"
+  backupStaticAttributes="true"
+  bootstrap="./TestHelper.php"
+  cacheTokens="false"
+  cacheResult="false"
+  colors="false"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  forceCoversAnnotation="false"
+  processIsolation="false"
+  stopOnError="false"
+  stopOnFailure="false"
+  stopOnIncomplete="false"
+  stopOnSkipped="false"
+  stopOnRisky="false"
+  timeoutForSmallTests="1"
+  timeoutForMediumTests="10"
+  timeoutForLargeTests="60"
+  verbose="false">
+  <testsuites>
+    <testsuite name="Stamsel Test Suite">
+      <directory suffix="Test.php">./</directory>
+      <exclude>./Abs.php</exclude>
+      <exclude>./TestHelper.php</exclude>
+    </testsuite>
+  </testsuites>
+</phpunit>

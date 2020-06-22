@@ -48,7 +48,7 @@ class Helper
             return;
         }
 
-        throw new NylasException("your organization unit not match to {$unitType}");
+        throw new NylasException(null, "your organization unit not match to {$unitType}");
     }
 
     // ------------------------------------------------------------------------------

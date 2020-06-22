@@ -10,7 +10,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 trait Abs
 {
@@ -52,7 +52,7 @@ trait Abs
         // check class exists
         if (!\class_exists($subClass))
         {
-            throw new NylasException("class {$subClass} not found!");
+            throw new NylasException(null, "class {$subClass} not found!");
         }
 
         return new $subClass($this->options);

@@ -166,7 +166,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator zend($validator, array $params = null)
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 class Validator extends AllOf
 {
@@ -268,7 +268,7 @@ class Validator extends AllOf
         }
         catch (NestedValidationException $e)
         {
-            throw new NylasException($e->getFullMessage());
+            throw new NylasException($e);
         }
     }
 

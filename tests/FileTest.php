@@ -20,7 +20,7 @@ class FileTest extends Abs
     {
         $data = self::$api->Files()->File()->getFilesList();
 
-        $this->assertTrue(\count($data) > 0);
+        $this->assertIsArray($data);
     }
 
     // ------------------------------------------------------------------------------

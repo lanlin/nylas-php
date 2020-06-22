@@ -22,7 +22,7 @@ class LabelTest extends Abs
     {
         $data = self::$api->Labels()->Label()->getLabelsList();
 
-        $this->assertTrue(\count($data) > 0);
+        $this->assertIsArray($data);
     }
 
     // ------------------------------------------------------------------------------

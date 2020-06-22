@@ -80,7 +80,7 @@ class Webhook
         // check if valid
         if (false === $vrif)
         {
-            throw new NylasException('not a valid nylas request');
+            throw new NylasException(null, 'not a valid nylas request');
         }
 
         // parse notification data
@@ -129,13 +129,13 @@ class Webhook
         {
             $msg = 'Unable to parse response body into JSON: ';
 
-            throw new NylasException($msg.\json_last_error());
+            throw new NylasException(null, $msg.\json_last_error());
         }
 
         // check deltas
         if (!isset($data['deltas']))
         {
-            throw new NylasException('invalid data');
+            throw new NylasException(null, 'invalid data');
         }
 
         return $data['deltas'];

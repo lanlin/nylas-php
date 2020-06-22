@@ -16,7 +16,7 @@ use GuzzleHttp\Promise\PromiseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 class Async
 {
@@ -166,7 +166,7 @@ class Async
         {
             if (!\is_callable($func))
             {
-                throw new NylasException('callable function required.');
+                throw new NylasException(null, 'callable function required.');
             }
         }
 
@@ -193,11 +193,15 @@ class Async
      */
     private function whenFailed(Exception $exception): array
     {
+        $preExcep = $exception->getPrevious();
+        $finalExc = ($preExcep instanceof NylasException) ? $preExcep : $exception;
+
         return
         [
             'error'     => true,
-            'message'   => $this->getExceptionMsg($exception),
-            'exception' => $exception,
+            'code'      => $finalExc->getCode(),
+            'message'   => $finalExc->getMessage(),
+            'exception' => $finalExc,
         ];
     }
 
@@ -222,6 +226,7 @@ class Async
             return
             [
                 'error'     => true,
+                'code'      => $e->getCode(),
                 'message'   => $e->getMessage(),
                 'exception' => $e,
             ];

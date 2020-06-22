@@ -25,7 +25,7 @@ use Nylas\Exceptions\NylasException;
  * @method Webhooks\Abs       Webhooks()
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/22
  */
 class Client
 {
@@ -74,7 +74,7 @@ class Client
         // check class exists
         if (!\class_exists($apiClass))
         {
-            throw new NylasException("class {$apiClass} not found!");
+            throw new NylasException(null, "class {$apiClass} not found!");
         }
 
         return new $apiClass($this->options);

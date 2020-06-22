@@ -40,12 +40,7 @@ class ContactTest extends Abs
 
     public function testAddContact(): void
     {
-        $params =
-        [
-            'company_name' => null,
-            'given_name'   => 'Bown',
-            'surname'      => 'Chou',
-        ];
+        $params = $this->getContactInfo();
 
         $data = self::$api->Contacts()->Contact()->addContact($params);
 
@@ -117,6 +112,52 @@ class ContactTest extends Abs
         $data = self::$api->Contacts()->Contact()->getContactPicture($params);
 
         $this->assertTrue(\count($data) > 0);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return array
+     */
+    private function getContactInfo(): array
+    {
+        return [
+            'given_name'     => 'My',
+            'middle_name'    => 'Nylas',
+            'surname'        => 'Friend',
+            'birthday'       => '2014-06-01',
+            'suffix'         => 'API',
+            'nickname'       => 'Nylas',
+            'company_name'   => 'Nylas',
+            'job_title'      => 'Communications Platform',
+            'manager_name'   => 'Communications',
+            'office_location'=> 'SF',
+            'notes'          => 'Check out the Nylas Email, Calendar, and Contacts APIs',
+            'emails'         => [[
+                'type' => 'personal',
+                'email'=> 'swagg@nylas.com',
+            ]],
+            'physical_addresses'=> [[
+                'type'          => 'work',
+                'street_address'=> '944 Market St, 8th Floor',
+                'city'          => 'San Francisco',
+                'postal_code'   => '94102',
+                'state'         => 'CA',
+                'country'       => 'USA',
+            ]],
+            'phone_numbers'=> [[
+                'type'  => 'home',
+                'number'=> '123-123-1234',
+            ]],
+            'web_pages'=> [[
+                'type'=> 'homepage',
+                'url' => 'https=>//nylas.com',
+            ]],
+            'im_addresses'=> [[
+                'type'      => 'gtalk',
+                'im_address'=> 'Nylas',
+            ]],
+        ];
     }
 
     // ------------------------------------------------------------------------------

@@ -310,8 +310,8 @@ Please feel free to use it and send me a pull request if you fix anything or add
 ### Launching the tests
 
 1. Initialise composer dependency ´composer install´
-1. Add your info in ´tests/Abs.php´
-1. Launch the test with ´vendor/bin/phpunit tests´
+2. Add your info in ´tests/Abs.php´
+3. Launch the test with ´vendor/bin/phpunit tests´
 
 ## License
 
