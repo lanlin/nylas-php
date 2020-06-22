@@ -4,12 +4,13 @@
 
 # Nylas PHP SDK
 
-![Build](https://github.com/lanlin/nylas-php/workflows/Build/badge.svg?branch=master)
-![Reformat](https://github.com/lanlin/nylas-php/workflows/Reformat/badge.svg?branch=master)
-![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/lanlin/nylas-php?include_prereleases)
-![Packagist Stars](https://img.shields.io/packagist/stars/lanlin/nylas-php)
-![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/lanlin/nylas-php)
-![License](https://img.shields.io/github/license/lanlin/nylas-php)
+[![Build](https://github.com/lanlin/nylas-php/workflows/Build/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
+[![Reformat](https://github.com/lanlin/nylas-php/workflows/Reformat/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
+[![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/lanlin/nylas-php?include_prereleases)](https://packagist.org/packages/lanlin/nylas-php)
+[![Packagist Stars](https://img.shields.io/packagist/stars/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
+[![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
+[![License](https://img.shields.io/github/license/lanlin/nylas-php)](https://github.com/lanlin/nylas-php#license)
 
 PHP bindings for the Nylas REST API (V2.1). https://docs.nylas.com/reference</br>
 I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
