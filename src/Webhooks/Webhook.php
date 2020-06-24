@@ -45,7 +45,7 @@ class Webhook
      */
     public function echoChallenge(): void
     {
-        $chanllenge = $_GET['chanllenge'] ?? null;
+        $chanllenge = $_GET['challenge'] ?? null;
 
         if (empty($chanllenge))
         {
