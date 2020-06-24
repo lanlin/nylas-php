@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 use Nylas\Client;
 use PHPUnit\Framework\TestCase;
@@ -11,27 +11,27 @@ use PHPUnit\Framework\TestCase;
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2020/04/26
+ * @change 2020/06/24
  *
  * @internal
  */
-class Abs extends TestCase
+class AbsCase extends TestCase
 {
     // ------------------------------------------------------------------------------
 
     /**
      * @var Client
      */
-    protected static Client $api;
+    protected Client $client;
 
     // ------------------------------------------------------------------------------
 
     /**
      * init client instance
      */
-    public static function setUpBeforeClass(): void
+    public function setUp(): void
     {
-        parent::setUpBeforeClass();
+        parent::setUp();
 
         $options =
         [
@@ -43,7 +43,19 @@ class Abs extends TestCase
             'client_secret' => 'your client secret',
         ];
 
-        self::$api = new Client($options);
+        $this->client = new Client($options);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * reset client
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        unset($this->client);
     }
 
     // ------------------------------------------------------------------------------

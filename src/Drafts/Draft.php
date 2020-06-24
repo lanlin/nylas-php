@@ -47,7 +47,7 @@ class Draft
      *
      * @return array
      */
-    public function getDraftsList($anyEmail): array
+    public function getDraftsList($anyEmail = null): array
     {
         $params =['access_token' => $this->options->getAccessToken()];
 

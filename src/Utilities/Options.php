@@ -107,8 +107,7 @@ class Options
             return;
         }
 
-        // cache account info
-        $this->accountInfo = (new Account($this))->getAccount();
+        $this->accountInfo = [];
     }
 
     // ------------------------------------------------------------------------------
@@ -315,6 +314,11 @@ class Options
             'sync_state'        => '',
             'organization_unit' => '',
         ];
+
+        if (empty($this->accountInfo) && !empty($this->accessToken))
+        {
+            $this->accountInfo = (new Account($this))->getAccount();
+        }
 
         return \array_merge($temp, $this->accountInfo);
     }

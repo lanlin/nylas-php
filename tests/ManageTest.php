@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,13 +12,13 @@ namespace NylasTest;
  *
  * @internal
  */
-class ManageTest extends Abs
+class ManageTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetAccountList(): void
     {
-        $data = self::$api->Accounts()->Manage()->getAccountsList();
+        $data = $this->client->Accounts()->Manage()->getAccountsList();
 
         $this->assertIsArray($data);
     }
@@ -27,7 +27,7 @@ class ManageTest extends Abs
 
     public function testGetAccountInfo(): void
     {
-        $data = self::$api->Accounts()->Manage()->getAccountInfo();
+        $data = $this->client->Accounts()->Manage()->getAccountInfo();
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -36,7 +36,7 @@ class ManageTest extends Abs
 
     public function testReactiveAccount(): void
     {
-        $data = self::$api->Accounts()->Manage()->reactiveAccount();
+        $data = $this->client->Accounts()->Manage()->reactiveAccount();
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -45,7 +45,7 @@ class ManageTest extends Abs
 
     public function testGetTokenInfo(): void
     {
-        $data = self::$api->Accounts()->Manage()->getTokenInfo();
+        $data = $this->client->Accounts()->Manage()->getTokenInfo();
 
         $this->assertArrayHasKey('state', $data);
     }
@@ -54,7 +54,7 @@ class ManageTest extends Abs
 
     public function testGetApplication(): void
     {
-        $data = self::$api->Accounts()->Manage()->getApplication();
+        $data = $this->client->Accounts()->Manage()->getApplication();
 
         $this->assertArrayHasKey('application_name', $data);
     }
@@ -69,7 +69,7 @@ class ManageTest extends Abs
             'redirect_uris'    => ['http://www.test-nylas-test.com'],
         ];
 
-        $data = self::$api->Accounts()->Manage()->updateApplication($param);
+        $data = $this->client->Accounts()->Manage()->updateApplication($param);
 
         $this->assertArrayHasKey('application_name', $data);
     }

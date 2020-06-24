@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,13 +12,13 @@ namespace NylasTest;
  *
  * @internal
  */
-class MessageTest extends Abs
+class MessageTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetMessagesList(): void
     {
-        $data = self::$api->Messages()->Message()->getMessagesList();
+        $data = $this->client->Messages()->Message()->getMessagesList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -29,7 +29,7 @@ class MessageTest extends Abs
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
-        $data = self::$api->Messages()->Message()->getMessage($id);
+        $data = $this->client->Messages()->Message()->getMessage($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -40,7 +40,7 @@ class MessageTest extends Abs
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
-        $data = self::$api->Messages()->Message()->getRawMessage($id);
+        $data = $this->client->Messages()->Message()->getRawMessage($id);
 
         $this->assertTrue(\is_object($data));
     }
@@ -55,7 +55,7 @@ class MessageTest extends Abs
             'unread' => false,
         ];
 
-        $data = self::$api->Messages()->Message()->updateMessage($params);
+        $data = $this->client->Messages()->Message()->updateMessage($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -66,7 +66,7 @@ class MessageTest extends Abs
     {
         $q = '测试';
 
-        $data = self::$api->Messages()->Search()->messages($q);
+        $data = $this->client->Messages()->Search()->messages($q);
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -81,7 +81,7 @@ class MessageTest extends Abs
             'subject' => 'this is for test',
         ];
 
-        $data = self::$api->Messages()->Sending()->sendDirectly($params);
+        $data = $this->client->Messages()->Sending()->sendDirectly($params);
 
         $this->assertArrayHasKey('id', $data[0]);
     }
@@ -92,7 +92,7 @@ class MessageTest extends Abs
     {
         $content = '';
 
-        $data = self::$api->Messages()->Sending()->sendRawMIME($content);
+        $data = $this->client->Messages()->Sending()->sendRawMIME($content);
 
         $this->assertArrayHasKey('id', $data);
     }

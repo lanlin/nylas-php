@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,13 +12,15 @@ namespace NylasTest;
  *
  * @internal
  */
-class AccountTest extends Abs
+class AccountTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetAccount(): void
     {
-        $data = self::$api->Accounts()->Account()->getAccount();
+        $data = $this->client->Accounts()->Account()->getAccount();
+
+        \print_r($data);
 
         $this->assertArrayHasKey('id', $data);
     }

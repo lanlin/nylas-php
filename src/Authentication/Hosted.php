@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/06/24
  */
 class Hosted
 {
@@ -49,19 +49,15 @@ class Hosted
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
         $rules = V::keySet(
-            V::key('login_hint', V::email()),
-            V::key('redirect_uri', V::url()),
+            V::key('scopes', V::stringType()->notEmpty()),
             V::key('client_id', V::stringType()->notEmpty()),
+            V::key('redirect_uri', V::url()),
+            V::key('response_type', V::in(['code', 'token'])),
             V::keyOptional('state', V::stringType()->length(1, 255)),
-            V::keyOptional('scopes', V::stringType()->notEmpty()),
-            V::keyOptional('response_type', V::in(['code', 'token']))
+            V::keyOptional('login_hint', V::email())
         );
 
         V::doValidate($rules, $params);
-
-        // @link https://docs.nylas.com/docs/how-to-use-selective-sync
-        $params['scopes']        = $params['scopes']        ?? 'calendar,email,contacts';
-        $params['response_type'] = $params['response_type'] ?? 'code';
 
         $query = \http_build_query($params, null, '&', PHP_QUERY_RFC3986);
 

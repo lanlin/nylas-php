@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 use Exception;
 
@@ -14,13 +14,13 @@ use Exception;
  *
  * @internal
  */
-class LabelTest extends Abs
+class LabelTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetLabelList(): void
     {
-        $data = self::$api->Labels()->Label()->getLabelsList();
+        $data = $this->client->Labels()->Label()->getLabelsList();
 
         $this->assertIsArray($data);
     }
@@ -31,7 +31,7 @@ class LabelTest extends Abs
     {
         $id = 'aenlhdgl3o55sc37a6fxjgjmo';
 
-        $data = self::$api->Labels()->Label()->getLabel($id);
+        $data = $this->client->Labels()->Label()->getLabel($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -42,7 +42,7 @@ class LabelTest extends Abs
     {
         $name = 'test_label'.\uniqid();
 
-        $data = self::$api->Labels()->Label()->addLabel($name);
+        $data = $this->client->Labels()->Label()->addLabel($name);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -57,7 +57,7 @@ class LabelTest extends Abs
             'display_name' => 'woo'.\uniqid(),
         ];
 
-        $data = self::$api->Labels()->Label()->updateLabel($params);
+        $data = $this->client->Labels()->Label()->updateLabel($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -67,7 +67,7 @@ class LabelTest extends Abs
     public function testDeleteLabel(): void
     {
         $name = 'test_label'.\uniqid();
-        $data = self::$api->Labels()->Label()->addLabel($name);
+        $data = $this->client->Labels()->Label()->addLabel($name);
 
         $params['id']           = $data['id'];
         $params['display_name'] = 'wooTTT'.\uniqid();
@@ -75,7 +75,7 @@ class LabelTest extends Abs
         try
         {
             $back = true;
-            self::$api->Labels()->Label()->deleteLabel($params);
+            $this->client->Labels()->Label()->deleteLabel($params);
         }
         catch (Exception $e)
         {

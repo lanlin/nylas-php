@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 use Exception;
 
@@ -14,13 +14,13 @@ use Exception;
  *
  * @internal
  */
-class FolderTest extends Abs
+class FolderTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetFolderList(): void
     {
-        $data = self::$api->Folders()->Folder()->getFoldersList();
+        $data = $this->client->Folders()->Folder()->getFoldersList();
 
         $this->assertIsArray($data);
     }
@@ -31,7 +31,7 @@ class FolderTest extends Abs
     {
         $id = 'ejom4k3o5qor5ooyh8yx7hgbw';
 
-        $data = self::$api->Folders()->Folder()->getFolder($id);
+        $data = $this->client->Folders()->Folder()->getFolder($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -42,7 +42,7 @@ class FolderTest extends Abs
     {
         $name = 'test_folder'.\uniqid();
 
-        $data = self::$api->Folders()->Folder()->addFolder($name);
+        $data = $this->client->Folders()->Folder()->addFolder($name);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -57,7 +57,7 @@ class FolderTest extends Abs
             'display_name' => 'woo---',
         ];
 
-        $data = self::$api->Folders()->Folder()->updateFolder($params);
+        $data = $this->client->Folders()->Folder()->updateFolder($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -71,7 +71,7 @@ class FolderTest extends Abs
         try
         {
             $back = true;
-            self::$api->Folders()->Folder()->deleteFolder($id);
+            $this->client->Folders()->Folder()->deleteFolder($id);
         }
         catch (Exception $e)
         {

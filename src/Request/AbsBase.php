@@ -17,7 +17,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait AbsBase
 {
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -66,7 +65,8 @@ trait AbsBase
     {
         $option =
         [
-            'base_uri' => trim($server ?? API::LIST['server'])
+            'verify'   => true,
+            'base_uri' => trim($server ?? API::LIST['server']),
         ];
 
         $this->debug  = $debug;
@@ -157,6 +157,7 @@ trait AbsBase
      * @see https://docs.nylas.com/docs/using-access-tokens
      *
      * @param array $headers
+     *
      * @return $this
      */
     public function setHeaderParams(array $headers) : self
@@ -199,18 +200,23 @@ trait AbsBase
     // ------------------------------------------------------------------------------
 
     /**
-     * get exception message
+     * concat response data when invalid json data responsed
      *
-     * @param \Exception $e
-     * @return string
+     * @param  array  $type
+     * @param  string  $code
+     * @param  string  $data
+     *
+     * @return array
      */
-    private function getExceptionMsg(\Exception $e) : string
+    private function concatForInvalidJsonData(array $type, string $code, string $data): array
     {
-        $preExcep = $e->getPrevious();
-
-        $finalExc = ($preExcep instanceof NylasException) ? $preExcep : $e;
-
-        return $finalExc->getMessage();
+        return
+        [
+            'httpStatus'  => $code,
+            'invalidJson' => true,
+            'contentType' => current($type),
+            'contentBody' => $data,
+        ];
     }
 
     // ------------------------------------------------------------------------------
@@ -243,41 +249,28 @@ trait AbsBase
     // ------------------------------------------------------------------------------
 
     /**
-     * Parse the JSON response body and return an array
+     * get json error info by error code
      *
-     * @param ResponseInterface $response
-     * @param bool $headers  TIPS: true for get headers, false get body data
-     * @return mixed
-     * @throws \Exception if the response body is not in JSON format
+     * @return string
      */
-    private function parseResponse(ResponseInterface $response, bool $headers = false)
+    private function getJsonErrorMessage()
     {
-        if ($headers) { return $response->getHeaders(); }
+        $error =
+        [
+            JSON_ERROR_NONE                  => 'No error has occurred.',
+            JSON_ERROR_DEPTH                 => 'The maximum stack depth has been exceeded.',
+            JSON_ERROR_STATE_MISMATCH        => 'Occurs with underflow or with the modes mismatch.',
+            JSON_ERROR_CTRL_CHAR             => 'Control character error, possibly incorrectly encoded.',
+            JSON_ERROR_SYNTAX                => 'Syntax error.',
+            JSON_ERROR_UTF8                  => 'Malformed UTF-8 characters, possibly incorrectly encoded.',
+            JSON_ERROR_RECURSION             => 'The object or array passed include recursive references and cannot be encoded.',
+            JSON_ERROR_INF_OR_NAN            => 'The value passed to json_encode() includes either NAN or INF',
+            JSON_ERROR_UNSUPPORTED_TYPE      => 'A value of an unsupported type was given to json_encode(), such as a resource.',
+            JSON_ERROR_INVALID_PROPERTY_NAME => 'A key starting with \u0000 character was in the string passed to json_decode()',
+            JSON_ERROR_UTF16                 => 'Single unpaired UTF-16 surrogate in unicode escape contained in the JSON string',
+        ];
 
-        $expc = 'application/json';
-        $type = $response->getHeader('Content-Type');
-
-        if (strpos(strtolower(current($type)), $expc) === false)
-        {
-            return $response->getBody();
-        }
-
-        $data = $response->getBody()->getContents();
-        $temp = json_decode($data, true, 512);
-        $errs = JSON_ERROR_NONE !== json_last_error();
-
-        if ($errs && $this->offDecodeError)
-        {
-            return $data;
-        }
-
-        if ($errs)
-        {
-            $msg = 'Unable to parse response body into JSON: ';
-            throw new NylasException(null, $msg . json_last_error());
-        }
-
-        return $temp ?? [];
+        return $error[json_last_error()];
     }
 
     // ------------------------------------------------------------------------------
@@ -317,4 +310,48 @@ trait AbsBase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * Parse the JSON response body and return an array
+     *
+     * @param ResponseInterface $response
+     * @param bool $headers  TIPS: true for get headers, false get body data
+     * @return mixed
+     * @throws \Exception if the response body is not in JSON format
+     */
+    private function parseResponse(ResponseInterface $response, bool $headers = false)
+    {
+        if ($headers) { return $response->getHeaders(); }
+
+        $expc = 'application/json';
+        $code = $response->getStatusCode();
+        $type = $response->getHeader('Content-Type');
+
+        // when not json type
+        if (strpos(strtolower(current($type)), $expc) === false)
+        {
+            return $this->concatForInvalidJsonData($type, $code, $response->getBody());
+        }
+
+        // decode json data
+        $data = $response->getBody()->getContents();
+        $temp = json_decode(trim(utf8_encode($data)), true, 512);
+        $errs = JSON_ERROR_NONE !== json_last_error();
+
+        // not throw when decode error
+        if ($errs && $this->offDecodeError)
+        {
+            return $this->concatForInvalidJsonData($type, $code, $data);
+        }
+
+        // throw error when decode failed
+        if ($errs)
+        {
+            $msg = 'Failed to parse the response due to: ';
+            throw new NylasException(null, $msg . $this->getJsonErrorMessage());
+        }
+
+        return $temp ?? [];
+    }
+
+    // ------------------------------------------------------------------------------
 }

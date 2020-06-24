@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ namespace NylasTest;
  *
  * @internal
  */
-class CalendarTest extends Abs
+class CalendarTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ class CalendarTest extends Abs
             'view' => 'count',
         ];
 
-        $data = self::$api->Calendars()->Calendar()->getCalendarsList($params);
+        $data = $this->client->Calendars()->Calendar()->getCalendarsList($params);
 
         $this->assertArrayHasKey('count', $data);
     }
@@ -34,7 +34,7 @@ class CalendarTest extends Abs
     {
         $id = 'f0yci053ovp2tit18hwemup33';
 
-        $data = self::$api->Calendars()->Calendar()->getCalendar($id);
+        $data = $this->client->Calendars()->Calendar()->getCalendar($id);
 
         $this->assertArrayHasKey($id, $data);
     }

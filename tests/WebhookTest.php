@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 use Throwable;
 
@@ -14,13 +14,13 @@ use Throwable;
  *
  * @internal
  */
-class WebhookTest extends Abs
+class WebhookTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetWebhookList(): void
     {
-        $data = self::$api->Webhooks()->Webhook()->getWebhookList();
+        $data = $this->client->Webhooks()->Webhook()->getWebhookList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -36,7 +36,7 @@ class WebhookTest extends Abs
             'callback_url' => 'http://www.test-nylas-api.com',
         ];
 
-        $data = self::$api->Webhooks()->Webhook()->createWebhook($para);
+        $data = $this->client->Webhooks()->Webhook()->createWebhook($para);
 
         $this->assertArrayHasKey('id', $data);
 
@@ -48,7 +48,7 @@ class WebhookTest extends Abs
 
     public function testUpdateWebhook($id): void
     {
-        $data = self::$api->Webhooks()->Webhook()->updateWebhook($id);
+        $data = $this->client->Webhooks()->Webhook()->updateWebhook($id);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -57,7 +57,7 @@ class WebhookTest extends Abs
 
     public function testGetWebhook($id): void
     {
-        $data = self::$api->Webhooks()->Webhook()->getWebhook($id);
+        $data = $this->client->Webhooks()->Webhook()->getWebhook($id);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -68,7 +68,7 @@ class WebhookTest extends Abs
     {
         try
         {
-            self::$api->Webhooks()->Webhook()->deleteWebhook($id);
+            $this->client->Webhooks()->Webhook()->deleteWebhook($id);
             $this->assertTrue(true);
         }
         catch (Throwable $e)

@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,13 +12,13 @@ namespace NylasTest;
  *
  * @internal
  */
-class FileTest extends Abs
+class FileTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetFileList(): void
     {
-        $data = self::$api->Files()->File()->getFilesList();
+        $data = $this->client->Files()->File()->getFilesList();
 
         $this->assertIsArray($data);
     }
@@ -29,7 +29,7 @@ class FileTest extends Abs
     {
         $id = '6i1hjmlao8s2b5oi7fsntq9va';
 
-        $data = self::$api->Files()->File()->getFileInfo($id);
+        $data = $this->client->Files()->File()->getFileInfo($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -50,7 +50,7 @@ class FileTest extends Abs
             'filename' => 'test_clound.png',
         ];
 
-        $data = self::$api->Files()->File()->uploadFile($file);
+        $data = $this->client->Files()->File()->uploadFile($file);
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -71,7 +71,7 @@ class FileTest extends Abs
             'path' => __DIR__.'/b.png',
         ];
 
-        $data = self::$api->Files()->File()->downloadFile($file);
+        $data = $this->client->Files()->File()->downloadFile($file);
 
         $this->assertTrue(\count($data) > 0);
     }

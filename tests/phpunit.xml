@@ -1,7 +1,7 @@
 <phpunit
-  backupGlobals="true"
-  backupStaticAttributes="true"
-  bootstrap="./TestHelper.php"
+  backupGlobals="false"
+  backupStaticAttributes="false"
+  bootstrap="../vendor/autoload.php"
   cacheTokens="false"
   cacheResult="false"
   colors="false"
@@ -20,10 +20,8 @@
   timeoutForLargeTests="60"
   verbose="false">
   <testsuites>
-    <testsuite name="Stamsel Test Suite">
+    <testsuite name="Nylas-PHP Test Suite">
       <directory suffix="Test.php">./</directory>
-      <exclude>./Abs.php</exclude>
-      <exclude>./TestHelper.php</exclude>
     </testsuite>
   </testsuites>
 </phpunit>

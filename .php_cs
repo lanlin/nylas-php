@@ -98,5 +98,6 @@ return \PhpCsFixer\Config::create()->setRules([
 ])
 ->setFinder(\PhpCsFixer\Finder::create()
     ->exclude('verdor')
+    ->notPath('src/Request/AbsBase.php')
     ->in(__DIR__)
 );

@@ -3,6 +3,7 @@
 namespace Nylas\Request;
 
 use Exception;
+use Throwable;
 use GuzzleHttp\Pool;
 use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
@@ -193,8 +194,7 @@ class Async
      */
     private function whenFailed(Exception $exception): array
     {
-        $preExcep = $exception->getPrevious();
-        $finalExc = ($preExcep instanceof NylasException) ? $preExcep : $exception;
+        $finalExc = $this->checkIfHasNylasException($exception);
 
         return
         [
@@ -231,6 +231,30 @@ class Async
                 'exception' => $e,
             ];
         }
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check if has nylas exception throwed
+     *
+     * @param Throwable $exception
+     *
+     * @return Throwable
+     */
+    private function checkIfHasNylasException(Throwable $exception): Throwable
+    {
+        if ($exception instanceof NylasException)
+        {
+            return $exception;
+        }
+
+        if ($exception && $exception->getPrevious())
+        {
+            return $this->checkIfHasNylasException($exception->getPrevious());
+        }
+
+        return $exception;
     }
 
     // ------------------------------------------------------------------------------

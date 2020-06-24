@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 use Exception;
 
@@ -14,13 +14,13 @@ use Exception;
  *
  * @internal
  */
-class EventTest extends Abs
+class EventTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetEventList(): void
     {
-        $data = self::$api->Events()->Event()->getEventsList();
+        $data = $this->client->Events()->Event()->getEventsList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -31,7 +31,7 @@ class EventTest extends Abs
     {
         $params = ['id' => 'ejom4k3o5qor5ooyh8yx7hgbw'];
 
-        $data = self::$api->Events()->Event()->getEvent($params);
+        $data = $this->client->Events()->Event()->getEvent($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -47,7 +47,7 @@ class EventTest extends Abs
             'title'       => 'nothing...',
         ];
 
-        $data = self::$api->Events()->Event()->addEvent($params);
+        $data = $this->client->Events()->Event()->addEvent($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -62,7 +62,7 @@ class EventTest extends Abs
             'when'    => ['time' => \time()],
         ];
 
-        $data = self::$api->Events()->Event()->updateEvent($params);
+        $data = $this->client->Events()->Event()->updateEvent($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -79,7 +79,7 @@ class EventTest extends Abs
         try
         {
             $back = true;
-            self::$api->Events()->Event()->deleteEvent($params);
+            $this->client->Events()->Event()->deleteEvent($params);
         }
         catch (Exception $e)
         {

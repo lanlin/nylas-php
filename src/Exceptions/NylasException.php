@@ -11,7 +11,7 @@ use RuntimeException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2020/06/24
  */
 class NylasException extends RuntimeException
 {
@@ -26,27 +26,41 @@ class NylasException extends RuntimeException
     /**
      * NylasException constructor.
      *
-     * @param null|Throwable $previous
+     * @param null|Throwable $exception
      * @param string         $message
      * @param int            $code
      */
-    public function __construct(?Throwable $previous = null, string $message = '', int $code = 0)
+    public function __construct(?Throwable $exception = null, string $message = '', int $code = 0)
     {
-        if ($previous instanceof NylasException)
-        {
-            throw $previous;
-        }
+        $this->checkIfHasNylasException($exception);
 
-        if ($previous && ($previous->getPrevious() instanceof NylasException))
-        {
-            throw $previous;
-        }
-
-        $msgs = $previous ? $previous->getMessage() : $this->message;
+        $msgs = $exception ? $exception->getMessage() : $this->message;
         $msgs = $message ?: $msgs;
         $code = $code ?: $this->code;
 
-        parent::__construct($msgs, $code, $previous);
+        parent::__construct($msgs, $code, $exception);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check if has nylas exception throwed
+     *
+     * @param null|Throwable $exception
+     *
+     * @throws Throwable
+     */
+    private function checkIfHasNylasException(?Throwable $exception = null): void
+    {
+        if ($exception instanceof NylasException)
+        {
+            throw $exception;
+        }
+
+        if ($exception && $exception->getPrevious())
+        {
+            $this->checkIfHasNylasException($exception->getPrevious());
+        }
     }
 
     // ------------------------------------------------------------------------------

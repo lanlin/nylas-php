@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,13 +12,13 @@ namespace NylasTest;
  *
  * @internal
  */
-class DeltaTest extends Abs
+class DeltaTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetLatestCursor(): void
     {
-        $data = self::$api->Deltas()->Delta()->getLatestCursor();
+        $data = $this->client->Deltas()->Delta()->getLatestCursor();
 
         $this->assertArrayHasKey('cursor', $data);
     }
@@ -33,7 +33,7 @@ class DeltaTest extends Abs
             'exclude_types'  => 'message',
         ];
 
-        $data = self::$api->Deltas()->Delta()->getSetOfDeltas($params);
+        $data = $this->client->Deltas()->Delta()->getSetOfDeltas($params);
 
         $this->assertArrayHasKey('deltas', $data);
     }
@@ -49,7 +49,7 @@ class DeltaTest extends Abs
             'exclude_types'  => 'message',
         ];
 
-        $data = self::$api->Deltas()->Delta()->longPollingDelta($params);
+        $data = $this->client->Deltas()->Delta()->longPollingDelta($params);
 
         $this->assertArrayHasKey('deltas', $data);
     }
@@ -64,7 +64,7 @@ class DeltaTest extends Abs
             'exclude_types'  => 'message',
         ];
 
-        $data = self::$api->Deltas()->Delta()->streamingDelta($params);
+        $data = $this->client->Deltas()->Delta()->streamingDelta($params);
 
         $this->assertArrayHasKey('deltas', $data);
     }

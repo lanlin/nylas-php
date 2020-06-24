@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,13 +12,13 @@ namespace NylasTest;
  *
  * @internal
  */
-class ThreadTest extends Abs
+class ThreadTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetThreadList(): void
     {
-        $data = self::$api->Threads()->Thread()->getThreadsList();
+        $data = $this->client->Threads()->Thread()->getThreadsList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -29,7 +29,7 @@ class ThreadTest extends Abs
     {
         $id = '7ax24gg39w06rqosrda5dtw4w';
 
-        $data = self::$api->Threads()->Thread()->getThread($id);
+        $data = $this->client->Threads()->Thread()->getThread($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -44,7 +44,7 @@ class ThreadTest extends Abs
             'unread' => true,
         ];
 
-        $data = self::$api->Threads()->Thread()->updateThread($params);
+        $data = $this->client->Threads()->Thread()->updateThread($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -55,7 +55,7 @@ class ThreadTest extends Abs
     {
         $q = 'test@test.com';
 
-        $data = self::$api->Threads()->Search()->threads($q);
+        $data = $this->client->Threads()->Search()->threads($q);
 
         $this->assertTrue(\count($data) > 0);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 use Exception;
 
@@ -14,13 +14,13 @@ use Exception;
  *
  * @internal
  */
-class DraftTest extends Abs
+class DraftTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetDraftList(): void
     {
-        $data = self::$api->Drafts()->Draft()->getDraftsList();
+        $data = $this->client->Drafts()->Draft()->getDraftsList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -31,7 +31,7 @@ class DraftTest extends Abs
     {
         $id = 'c5m5em1s3jd2ggsttf2zayzre';
 
-        $data = self::$api->Drafts()->Draft()->getDraft($id);
+        $data = $this->client->Drafts()->Draft()->getDraft($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -46,7 +46,7 @@ class DraftTest extends Abs
             'to'      => [['name' => '', 'email' => 'test@test.com']],
         ];
 
-        $data = self::$api->Drafts()->Draft()->addDraft($params);
+        $data = $this->client->Drafts()->Draft()->addDraft($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -63,7 +63,7 @@ class DraftTest extends Abs
             'to'      => [['name' => 'zhang san', 'email' => 'test@test.com']],
         ];
 
-        $data = self::$api->Drafts()->Draft()->updateDraft($params);
+        $data = $this->client->Drafts()->Draft()->updateDraft($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -81,7 +81,7 @@ class DraftTest extends Abs
         try
         {
             $back = true;
-            self::$api->Drafts()->Draft()->deleteDraft($params);
+            $this->client->Drafts()->Draft()->deleteDraft($params);
         }
         catch (Exception $e)
         {
@@ -101,7 +101,7 @@ class DraftTest extends Abs
             'to'      => [['name' => '', 'email' => 'test@test.com']],
         ];
 
-        $draft = self::$api->Drafts()->Draft()->addDraft($params);
+        $draft = $this->client->Drafts()->Draft()->addDraft($params);
 
         $params =
         [
@@ -109,7 +109,7 @@ class DraftTest extends Abs
             'draft_id' => $draft['id'],
         ];
 
-        $data = self::$api->Drafts()->Sending()->sendDraft($params);
+        $data = $this->client->Drafts()->Sending()->sendDraft($params);
 
         $this->assertArrayHasKey($draft['id'], $data);
     }

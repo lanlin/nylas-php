@@ -1,6 +1,6 @@
 <?php
 
-namespace NylasTest;
+namespace Nylas\Tests;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -8,27 +8,46 @@ namespace NylasTest;
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2020/04/26
+ * @change 2020/06/24
  *
  * @internal
  */
-class HostedTest extends Abs
+class HostedTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
     public function testGetOAuthAuthorize(): void
     {
         $params =
-        [
-            'state'        => 'testing',
-            'login_hint'   => 'test@gmail.com',
-            'redirect_uri' => 'https://www.test.com/redirect_callback',
-        ];
+         [
+             'state'         => 'testing',
+             'scopes'        => 'email,contacts,calendar',
+             'login_hint'    => 'test@gmail.com',
+             'redirect_uri'  => 'https://www.test.com/redirect_callback',
+             'response_type' => 'code',
+         ];
 
-        $data = self::$api->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
+        $data = $this->client->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
 
         $this->assertTrue(\is_string($data));
     }
+
+    // ------------------------------------------------------------------------------
+
+    /*
+     *  $data
+     *
+     * [httpStatus] => 200
+     * [invalidJson] => 1
+     * [contentType] => text/html; charset=utf-8
+     * [contentBody] =>
+     */
+    // public function testPostOAuthRevoke(): void
+    // {
+    //     $data = $this->client->Authentication()->Hosted()->postOAuthRevoke();
+
+    //     $this->assertTrue(\is_string($data));
+    // }
 
     // ------------------------------------------------------------------------------
 }

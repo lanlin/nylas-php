@@ -310,6 +310,48 @@ $nylas->Webhooks()->Webhook()->xxx();
 ```
 
 
+## Error & Exceptions
+
+1. common error codes that response from nylas are wrapped as exceptions, (see `src/Exceptions`)
+   and the exception code is the same as [nylas api error list](https://docs.nylas.com/reference#errors)
+
+2. if you set `off_decode_error` to `false` (default value),
+   you will get an exception when response data was not a valid json string,
+   or you will get an array like below:
+
+   ```php
+   [
+       'httpStatus'  => 'http status code',
+       'invalidJson' => true,
+       'contentType' => 'response header content type',
+       'contentBody' => 'response body content',
+   ]
+   ```
+
+3. for all methods that execute as the async mode will not throw an exception when an error occurs,
+   instead, it will return an array which contains all data and exceptions inside like below:
+
+   ```php
+   [
+       // ...
+       [
+           'error'     => true,
+           'code'      => 'exception code',
+           'message'   => 'exception message',
+           'exception' => 'exception instance',
+       ],
+       // ...
+   ]
+   ```
+
+4. some email provider may not support all features, exp: calendar, event.
+   for that reason you may get an exception named `BadRequestException` with 400 code and the msg:
+
+   ```shell
+   Malformed or missing a required parameter, or your email provider not support this.
+   ```
+
+
 ## Contributing
 
 For more usage demos, please view the tests.</br>
@@ -317,9 +359,9 @@ Please feel free to use it and send me a pull request if you fix anything or add
 
 ### Launching the tests
 
-1. Initialise composer dependency ´composer install´
-2. Add your info in ´tests/Abs.php´
-3. Launch the test with ´vendor/bin/phpunit tests´
+1. Initialise composer dependency `composer install`
+2. Add your info in `tests/AbsCase.php`
+3. Launch the test with `composer run-script test`
 
 ## License
 
