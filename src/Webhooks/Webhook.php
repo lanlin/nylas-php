@@ -13,7 +13,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/27
+ * @change 2020/06/27
  */
 class Webhook
 {
@@ -39,22 +39,22 @@ class Webhook
     // ------------------------------------------------------------------------------
 
     /**
-     * echo chanllenge to validate webhook
+     * echo challenge to validate webhook
      *
      * TIPS: you'd better use the output method from your framework.
      */
     public function echoChallenge(): void
     {
-        $chanllenge = $_GET['challenge'] ?? null;
+        $challenge = $_GET['challenge'] ?? null;
 
-        if (empty($chanllenge))
+        if (empty($challenge))
         {
             return;
         }
 
         \header('Content-Type: text/html; charset=utf-8', true, 200);
 
-        die($chanllenge);
+        die($challenge);
     }
 
     // ------------------------------------------------------------------------------
