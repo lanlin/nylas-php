@@ -10,7 +10,7 @@ use Throwable;
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2020/04/26
+ * @change 2020/06/27
  *
  * @internal
  */
@@ -40,14 +40,16 @@ class WebhookTest extends AbsCase
 
         $this->assertArrayHasKey('id', $data);
 
-        $this->testGetWebhook($data['id'] ?? uniqid());
-        $this->testUpdateWebhook($data['id'] ?? uniqid());
+        $this->testGetWebhook($data['id']);
+        $this->testUpdateWebhook($data['id']);
     }
 
     // ------------------------------------------------------------------------------
 
     public function testUpdateWebhook($id): void
     {
+        $id = $id ?: uniqid();
+
         $data = $this->client->Webhooks()->Webhook()->updateWebhook($id);
 
         $this->assertArrayHasKey('id', $data);
@@ -57,6 +59,8 @@ class WebhookTest extends AbsCase
 
     public function testGetWebhook($id): void
     {
+        $id = $id ?: uniqid();
+
         $data = $this->client->Webhooks()->Webhook()->getWebhook($id);
 
         $this->assertArrayHasKey('id', $data);
@@ -68,6 +72,8 @@ class WebhookTest extends AbsCase
     {
         try
         {
+            $id = $id ?: uniqid();
+
             $this->client->Webhooks()->Webhook()->deleteWebhook($id);
             $this->assertTrue(true);
         }
