@@ -48,7 +48,7 @@ class WebhookTest extends AbsCase
 
     public function testUpdateWebhook($id): void
     {
-        $id = $id ?: uniqid();
+        $id = $id ?: \uniqid();
 
         $data = $this->client->Webhooks()->Webhook()->updateWebhook($id);
 
@@ -59,7 +59,7 @@ class WebhookTest extends AbsCase
 
     public function testGetWebhook($id): void
     {
-        $id = $id ?: uniqid();
+        $id = $id ?: \uniqid();
 
         $data = $this->client->Webhooks()->Webhook()->getWebhook($id);
 
@@ -72,7 +72,7 @@ class WebhookTest extends AbsCase
     {
         try
         {
-            $id = $id ?: uniqid();
+            $id = $id ?: \uniqid();
 
             $this->client->Webhooks()->Webhook()->deleteWebhook($id);
             $this->assertTrue(true);
