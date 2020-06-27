@@ -1,4 +1,4 @@
-name: Reformat
+name: CodeQuality
 
 on:
   push:

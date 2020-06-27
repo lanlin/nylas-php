@@ -20,8 +20,6 @@ class AccountTest extends AbsCase
     {
         $data = $this->client->Accounts()->Account()->getAccount();
 
-        \print_r($data);
-
         $this->assertArrayHasKey('id', $data);
     }
 
