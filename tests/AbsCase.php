@@ -43,13 +43,13 @@ class AbsCase extends TestCase
             'client_secret' => 'your client secret',
         ];
 
-        $ENVS = getenv('TESTING_ENVS');
+        $ENVS = \getenv('TESTING_ENVS');
 
         if (!empty($ENVS))
         {
             echo "TESTING_ENVS found...\n";
 
-            $options = \base64_decode($ENVS);
+            $options = \base64_decode($ENVS, true);
         }
 
         $this->client = new Client($options);
