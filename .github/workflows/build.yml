@@ -19,8 +19,6 @@ jobs:
       with:
         php-version: '7.4'
         coverage: pcov
-      env:
-        TESTING_ENVS: ${{ secrets.TESTING_ENVS }}
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -37,6 +35,10 @@ jobs:
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Set Testing Envs
+      run: |
+        export TESTING_ENVS="${{ secrets.TESTING_ENVS }}"
 
     - name: Run test suite
       run: composer run-script test
