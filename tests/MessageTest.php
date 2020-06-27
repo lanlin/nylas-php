@@ -90,7 +90,7 @@ class MessageTest extends AbsCase
 
     public function testSendRaw(): void
     {
-        $content = '';
+        $content = 'testing send raw';
 
         $data = $this->client->Messages()->Sending()->sendRawMIME($content);
 

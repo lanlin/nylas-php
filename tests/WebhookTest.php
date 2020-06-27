@@ -40,8 +40,8 @@ class WebhookTest extends AbsCase
 
         $this->assertArrayHasKey('id', $data);
 
-        $this->testGetWebhook($data['id']);
-        $this->testUpdateWebhook($data['id']);
+        $this->testGetWebhook($data['id'] ?? uniqid());
+        $this->testUpdateWebhook($data['id'] ?? uniqid());
     }
 
     // ------------------------------------------------------------------------------

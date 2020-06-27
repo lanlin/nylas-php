@@ -177,13 +177,16 @@ class Event
      */
     public function getEvent(array $params): array
     {
+        $rules       = $this->getBaseRules();
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
-        $temps = [V::key('id', V::stringType()->notEmpty())];
-        $rules = \array_merge($temps, $this->getBaseRules());
+        $rules = V::simpleArray(V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            ...$rules
+        ));
 
-        V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate($rules, $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
@@ -227,10 +230,10 @@ class Event
         $params      = Helper::arrayToMulti($params);
         $accessToken = $this->options->getAccessToken();
 
-        $rule = V::keySet(
+        $rule = V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
-        );
+        ));
 
         V::doValidate($rule, $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
