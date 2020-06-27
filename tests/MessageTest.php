@@ -64,7 +64,7 @@ class MessageTest extends AbsCase
 
     public function testSearchMessage(): void
     {
-        $q = '测试';
+        $q = 'testing';
 
         $data = $this->client->Messages()->Search()->messages($q);
 
