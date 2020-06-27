@@ -19,6 +19,8 @@ jobs:
       with:
         php-version: '7.4'
         coverage: pcov
+      env:
+        TESTING_ENVS: ${{ secrets.TESTING_ENVS }}
 
     - name: Validate composer.json and composer.lock
       run: composer validate
