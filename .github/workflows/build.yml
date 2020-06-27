@@ -36,9 +36,6 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Set Testing Envs
-      run: |
-        export TESTING_ENVS="${{ secrets.TESTING_ENVS }}"
-
     - name: Run test suite
-      run: composer run-script test
+      run: |
+        export TESTING_ENVS="${{ secrets.TESTING_ENVS }}" && composer run-script test
