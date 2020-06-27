@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2020/06/24
+ * @change 2020/06/27
  *
  * @internal
  */
