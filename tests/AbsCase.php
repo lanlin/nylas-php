@@ -47,9 +47,8 @@ class AbsCase extends TestCase
 
         if (!empty($ENVS))
         {
-            echo "TESTING_ENVS found...\n";
-
             $options = \base64_decode($ENVS, true);
+            $options = \json_decode($options, true, 512);
         }
 
         $this->client = new Client($options);
