@@ -193,7 +193,7 @@ $nylas->Options()->setAccessToken("pass the token you got");
    ```
 
 
-### Launching the tests
+## Launching the tests
 
 1. Initialise composer dependency `composer install`
 2. Add your info in `tests/AbsCase.php`
