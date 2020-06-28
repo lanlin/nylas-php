@@ -67,7 +67,9 @@ $options =
 
     'client_id'        => 'your client id',        // required
     'client_secret'    => 'your client secret'     // required
-    'off_decode_error' => false,                   // disable json_decode error or not, default enable.
+
+    // 'off_decode_error' has removed since version 4.1.2,
+    // see [Error & Exceptions](#error--exceptions)
 ];
 
 $nylas = new Client($options);
@@ -315,9 +317,7 @@ $nylas->Webhooks()->Webhook()->xxx();
 1. common error codes that response from nylas are wrapped as exceptions, (see `src/Exceptions`)
    and the exception code is the same as [nylas api error list](https://docs.nylas.com/reference#errors)
 
-2. if you set `off_decode_error` to `false` (default value),
-   you will get an exception when response data was not a valid json string,
-   or you will get an array like below:
+2. you will get an array like below, when response data was not a valid json string or even not json content type:
 
    ```php
    [

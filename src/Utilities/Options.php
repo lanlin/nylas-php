@@ -30,11 +30,6 @@ class Options
     private bool $debug = false;
 
     /**
-     * @var bool
-     */
-    private bool $offDecodeError = false;
-
-    /**
      * @var string
      */
     private string $clientId;
@@ -73,7 +68,6 @@ class Options
             V::key('log_file', $this->getLogFileRule(), false),
             V::key('account_id', V::stringType()->notEmpty(), false),
             V::key('access_token', V::stringType()->notEmpty(), false),
-            V::key('off_decode_error', V::boolType(), false),
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('client_secret', V::stringType()->notEmpty())
         );
@@ -88,7 +82,6 @@ class Options
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccountId($options['account_id'] ?? '');
         $this->setAccessToken($options['access_token'] ?? '');
-        $this->setOffDecodeError($options['off_decode_error'] ?? false);
     }
 
     // ------------------------------------------------------------------------------
@@ -190,28 +183,6 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * enable/disable decode error (true => close, false => open)
-     *
-     * @param bool $off
-     */
-    public function setOffDecodeError(bool $off): void
-    {
-        $this->offDecodeError = $off;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get decode error set
-     */
-    public function getOffDecodeError(): bool
-    {
-        return $this->offDecodeError;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * set client id & secret
      *
      * @param string $clientId
@@ -257,7 +228,6 @@ class Options
             'client_secret'    => $this->clientSecret,
             'account_id'       => $this->accountId,
             'access_token'     => $this->accessToken,
-            'off_decode_error' => $this->offDecodeError,
         ];
     }
 
@@ -274,7 +244,7 @@ class Options
 
         $debug = $this->getLoggerHandler();
 
-        return new Sync($server, $debug, $this->offDecodeError);
+        return new Sync($server, $debug);
     }
 
     // ------------------------------------------------------------------------------
@@ -290,7 +260,7 @@ class Options
 
         $debug = $this->getLoggerHandler();
 
-        return new Async($server, $debug, $this->offDecodeError);
+        return new Async($server, $debug);
     }
 
     // ------------------------------------------------------------------------------

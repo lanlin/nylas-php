@@ -49,11 +49,9 @@ class OptionTest extends TestCase
             'client_id'        => \uniqid(),
             'client_secret'    => \uniqid(),
             'account_id'       => \uniqid(),
-            'off_decode_error' => true,
         ];
 
         $options = new Options($optionsData);
-        $this->assertSame($optionsData['off_decode_error'], $options->getOffDecodeError());
         $this->assertSame($optionsData['account_id'], $options->getAccountId());
         $data = $options->getAllOptions();
         unset($data['server'], $data['access_token']);

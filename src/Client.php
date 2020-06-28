@@ -25,7 +25,7 @@ use Nylas\Exceptions\NylasException;
  * @method Webhooks\Abs       Webhooks()
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2020/06/28
  */
 class Client
 {
@@ -49,7 +49,6 @@ class Client
      *                       'access_token'     => '',
      *                       'client_id'        => 'required',
      *                       'client_secret'    => 'required',
-     *                       'off_decode_error' => bool,
      *                       ]
      */
     public function __construct(array $options)

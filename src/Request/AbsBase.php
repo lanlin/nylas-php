@@ -4,7 +4,6 @@ use GuzzleHttp\Client;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Errors;
-use Nylas\Exceptions\NylasException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -13,17 +12,10 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2020/06/28
  */
 trait AbsBase
 {
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @var \GuzzleHttp\Client
-     */
-    private Client $guzzle;
-
     // ------------------------------------------------------------------------------
 
     /**
@@ -36,11 +28,9 @@ trait AbsBase
     // ------------------------------------------------------------------------------
 
     /**
-     * enable or disable json_decode exception throws
-     *
-     * @var bool
+     * @var \GuzzleHttp\Client
      */
-    private bool $offDecodeError = false;
+    private Client $guzzle;
 
     // ------------------------------------------------------------------------------
 
@@ -59,9 +49,8 @@ trait AbsBase
      *
      * @param string|NULL $server
      * @param bool|resource $debug
-     * @param bool $offDecodeError
      */
-    public function __construct(string $server = null, $debug = false, bool $offDecodeError = false)
+    public function __construct(string $server = null, $debug = false)
     {
         $option =
         [
@@ -71,7 +60,6 @@ trait AbsBase
 
         $this->debug  = $debug;
         $this->guzzle = new Client($option);
-        $this->offDecodeError = $offDecodeError;
     }
 
     // ------------------------------------------------------------------------------
@@ -202,9 +190,9 @@ trait AbsBase
     /**
      * concat response data when invalid json data responsed
      *
-     * @param  array  $type
-     * @param  string  $code
-     * @param  string  $data
+     * @param array  $type
+     * @param string $code
+     * @param string $data
      *
      * @return array
      */
@@ -244,33 +232,6 @@ trait AbsBase
             empty($this->headerParams) ? [] : $this->headerParams,
             empty($this->bodyContents) ? [] : $this->bodyContents
         );
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get json error info by error code
-     *
-     * @return string
-     */
-    private function getJsonErrorMessage()
-    {
-        $error =
-        [
-            JSON_ERROR_NONE                  => 'No error has occurred.',
-            JSON_ERROR_DEPTH                 => 'The maximum stack depth has been exceeded.',
-            JSON_ERROR_STATE_MISMATCH        => 'Occurs with underflow or with the modes mismatch.',
-            JSON_ERROR_CTRL_CHAR             => 'Control character error, possibly incorrectly encoded.',
-            JSON_ERROR_SYNTAX                => 'Syntax error.',
-            JSON_ERROR_UTF8                  => 'Malformed UTF-8 characters, possibly incorrectly encoded.',
-            JSON_ERROR_RECURSION             => 'The object or array passed include recursive references and cannot be encoded.',
-            JSON_ERROR_INF_OR_NAN            => 'The value passed to json_encode() includes either NAN or INF',
-            JSON_ERROR_UNSUPPORTED_TYPE      => 'A value of an unsupported type was given to json_encode(), such as a resource.',
-            JSON_ERROR_INVALID_PROPERTY_NAME => 'A key starting with \u0000 character was in the string passed to json_decode()',
-            JSON_ERROR_UTF16                 => 'Single unpaired UTF-16 surrogate in unicode escape contained in the JSON string',
-        ];
-
-        return $error[json_last_error()];
     }
 
     // ------------------------------------------------------------------------------
@@ -338,16 +299,9 @@ trait AbsBase
         $errs = JSON_ERROR_NONE !== json_last_error();
 
         // not throw when decode error
-        if ($errs && $this->offDecodeError)
-        {
-            return $this->concatForInvalidJsonData($type, $code, $data);
-        }
-
-        // throw error when decode failed
         if ($errs)
         {
-            $msg = 'Failed to parse the response due to: ';
-            throw new NylasException(null, $msg . $this->getJsonErrorMessage());
+            return $this->concatForInvalidJsonData($type, $code, $data);
         }
 
         return $temp ?? [];
