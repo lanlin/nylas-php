@@ -192,6 +192,37 @@ $nylas->Options()->setAccessToken("pass the token you got");
    Malformed or missing a required parameter, or your email provider not support this.
    ```
 
+5. the `log_file` parameter only works when `debug` set to `true`,
+   then the detailed info of the http request will be logged.
+
+   Tips:
+   nylas-php use the guzzlehttp for http request.
+   but guzzlehttp only support a resource type as the debug handler (cURL CURLOPT_STDERR required that).
+
+   for anyone who wants to use psr/log interface to debug,
+   you can init a temp resource, and pass the handler to nylas-php,
+   then get log content from temp resource after calling some methods.
+
+   ```php
+   $handler = fopen('php://temp', 'w+');
+
+   $options =
+   [
+       'log_file' => $handler,
+       ...
+   ];
+
+   $nylas = new Client($options);
+   $nylas->doSomething();
+   ....
+
+   rewind($handler);
+   $logContent = stream_get_contents($handler);
+   fclose($handler);
+
+   $yourPsrLogger->debug($logContent);
+   ```
+
 
 ## Launching the tests
 

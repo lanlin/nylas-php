@@ -89,6 +89,11 @@ class Native
             V::key('provider', V::in($this->providers)),
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('email_address', V::email()),
+
+            // @see https://docs.nylas.com/docs/authentication-scopes
+            V::keyOptional('scopes', V::stringType()->notEmpty()),
+
+            // re-authenticate existing account id
             V::keyOptional('reauth_account_id', V::stringType()->notEmpty())
         );
 
