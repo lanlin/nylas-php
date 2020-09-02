@@ -79,7 +79,7 @@ class Sending
     // ------------------------------------------------------------------------------
 
     /**
-     * get rules for draft
+     * get rules for draf
      *
      * @return \Nylas\Utilities\Validator
      */
