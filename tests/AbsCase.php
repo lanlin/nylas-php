@@ -22,7 +22,7 @@ class AbsCase extends TestCase
     /**
      * @var Client
      */
-    protected Client $client;
+    protected $client;
 
     // ------------------------------------------------------------------------------
 
