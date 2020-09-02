@@ -18,7 +18,7 @@ jobs:
     - name: Setup PHP Action
       uses: shivammathur/setup-php@2.3.1
       with:
-        php-version: '7.4'
+        php-version: '7.3'
         tools: php-cs-fixer:2.16.4
 
     - name: Code Reformatting...
@@ -28,7 +28,4 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         branch: ${{ github.head_ref }}
-        commit_author: lanlin <lanlin1987@github.com>
         commit_message: code reformat workflow
-        commit_user_name: lanlin
-        commit_user_email: lanlin1987@gmail.com
