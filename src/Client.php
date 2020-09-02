@@ -34,7 +34,7 @@ class Client
     /**
      * @var Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 

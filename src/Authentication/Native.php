@@ -21,7 +21,7 @@ class Native
     /**
      * @var array
      */
-    private array $providers =
+    private $providers =
     [
         'gmail', 'yahoo', 'exchange', 'outlook', 'imap', 'icloud', 'hotmail', 'aol',
     ];
@@ -31,7 +31,7 @@ class Native
     /**
      * @var \Nylas\Utilities\Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
@@ -124,13 +124,9 @@ class Native
             case 'yahoo':
             case 'icloud':
             case 'hotmail': return $this->knownProviderRule();
-
-            case 'imap':     return $this->imapProviderRule();
-
             case 'gmail':    return $this->gmailProviderRule();
-
             case 'exchange': return $this->exchangeProviderRule();
-
+            case 'imap':
             default: return $this->imapProviderRule();
         }
     }

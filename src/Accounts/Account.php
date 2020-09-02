@@ -21,7 +21,7 @@ class Account
     /**
      * @var \Nylas\Utilities\Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
