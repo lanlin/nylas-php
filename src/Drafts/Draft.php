@@ -24,7 +24,7 @@ class Draft
     /**
      * @var \Nylas\Utilities\Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 

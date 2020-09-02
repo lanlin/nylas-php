@@ -27,32 +27,32 @@ class Options
     /**
      * @var bool
      */
-    private bool $debug = false;
+    private $debug = false;
 
     /**
      * @var string
      */
-    private string $clientId;
+    private $clientId;
 
     /**
      * @var string
      */
-    private string $clientSecret;
+    private $clientSecret;
 
     /**
      * @var string
      */
-    private string $accessToken;
+    private $accessToken;
 
     /**
      * @var string
      */
-    private string $accountId;
+    private $accountId;
 
     /**
      * @var array
      */
-    private array $accountInfo;
+    private $accountInfo;
 
     // ------------------------------------------------------------------------------
 

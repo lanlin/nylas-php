@@ -22,7 +22,7 @@ class Sending
     /**
      * @var \Nylas\Utilities\Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ class Sending
     // ------------------------------------------------------------------------------
 
     /**
-     * get rules for draf
+     * get rules for draft
      *
      * @return \Nylas\Utilities\Validator
      */

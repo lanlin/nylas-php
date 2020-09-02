@@ -21,7 +21,7 @@ class Hosted
     /**
      * @var \Nylas\Utilities\Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 
