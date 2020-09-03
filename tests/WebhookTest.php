@@ -46,7 +46,7 @@ class WebhookTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateWebhook($id): void
+    public function testUpdateWebhook($id = ''): void
     {
         $id = $id ?: \uniqid();
 
@@ -57,7 +57,7 @@ class WebhookTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhook($id): void
+    public function testGetWebhook($id = ''): void
     {
         $id = $id ?: \uniqid();
 
@@ -68,7 +68,7 @@ class WebhookTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteWebhook($id): void
+    public function testDeleteWebhook($id = ''): void
     {
         try
         {

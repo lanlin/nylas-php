@@ -92,7 +92,7 @@ class API
         'searchMessages' => '/messages/search',
 
         // Webhooks
-        'Webhooks'   => '/a/%s/webhooks',
+        'webhooks'   => '/a/%s/webhooks',
         'oneWebhook' => '/a/%s/webhooks/%s',
 
         // Deltas
