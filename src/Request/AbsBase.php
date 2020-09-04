@@ -188,7 +188,7 @@ trait AbsBase
     // ------------------------------------------------------------------------------
 
     /**
-     * concat response data when invalid json data responsed
+     * concat response data when invalid json data responded
      *
      * @param array  $type
      * @param string $code
@@ -220,7 +220,7 @@ trait AbsBase
         $temp =
         [
             'debug'       => $this->debug,
-            'on_headers'  => $this->onHeadersFuncions(),
+            'on_headers'  => $this->onHeadersFunctions(),
             'http_errors' => $httpErrors
         ];
 
@@ -239,7 +239,7 @@ trait AbsBase
     /**
      * check http status code before response body
      */
-    private function onHeadersFuncions() : callable
+    private function onHeadersFunctions() : callable
     {
         $request = $this;
         $excpArr = Errors::StatusExceptions;
