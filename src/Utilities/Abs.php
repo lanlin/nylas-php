@@ -19,7 +19,7 @@ trait Abs
     /**
      * @var Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 

@@ -34,7 +34,7 @@ Last check at the point: [Service Accounts Now Supported for EWS Mail](https://c
 </div>
 
 
-## Installation (PHP 7.4 required since version 4.0)
+## Installation (version 3.x for php 7.3)
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
 You can install it by running

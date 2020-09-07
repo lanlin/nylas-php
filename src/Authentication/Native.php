@@ -21,7 +21,7 @@ class Native
     /**
      * @var array
      */
-    private array $providers =
+    private $providers =
     [
         'gmail', 'yahoo', 'exchange', 'outlook', 'imap', 'icloud', 'hotmail', 'aol',
     ];
@@ -31,7 +31,7 @@ class Native
     /**
      * @var \Nylas\Utilities\Options
      */
-    private Options $options;
+    private $options;
 
     // ------------------------------------------------------------------------------
 

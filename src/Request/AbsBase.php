@@ -30,17 +30,17 @@ trait AbsBase
     /**
      * @var \GuzzleHttp\Client
      */
-    private Client $guzzle;
+    private $guzzle;
 
     // ------------------------------------------------------------------------------
 
-    private array $formFiles     = [];
-    private array $pathParams    = [];
-    private array $jsonParams    = [];
-    private array $queryParams   = [];
-    private array $headerParams  = [];
-    private array $bodyContents  = [];
-    private array $onHeadersFunc = [];
+    private $formFiles     = [];
+    private $pathParams    = [];
+    private $jsonParams    = [];
+    private $queryParams   = [];
+    private $headerParams  = [];
+    private $bodyContents  = [];
+    private $onHeadersFunc = [];
 
     // ------------------------------------------------------------------------------
 
@@ -220,7 +220,7 @@ trait AbsBase
         $temp =
         [
             'debug'       => $this->debug,
-            'on_headers'  => $this->onHeadersFuncions(),
+            'on_headers'  => $this->onHeadersFunctions(),
             'http_errors' => $httpErrors
         ];
 
@@ -239,7 +239,7 @@ trait AbsBase
     /**
      * check http status code before response body
      */
-    private function onHeadersFuncions() : callable
+    private function onHeadersFunctions() : callable
     {
         $request = $this;
         $excpArr = Errors::StatusExceptions;

@@ -1,6 +1,6 @@
 {
     "name": "lanlin/nylas-php",
-    "description": "Nylas PHP SDK (api version 2.0)",
+    "description": "Nylas PHP SDK (api version 2.1)",
     "license": "MIT",
     "authors" : [
         {
@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": ">=7.3",
+        "ext-json": "*",
         "guzzlehttp/guzzle": ">=6.5",
         "respect/validation": "^2.0",
         "zbateson/mail-mime-parser": "^1.2"
