@@ -58,6 +58,23 @@ class Event
 
         $header = ['Authorization' => $accessToken];
 
+        //boolean parameters passed as get query have to be string true/false
+        if (array_key_exists('show_cancelled', $params)) {
+            if ($params['show_cancelled']) {
+                $params['show_cancelled'] = 'true';
+            }  else {
+                $params['show_cancelled'] = 'false';
+            }
+        }
+
+        if (array_key_exists('expand_recurring', $params)) {
+            if ($params['expand_recurring']) {
+                $params['expand_recurring'] = 'true';
+            }  else {
+                $params['expand_recurring'] = 'false';
+            }
+        }
+
         return $this->options
             ->getSync()
             ->setQuery($params)
