@@ -126,6 +126,7 @@ class Native
             case 'hotmail': return $this->knownProviderRule();
 
             case 'gmail':    return $this->gmailProviderRule();
+
             case 'exchange': return $this->exchangeProviderRule();
 
             case 'imap':
