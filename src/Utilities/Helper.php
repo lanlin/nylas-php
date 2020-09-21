@@ -10,7 +10,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/21
  */
 class Helper
 {
@@ -106,6 +106,28 @@ class Helper
         $temp = \is_array($foo) ? $foo : [$foo];
 
         return \array_values(\array_unique($temp));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * convert boolean to string value
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public static function boolToString(array $data): array
+    {
+        foreach ($data as $key => $val)
+        {
+            if (\is_bool($val))
+            {
+                $data[$key] = $val ? 'true' : 'false';
+            }
+        }
+
+        return $data;
     }
 
     // ------------------------------------------------------------------------------

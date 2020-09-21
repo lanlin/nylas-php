@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/28
+ * @change 2020/09/21
  */
 trait AbsBase
 {
@@ -102,6 +102,8 @@ trait AbsBase
      */
     public function setQuery(array $query) : self
     {
+        $query = Helper::boolToString($query);
+
         $this->queryParams = ['query' => $query];
 
         return $this;

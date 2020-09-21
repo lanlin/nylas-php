@@ -125,12 +125,10 @@ class Native
             case 'icloud':
             case 'hotmail': return $this->knownProviderRule();
 
-            case 'imap':     return $this->imapProviderRule();
-
             case 'gmail':    return $this->gmailProviderRule();
-
             case 'exchange': return $this->exchangeProviderRule();
 
+            case 'imap':
             default: return $this->imapProviderRule();
         }
     }
