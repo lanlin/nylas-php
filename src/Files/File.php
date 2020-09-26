@@ -304,6 +304,8 @@ class File
             }
         }
 
+        unset($item);
+
         return $files;
     }
 
