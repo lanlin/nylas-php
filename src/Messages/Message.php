@@ -148,11 +148,12 @@ class Message
     /**
      * get message info
      *
-     * @param mixed $messageId string|string[]
+     * @param  mixed  $messageId  string|string[]
+     * @param  bool  $expanded
      *
      * @return array
      */
-    public function getMessage($messageId): array
+    public function getMessage($messageId, bool $expanded = false): array
     {
         $messageId   = Helper::fooToArray($messageId);
         $accessToken = $this->options->getAccessToken();
@@ -172,6 +173,10 @@ class Message
                 ->getAsync()
                 ->setPath($id)
                 ->setHeaderParams($header);
+
+            if($expanded) {
+                $request->setQuery(['view' => 'expanded']);
+            }
 
             $queues[] = static function () use ($request, $target)
             {
