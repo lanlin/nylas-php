@@ -15,7 +15,7 @@
 PHP bindings for the Nylas REST API (V2.1). https://docs.nylas.com/reference</br>
 I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
 
-Last check at the point: [Service Accounts Now Supported for EWS Mail](https://changelog.nylas.com/#entry-166883)
+Last check at the point: [Scheduler Updates](https://changelog.nylas.com/#entry-167291)
 
 **What's new?**</br>
 
