@@ -50,7 +50,7 @@ class Calendar
         $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::keyOptional('view', V::in(['count', 'ids'])),
+            V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0))
         );

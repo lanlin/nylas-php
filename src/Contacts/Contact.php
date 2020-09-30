@@ -16,7 +16,7 @@ use Psr\Http\Message\StreamInterface;
  * @see https://docs.nylas.com/reference#contact-limitations
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class Contact
 {
@@ -296,6 +296,7 @@ class Contact
     private function getBaseRules(): V
     {
         return V::keySet(
+            V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
             V::keyOptional('email', V::email()),

@@ -16,7 +16,7 @@ use ZBateson\MailMimeParser\MailMimeParser;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class Message
 {
@@ -149,10 +149,11 @@ class Message
      * get message info
      *
      * @param mixed $messageId string|string[]
+     * @param bool  $expanded  true|false
      *
      * @return array
      */
-    public function getMessage($messageId): array
+    public function getMessage($messageId, bool $expanded = false): array
     {
         $messageId   = Helper::fooToArray($messageId);
         $accessToken = $this->options->getAccessToken();
@@ -165,12 +166,14 @@ class Message
         $queues = [];
         $target = API::LIST['oneMessage'];
         $header = ['Authorization' => $accessToken];
+        $query  = $expanded ? ['view' => 'expanded'] : [];
 
         foreach ($messageId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
+                ->setQuery($query)
                 ->setHeaderParams($header);
 
             $queues[] = static function () use ($request, $target)

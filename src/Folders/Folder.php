@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class Folder
 {
@@ -41,22 +41,32 @@ class Folder
     /**
      * get folders list
      *
+     * @param string $view ids|count
+     *
      * @return array
      */
-    public function getFoldersList(): array
+    public function getFoldersList(?string $view = null): array
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $rule = V::stringType()->notEmpty();
+        $params = [
+            'view'         => $view,
+            'access_token' => $this->options->getAccessToken(),
+        ];
 
-        $accessToken = $this->options->getAccessToken();
+        $rule = V::keySet(
+            V::key('access_token', V::stringType()->notEmpty()),
+            V::keyOptional('view', V::in(['ids', 'count'])),
+        );
 
-        V::doValidate($rule, $accessToken);
+        V::doValidate($rule, $params);
 
-        $header = ['Authorization' => $accessToken];
+        $header = ['Authorization' => $params['access_token']];
+        $query  = empty($params['view']) ? [] : ['view' => $params['view']];
 
         return $this->options
             ->getSync()
+            ->setQuery($query)
             ->setHeaderParams($header)
             ->get(API::LIST['folders']);
     }

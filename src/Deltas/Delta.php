@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class Delta
 {
@@ -153,7 +153,7 @@ class Delta
         [
             V::key('cursor', V::stringType()->notEmpty()),
 
-            V::keyOptional('view', V::stringType()->notEmpty()),
+            V::keyOptional('view', V::equals('expanded')),
             V::keyOptional('exclude_types', V::in($types)),
             V::keyOptional('include_types', V::in($types)),
         ];
