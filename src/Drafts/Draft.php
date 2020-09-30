@@ -53,7 +53,7 @@ class Draft
         $params = [
             'view'         => $view,
             'any_email'    => Helper::fooToArray($anyEmail),
-            'access_token' => $this->options->getAccessToken()
+            'access_token' => $this->options->getAccessToken(),
         ];
 
         $rule = V::keySet(
