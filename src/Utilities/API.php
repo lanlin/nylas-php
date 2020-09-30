@@ -10,10 +10,10 @@ namespace Nylas\Utilities;
  * @see https://changelog.nylas.com/
  * @see https://docs.nylas.com/reference#api-changelog
  *
- * @version 2.1 (2020/04/27)
+ * @version 2.1 (2020/09/30)
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class API
 {

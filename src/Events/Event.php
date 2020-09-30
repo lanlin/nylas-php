@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class Event
 {
@@ -51,6 +51,7 @@ class Event
     {
         $rules = $this->getBaseRules();
 
+        $rules[]     = V::keyOptional('view', V::in(['ids', 'count']));
         $accessToken = $this->options->getAccessToken();
 
         V::doValidate(V::keySet(...$rules), $params);

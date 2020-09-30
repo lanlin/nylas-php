@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class File
 {
@@ -51,7 +51,7 @@ class File
         $accessToken = $this->options->getAccessToken();
 
         $rule = V::keySet(
-            V::keyOptional('view', V::in(['count', 'ids'])),
+            V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('filename', V::stringType()->notEmpty()),
             V::keyOptional('message_id', V::stringType()->notEmpty()),
             V::keyOptional('content_type', V::stringType()->notEmpty())

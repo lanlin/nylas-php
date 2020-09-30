@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2020/09/30
  */
 class Draft
 {
@@ -43,29 +43,29 @@ class Draft
     /**
      * get drafts list
      *
-     * @param mixed $anyEmail string|string[]
+     * @param mixed  $anyEmail string|string[]
+     * @param string $view     ids|count
      *
      * @return array
      */
-    public function getDraftsList($anyEmail = null): array
+    public function getDraftsList($anyEmail = null, ?string $view = null): array
     {
-        $params =['access_token' => $this->options->getAccessToken()];
-
-        if (!empty($anyEmail))
-        {
-            $params['any_email'] = Helper::fooToArray($anyEmail);
-        }
+        $params = [
+            'view'         => $view,
+            'any_email'    => Helper::fooToArray($anyEmail),
+            'access_token' => $this->options->getAccessToken(),
+        ];
 
         $rule = V::keySet(
             V::key('access_token', V::stringType()->notEmpty()),
+            V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('any_email', V::simpleArray(V::email()))
         );
 
         V::doValidate($rule, $params);
 
-        $emails = \implode(',', ($params['any_email'] ?? []));
+        $query  = $this->getListQuery($params);
         $header = ['Authorization' => $params['access_token']];
-        $query  = empty($emails) ? [] : ['any_email' => $emails];
 
         return $this->options
             ->getSync()
@@ -265,6 +265,33 @@ class Draft
         ];
 
         return \array_merge($rules, $update);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get list query conditions
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    private function getListQuery(array $params): array
+    {
+        $query  = [];
+        $emails = \implode(',', $params['any_email']);
+
+        if (!empty($params['view']))
+        {
+            $query['view'] = $params['view'];
+        }
+
+        if (!empty($emails))
+        {
+            $query['any_email'] = $emails;
+        }
+
+        return $query;
     }
 
     // ------------------------------------------------------------------------------
