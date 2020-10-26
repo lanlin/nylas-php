@@ -40,4 +40,28 @@ class CalendarTest extends AbsCase
     }
 
     // ------------------------------------------------------------------------------
+
+    public function testAddCalendar(): void
+    {
+        $params = $this->getCalendarInfo();
+
+        $data = $this->client->Calendars()->Calendar()->addCalendar($params);
+
+        $this->assertArrayHasKey('id', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return array
+     */
+    private function getCalendarInfo(): array
+    {
+        return [
+            'name'        => 'Test Calendar',
+            'description' => 'This is a test calendar.',
+            'timezone'    => 'America/New_York'
+            'location'    => 'Front Conference Room',
+        ];
+    }
 }
