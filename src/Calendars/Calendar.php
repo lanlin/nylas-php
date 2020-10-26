@@ -98,6 +98,38 @@ class Calendar
     // ------------------------------------------------------------------------------
 
     /**
+     * update calendar
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    public function updateCalendar(array $params): array
+    {
+        $rules   = $this->addCalendarRules();
+        $rules[] = V::key('id', V::stringType()->notEmpty());
+
+        $accessToken = $this->options->getAccessToken();
+
+        V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $path   = $params['id'];
+        $header = ['Authorization' => $accessToken];
+
+        unset($params['id']);
+
+        return $this->options
+            ->getSync()
+            ->setPath($path)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneCalendar']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get calendar
      *
      * @param mixed $calendarId string|string[]
@@ -128,6 +160,47 @@ class Calendar
             $queues[] = static function () use ($request, $target)
             {
                 return $request->get($target);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($calendarId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * delete calendar
+     *
+     * @param mixed $contactId string|string[]
+     *
+     * @return array
+     */
+    public function deleteCalendar($contactId): array
+    {
+        $calendarId  = Helper::fooToArray($contactId);
+        $accessToken = $this->options->getAccessToken();
+
+        $rule = V::simpleArray(V::stringType()->notEmpty());
+
+        V::doValidate($rule, $calendarId);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $queues = [];
+        $target = API::LIST['oneCalendar'];
+        $header = ['Authorization' => $accessToken];
+
+        foreach ($calendarId as $id)
+        {
+            $request = $this->options
+                ->getAsync()
+                ->setPath($id)
+                ->setHeaderParams($header);
+
+            $queues[] = static function () use ($request, $target)
+            {
+                return $request->delete($target);
             };
         }
 
