@@ -2,6 +2,7 @@
 
 namespace Nylas\Calendars;
 
+use DateTimeZone;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
@@ -70,6 +71,33 @@ class Calendar
     // ------------------------------------------------------------------------------
 
     /**
+     * add calendar
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    public function addCalendar(array $params): array
+    {
+        $rules = $this->addCalendarRules();
+
+        $accessToken = $this->options->getAccessToken();
+
+        V::doValidate(V::keySet(...$rules), $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $header = ['Authorization' => $accessToken];
+
+        return $this->options
+            ->getSync()
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->post(API::LIST['calendars']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get calendar
      *
      * @param mixed $calendarId string|string[]
@@ -106,6 +134,24 @@ class Calendar
         $pools = $this->options->getAsync()->pool($queues, false);
 
         return Helper::concatPoolInfos($calendarId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * rules for add calendar
+     *
+     * @return array
+     */
+    private function addCalendarRules(): array
+    {
+        return
+            [
+                V::key('name', V::stringType()->notEmpty()),
+                V::keyOptional('description', V::stringType()->notEmpty()),
+                V::keyOptional('location', V::stringType()->notEmpty()),
+                V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
+            ];
     }
 
     // ------------------------------------------------------------------------------
