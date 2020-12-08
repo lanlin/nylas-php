@@ -291,15 +291,15 @@ trait AbsBase
         $expc = 'application/json';
         $code = $response->getStatusCode();
         $type = $response->getHeader('Content-Type');
+        $data = $response->getBody()->getContents();
 
         // when not json type
         if (strpos(strtolower(current($type)), $expc) === false)
         {
-            return $this->concatForInvalidJsonData($type, $code, $response->getBody());
+            return $this->concatForInvalidJsonData($type, $code, $data);
         }
 
         // decode json data
-        $data = $response->getBody()->getContents();
         $temp = json_decode(trim(utf8_encode($data)), true, 512);
         $errs = JSON_ERROR_NONE !== json_last_error();
 
