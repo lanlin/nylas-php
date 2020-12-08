@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2020/12/08
  */
 class Sync
 {
@@ -143,9 +143,9 @@ class Sync
      *
      * @throws Exception
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\StreamInterface
      */
-    public function getStream(string $api): \Psr\Http\Message\ResponseInterface
+    public function getStream(string $api): \Psr\Http\Message\StreamInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -153,14 +153,12 @@ class Sync
 
         try
         {
-            $response = $this->guzzle->get($apiPath, $options);
+            return $this->guzzle->get($apiPath, $options)->getBody();
         }
         catch (Exception $e)
         {
             throw new NylasException($e);
         }
-
-        return $this->parseResponse($response, false);
     }
 
     // ------------------------------------------------------------------------------
