@@ -85,6 +85,7 @@ class Options
 
         // optional
         $this->setDebug($options['debug'] ?? false);
+        $this->setServer($options['region'] ?? 'oregon');
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccountId($options['account_id'] ?? '');
         $this->setAccessToken($options['access_token'] ?? '');
