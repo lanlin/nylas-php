@@ -55,7 +55,7 @@ trait AbsBase
         $option =
         [
             'verify'   => true,
-            'base_uri' => trim($server ?? API::LIST['server']),
+            'base_uri' => trim($server ?? API::LIST['oregon']),
         ];
 
         $this->debug  = $debug;

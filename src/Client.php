@@ -25,7 +25,7 @@ use Nylas\Exceptions\NylasException;
  * @method Webhooks\Abs       Webhooks()
  *
  * @author lanlin
- * @change 2020/06/28
+ * @change 2021/03/18
  */
 class Client
 {
@@ -44,6 +44,7 @@ class Client
      * @param array $options
      *                       [
      *                       'debug'            => bool,
+     *                       'region'           => 'oregon',
      *                       'log_file'         => 'log file path',
      *                       'account_id'       => '',
      *                       'access_token'     => '',
