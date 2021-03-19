@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/18
+ * @change 2021/03/18
  */
 class Options
 {
@@ -28,6 +28,11 @@ class Options
      * @var bool
      */
     private bool $debug = false;
+
+    /**
+     * @var string
+     */
+    private string $server;
 
     /**
      * @var string
@@ -65,6 +70,7 @@ class Options
     {
         $rules = V::keySet(
             V::key('debug', V::boolType(), false),
+            V::key('region', V::in(['oregon', 'canada', 'ireland']), false),
             V::key('log_file', $this->getLogFileRule(), false),
             V::key('account_id', V::stringType()->notEmpty(), false),
             V::key('access_token', V::stringType()->notEmpty(), false),
@@ -79,6 +85,7 @@ class Options
 
         // optional
         $this->setDebug($options['debug'] ?? false);
+        $this->setServer($options['region'] ?? 'oregon');
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccountId($options['account_id'] ?? '');
         $this->setAccessToken($options['access_token'] ?? '');
@@ -142,13 +149,25 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * @param null|string $region
+     */
+    public function setServer(?string $region = null): void
+    {
+        $region = $region ?? 'oregon';
+
+        $this->server = API::SERVER[$region] ?? API::SERVER['oregon'];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get server
      *
      * @return string
      */
     public function getServer(): string
     {
-        return API::LIST['server'];
+        return $this->server;
     }
 
     // ------------------------------------------------------------------------------
@@ -221,13 +240,13 @@ class Options
     {
         return
         [
-            'debug'            => $this->debug,
-            'log_file'         => $this->logFile,
-            'server'           => API::LIST['server'],
-            'client_id'        => $this->clientId,
-            'client_secret'    => $this->clientSecret,
-            'account_id'       => $this->accountId,
-            'access_token'     => $this->accessToken,
+            'debug'         => $this->debug,
+            'log_file'      => $this->logFile,
+            'server'        => $this->server,
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'account_id'    => $this->accountId,
+            'access_token'  => $this->accessToken,
         ];
     }
 

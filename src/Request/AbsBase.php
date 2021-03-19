@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/03/18
  */
 trait AbsBase
 {
@@ -50,12 +50,12 @@ trait AbsBase
      * @param string|NULL $server
      * @param bool|resource $debug
      */
-    public function __construct(string $server = null, $debug = false)
+    public function __construct(?string $server = null, $debug = false)
     {
         $option =
         [
             'verify'   => true,
-            'base_uri' => trim($server ?? API::LIST['server']),
+            'base_uri' => trim($server ?? API::SERVER['oregon']),
         ];
 
         $this->debug  = $debug;

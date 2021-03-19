@@ -13,10 +13,21 @@ namespace Nylas\Utilities;
  * @version 2.1 (2020/09/30)
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/03/18
  */
 class API
 {
+    // ------------------------------------------------------------------------------
+
+    /**
+     * nylas server list array
+     */
+    public const SERVER = [
+        'oregon'  => 'https://api.nylas.com',
+        'canada'  => 'https://canada.api.nylas.com',
+        'ireland' => 'https://ireland.api.nylas.com',
+    ];
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -24,8 +35,6 @@ class API
      */
     public const LIST =
     [
-        'server' => 'https://api.nylas.com',
-
         // Authentication
         'oAuthToken'        => '/oauth/token',
         'oAuthRevoke'       => '/oauth/revoke',
