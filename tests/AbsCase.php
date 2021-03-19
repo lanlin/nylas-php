@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
- * @change 2020/06/27
+ * @change 2021/03/18
  *
  * @internal
  */
@@ -36,6 +36,7 @@ class AbsCase extends TestCase
         $options =
         [
             'debug'         => true,
+            'region'        => 'oregon',
             'log_file'      => __DIR__.'/test.log',
             'account_id'    => 'your account id',
             'access_token'  => 'your access token',
