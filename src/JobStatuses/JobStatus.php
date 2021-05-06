@@ -47,6 +47,7 @@ class JobStatus
      * @param array $params
      *
      * @return array
+     * @throws \Exception
      */
     public function getJobStatusesList(array $params = []): array
     {
