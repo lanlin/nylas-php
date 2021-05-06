@@ -111,7 +111,7 @@ class API
         'deltaLatestCursor'  => '/delta/latest_cursor',
 
         // JobStatuses
-        'jobStatus'    => '/job-statuses',
+        'jobStatuses'  => '/job-statuses',
         'oneJobStatus' => '/job-statuses/%s',
 
     ];

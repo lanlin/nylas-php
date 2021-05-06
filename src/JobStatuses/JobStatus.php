@@ -65,7 +65,7 @@ class JobStatus
             ->getSync()
             ->setQuery($params)
             ->setHeaderParams($header)
-            ->get(API::LIST['jobStatus']);
+            ->get(API::LIST['jobStatuses']);
     }
 
     // ------------------------------------------------------------------------------
