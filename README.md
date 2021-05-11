@@ -37,6 +37,7 @@ Last check at the point: [Dashboard Release for Canada and Ireland](https://chan
 ## Installation (PHP 7.4 required since version 4.0)
 
 **version 3.x for php >= 7.3 (branch 3.0)**
+
 **version 4.x for php >= 7.4 (branch master)**
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
