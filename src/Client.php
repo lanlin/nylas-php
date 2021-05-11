@@ -23,6 +23,7 @@ use Nylas\Exceptions\NylasException;
  * @method Messages\Abs       Messages()
  * @method Threads\Abs        Threads()
  * @method Webhooks\Abs       Webhooks()
+ * @method JobStatuses\Abs    JobStatuses()
  *
  * @author lanlin
  * @change 2021/03/18

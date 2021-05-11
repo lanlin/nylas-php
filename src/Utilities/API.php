@@ -109,6 +109,11 @@ class API
         'deltaLongpoll'      => '/delta/longpoll',
         'deltaStreaming'     => '/delta/streaming',
         'deltaLatestCursor'  => '/delta/latest_cursor',
+
+        // JobStatuses
+        'jobStatuses'  => '/job-statuses',
+        'oneJobStatus' => '/job-statuses/%s',
+
     ];
 
     // ------------------------------------------------------------------------------
