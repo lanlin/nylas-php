@@ -370,6 +370,12 @@ $nylas->Folders()->Folder()->xxx();
 $nylas->Labels()->Label()->xxx();
 ```
 
+### [Job-Statuses](https://docs.nylas.com/reference#job-statuses)
+
+```php
+$nylas->JobStatuses()->JobStatus()->xxx();
+```
+
 
 ### [Messages](https://docs.nylas.com/reference#messages)
 
