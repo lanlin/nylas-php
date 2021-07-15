@@ -269,30 +269,16 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * event base validate rules
+     * rules for add event
      *
-     * @return array
+     * @return \Nylas\Utilities\Validator
      */
-    private function getBaseRules(): array
+    private function addEventRules(): V
     {
-        return
-        [
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
-            V::keyOptional('event_id', V::stringType()->notEmpty()),
-            V::keyOptional('calendar_id', V::stringType()->notEmpty()),
-
-            V::keyOptional('title', V::stringType()->notEmpty()),
-            V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
-            V::keyOptional('show_cancelled', V::boolType()),
-            V::keyOptional('expand_recurring', V::boolType()),
-
-            V::keyOptional('ends_after', V::timestampType()),
-            V::keyOptional('ends_before', V::timestampType()),
-            V::keyOptional('starts_after', V::timestampType()),
-            V::keyOptional('starts_before', V::timestampType()),
-        ];
+        return V::keySet(
+            V::key('when', $this->timeRules()),
+            ...$this->getEventBaseRules(),
+        );
     }
 
     // ------------------------------------------------------------------------------
@@ -307,54 +293,73 @@ class Event
         return V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::keyOptional('when', $this->timeRules()),
-            V::keyOptional('busy', V::boolType()),
-            V::keyOptional('title', V::stringType()->notEmpty()),
-            V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
-            V::keyOptional('notify_participants', V::boolType()),
-            V::keyOptional('participants', $this->participantsRules()),
-            V::keyOptional('conferencing', $this->conferenceRules())
+            ...$this->getEventBaseRules(),
         );
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * rules for add event
+     * event base validate rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return array
      */
-    private function addEventRules(): V
+    private function getBaseRules(): array
     {
-        return V::keySet(
-            V::key('when', $this->timeRules()),
+        return
+            [
+                V::keyOptional('limit', V::intType()->min(1)),
+                V::keyOptional('offset', V::intType()->min(0)),
+                V::keyOptional('event_id', V::stringType()->notEmpty()),
+                V::keyOptional('calendar_id', V::stringType()->notEmpty()),
+
+                V::keyOptional('title', V::stringType()->notEmpty()),
+                V::keyOptional('location', V::stringType()->notEmpty()),
+                V::keyOptional('description', V::stringType()->notEmpty()),
+                V::keyOptional('show_cancelled', V::boolType()),
+                V::keyOptional('expand_recurring', V::boolType()),
+
+                V::keyOptional('ends_after', V::timestampType()),
+                V::keyOptional('ends_before', V::timestampType()),
+                V::keyOptional('starts_after', V::timestampType()),
+                V::keyOptional('starts_before', V::timestampType()),
+            ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get event base rules
+     *
+     * @return array
+     */
+    private function getEventBaseRules(): array
+    {
+        $recurrenceRule = V::keySet(
+            V::key('rrule', V::simpleArray()),
+            V::key('timezone', V::stringType()),
+        );
+
+        $participantsRule = V::simpleArray(V::keySet(
+            V::key('email', V::email()),
+            V::keyOptional('name', V::stringType()),
+            V::keyOptional('status', V::in(['yes', 'no', 'maybe', 'noreply'])),
+            V::keyOptional('comment', V::stringType())
+        ));
+
+        return
+        [
             V::key('calendar_id', V::stringType()->notEmpty()),
             V::keyOptional('busy', V::boolType()),
+            V::keyOptional('read_only', V::boolType()),
             V::keyOptional('title', V::stringType()->notEmpty()),
             V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('recurrence', V::arrayType()),
+            V::keyOptional('recurrence', $recurrenceRule),
             V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('participants', $participantsRule),
+            V::keyOptional('conferencing', $this->conferenceRules()),
             V::keyOptional('notify_participants', V::boolType()),
-            V::keyOptional('participants', $this->participantsRules()),
-            V::keyOptional('conferencing', $this->conferenceRules())
-        );
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get event participants rules
-     *
-     * @return \Nylas\Utilities\Validator
-     */
-    private function participantsRules(): V
-    {
-        return V::simpleArray(V::keySet(
-            V::key('email', V::email()),
-            V::key('status', V::stringType()),
-            V::key('name', V::stringType()),
-            V::key('comment', V::stringType())
-        ));
+        ];
     }
 
     // ------------------------------------------------------------------------------
@@ -367,7 +372,6 @@ class Event
     private function timeRules(): V
     {
         return V::anyOf(
-
             // time
             V::keySet(V::key('time', V::timestampType())),
 
