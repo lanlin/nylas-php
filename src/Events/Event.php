@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/07/15
  */
 class Event
 {
@@ -269,6 +269,37 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
+     * rules for add event
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function addEventRules(): V
+    {
+        return V::keySet(
+            V::key('when', $this->timeRules()),
+            ...$this->getEventBaseRules(),
+        );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * rules for update event
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function updateEventRules(): V
+    {
+        return V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            V::keyOptional('when', $this->timeRules()),
+            ...$this->getEventBaseRules(),
+        );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * event base validate rules
      *
      * @return array
@@ -298,54 +329,37 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * rules for update event
+     * get event base rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return array
      */
-    private function updateEventRules(): V
+    private function getEventBaseRules(): array
     {
-        return V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::keyOptional('when', $this->timeRules()),
-            V::keyOptional('busy', V::boolType()),
-            V::keyOptional('title', V::stringType()->notEmpty()),
-            V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
-            V::keyOptional('notify_participants', V::boolType()),
-            V::keyOptional('participants', V::simpleArray(V::keySet(
-                V::key('email', V::email()),
-                V::key('status', V::stringType()),
-                V::key('name', V::stringType()),
-                V::key('comment', V::stringType())
-            )))
+        $recurrenceRule = V::keySet(
+            V::key('rrule', V::simpleArray()),
+            V::key('timezone', V::stringType()),
         );
-    }
 
-    // ------------------------------------------------------------------------------
+        $participantsRule = V::simpleArray(V::keySet(
+            V::key('email', V::email()),
+            V::keyOptional('name', V::stringType()),
+            V::keyOptional('status', V::in(['yes', 'no', 'maybe', 'noreply'])),
+            V::keyOptional('comment', V::stringType())
+        ));
 
-    /**
-     * rules for add event
-     *
-     * @return \Nylas\Utilities\Validator
-     */
-    private function addEventRules(): V
-    {
-        return V::keySet(
-            V::key('when', $this->timeRules()),
+        return
+        [
             V::key('calendar_id', V::stringType()->notEmpty()),
             V::keyOptional('busy', V::boolType()),
+            V::keyOptional('read_only', V::boolType()),
             V::keyOptional('title', V::stringType()->notEmpty()),
             V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('recurrence', V::arrayType()),
+            V::keyOptional('recurrence', $recurrenceRule),
             V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('participants', $participantsRule),
+            V::keyOptional('conferencing', $this->conferenceRules()),
             V::keyOptional('notify_participants', V::boolType()),
-            V::keyOptional('participants', V::simpleArray(V::keySet(
-                V::key('email', V::email()),
-                V::key('status', V::stringType()),
-                V::key('name', V::stringType()),
-                V::key('comment', V::stringType())
-            )))
-        );
+        ];
     }
 
     // ------------------------------------------------------------------------------
@@ -359,7 +373,7 @@ class Event
     {
         return V::anyOf(
 
-            // time
+        // time
             V::keySet(V::key('time', V::timestampType())),
 
             // date
@@ -377,6 +391,54 @@ class Event
                 V::key('start_date', V::date('Y-m-d'))
             )
         );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get event conference rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function conferenceRules(): V
+    {
+        $webEx = V::keySet(
+            V::key('provider', V::equals('WebEx')),
+            V::key('details', V::keySet(
+                V::key('password', V::stringType()),
+                V::key('pin', V::stringType()),
+                V::key('url', V::stringType())
+            ))
+        );
+
+        $zoomMeeting = V::keySet(
+            V::key('provider', V::equals('Zoom Meeting')),
+            V::key('details', V::keySet(
+                V::key('meeting_code', V::stringType()),
+                V::key('password', V::stringType()),
+                V::key('url', V::stringType()),
+            ))
+        );
+
+        $goToMeeting = V::keySet(
+            V::key('provider', V::equals('GoToMeeting')),
+            V::key('details', V::keySet(
+                V::key('meeting_code', V::stringType()),
+                V::key('phone', V::simpleArray()),
+                V::key('url', V::stringType()),
+            ))
+        );
+
+        $googleMeet = V::keySet(
+            V::key('provider', V::equals('Google Meet')),
+            V::key('details', V::keySet(
+                V::key('phone', V::simpleArray()),
+                V::key('pin', V::stringType()),
+                V::key('url', V::stringType()),
+            ))
+        );
+
+        return V::oneOf($webEx, $zoomMeeting, $goToMeeting, $googleMeet);
     }
 
     // ------------------------------------------------------------------------------
