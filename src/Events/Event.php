@@ -317,6 +317,31 @@ class Event
                 V::key('status', V::stringType()),
                 V::key('name', V::stringType()),
                 V::key('comment', V::stringType())
+            ))),
+            V::keyOptional('conferencing', V::simpleArray(V::keySet(
+                V::key('provider', V::in(['WebEx', 'Zoom Meeting', 'GoToMeeting', 'Google Meet'])),
+                V::key('details', V::oneOf(
+                    V::simpleArray(V::keySet(
+                        V::key('password', V::stringType()),
+                        V::key('pin', V::stringType()),
+                        V::key('url', V::stringType()),
+                    )),
+                    V::simpleArray(V::keySet(
+                        V::key('meeting_code', V::stringType()),
+                        V::key('password', V::stringType()),
+                        V::key('url', V::stringType()),
+                    )),
+                    V::simpleArray(V::keySet(
+                        V::key('meeting_code', V::stringType()),
+                        V::key('phone', V::simpleArray()),
+                        V::key('url', V::stringType()),
+                    )),
+                    V::simpleArray(V::keySet(
+                        V::key('phone', V::simpleArray()),
+                        V::key('pin', V::stringType()),
+                        V::key('url', V::stringType()),
+                    )),
+                ))
             )))
         );
     }
@@ -344,6 +369,31 @@ class Event
                 V::key('status', V::stringType()),
                 V::key('name', V::stringType()),
                 V::key('comment', V::stringType())
+            ))),
+            V::keyOptional('conferencing', V::simpleArray(V::keySet(
+                V::key('provider', V::in(['WebEx', 'Zoom Meeting', 'GoToMeeting', 'Google Meet'])),
+                V::key('details', V::oneOf(
+                    V::simpleArray(V::keySet(
+                        V::key('password', V::stringType()),
+                        V::key('pin', V::stringType()),
+                        V::key('url', V::stringType()),
+                    )),
+                    V::simpleArray(V::keySet(
+                        V::key('meeting_code', V::stringType()),
+                        V::key('password', V::stringType()),
+                        V::key('url', V::stringType()),
+                    )),
+                    V::simpleArray(V::keySet(
+                        V::key('meeting_code', V::stringType()),
+                        V::key('phone', V::simpleArray()),
+                        V::key('url', V::stringType()),
+                    )),
+                    V::simpleArray(V::keySet(
+                        V::key('phone', V::simpleArray()),
+                        V::key('pin', V::stringType()),
+                        V::key('url', V::stringType()),
+                    )),
+                ))
             )))
         );
     }
