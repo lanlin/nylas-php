@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/07/15
  */
 class Event
 {
@@ -312,37 +312,8 @@ class Event
             V::keyOptional('location', V::stringType()->notEmpty()),
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
-            V::keyOptional('participants', V::simpleArray(V::keySet(
-                V::key('email', V::email()),
-                V::key('status', V::stringType()),
-                V::key('name', V::stringType()),
-                V::key('comment', V::stringType())
-            ))),
-            V::keyOptional('conferencing', V::simpleArray(V::keySet(
-                V::key('provider', V::in(['WebEx', 'Zoom Meeting', 'GoToMeeting', 'Google Meet'])),
-                V::key('details', V::oneOf(
-                    V::simpleArray(V::keySet(
-                        V::key('password', V::stringType()),
-                        V::key('pin', V::stringType()),
-                        V::key('url', V::stringType()),
-                    )),
-                    V::simpleArray(V::keySet(
-                        V::key('meeting_code', V::stringType()),
-                        V::key('password', V::stringType()),
-                        V::key('url', V::stringType()),
-                    )),
-                    V::simpleArray(V::keySet(
-                        V::key('meeting_code', V::stringType()),
-                        V::key('phone', V::simpleArray()),
-                        V::key('url', V::stringType()),
-                    )),
-                    V::simpleArray(V::keySet(
-                        V::key('phone', V::simpleArray()),
-                        V::key('pin', V::stringType()),
-                        V::key('url', V::stringType()),
-                    )),
-                ))
-            )))
+            V::keyOptional('participants', $this->participantsRules()),
+            V::keyOptional('conferencing', $this->conferenceRules())
         );
     }
 
@@ -364,38 +335,26 @@ class Event
             V::keyOptional('recurrence', V::arrayType()),
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType()),
-            V::keyOptional('participants', V::simpleArray(V::keySet(
-                V::key('email', V::email()),
-                V::key('status', V::stringType()),
-                V::key('name', V::stringType()),
-                V::key('comment', V::stringType())
-            ))),
-            V::keyOptional('conferencing', V::simpleArray(V::keySet(
-                V::key('provider', V::in(['WebEx', 'Zoom Meeting', 'GoToMeeting', 'Google Meet'])),
-                V::key('details', V::oneOf(
-                    V::simpleArray(V::keySet(
-                        V::key('password', V::stringType()),
-                        V::key('pin', V::stringType()),
-                        V::key('url', V::stringType()),
-                    )),
-                    V::simpleArray(V::keySet(
-                        V::key('meeting_code', V::stringType()),
-                        V::key('password', V::stringType()),
-                        V::key('url', V::stringType()),
-                    )),
-                    V::simpleArray(V::keySet(
-                        V::key('meeting_code', V::stringType()),
-                        V::key('phone', V::simpleArray()),
-                        V::key('url', V::stringType()),
-                    )),
-                    V::simpleArray(V::keySet(
-                        V::key('phone', V::simpleArray()),
-                        V::key('pin', V::stringType()),
-                        V::key('url', V::stringType()),
-                    )),
-                ))
-            )))
+            V::keyOptional('participants', $this->participantsRules()),
+            V::keyOptional('conferencing', $this->conferenceRules())
         );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get event participants rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function participantsRules(): V
+    {
+        return V::simpleArray(V::keySet(
+            V::key('email', V::email()),
+            V::key('status', V::stringType()),
+            V::key('name', V::stringType()),
+            V::key('comment', V::stringType())
+        ));
     }
 
     // ------------------------------------------------------------------------------
@@ -427,6 +386,54 @@ class Event
                 V::key('start_date', V::date('Y-m-d'))
             )
         );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get event conference rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function conferenceRules(): V
+    {
+        $webEx = V::keySet(
+            V::key('provider', V::equals('WebEx')),
+            V::key('details', V::keySet(
+                V::key('password', V::stringType()),
+                V::key('pin', V::stringType()),
+                V::key('url', V::stringType())
+            ))
+        );
+
+        $zoomMeeting = V::keySet(
+            V::key('provider', V::equals('Zoom Meeting')),
+            V::key('details', V::keySet(
+                V::key('meeting_code', V::stringType()),
+                V::key('password', V::stringType()),
+                V::key('url', V::stringType()),
+            ))
+        );
+
+        $goToMeeting = V::keySet(
+            V::key('provider', V::equals('GoToMeeting')),
+            V::key('details', V::keySet(
+                V::key('meeting_code', V::stringType()),
+                V::key('phone', V::simpleArray()),
+                V::key('url', V::stringType()),
+            ))
+        );
+
+        $googleMeet = V::keySet(
+            V::key('provider', V::equals('Google Meet')),
+            V::key('details', V::keySet(
+                V::key('phone', V::simpleArray()),
+                V::key('pin', V::stringType()),
+                V::key('url', V::stringType()),
+            ))
+        );
+
+        return V::oneOf($webEx, $zoomMeeting, $goToMeeting, $googleMeet);
     }
 
     // ------------------------------------------------------------------------------
