@@ -2,6 +2,7 @@
 
 namespace Nylas\JobStatuses;
 
+use Exception;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
@@ -46,8 +47,9 @@ class JobStatus
      *
      * @param array $params
      *
+     * @throws Exception
+     *
      * @return array
-     * @throws \Exception
      */
     public function getJobStatusesList(array $params = []): array
     {

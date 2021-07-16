@@ -145,7 +145,7 @@ class Sync
      *
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function getStream(string $api): \Psr\Http\Message\StreamInterface
+    public function getStream(string $api): StreamInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
