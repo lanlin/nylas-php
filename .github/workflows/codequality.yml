@@ -16,7 +16,7 @@ jobs:
         token: ${{ secrets.ACTION_TOKEN }}
 
     - name: Setup PHP Action
-      uses: shivammathur/setup-php@2
+      uses: shivammathur/setup-php@v2
       with:
         php-version: '7.4'
         tools: php-cs-fixer:2.16.4
