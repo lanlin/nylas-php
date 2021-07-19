@@ -12,14 +12,14 @@
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
 [![License](https://img.shields.io/github/license/lanlin/nylas-php)](https://github.com/lanlin/nylas-php#license)
 
-PHP bindings for the Nylas REST API (V2.1). https://docs.nylas.com/reference</br>
+PHP bindings for the Nylas REST API (V2.2). https://docs.nylas.com/reference</br>
 I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
 
 Last check at the point: [Dashboard Release for Canada and Ireland](https://changelog.nylas.com/#entry-176451)
 
 **What's new?**</br>
 
-1. API 2.1 support</br>
+1. API 2.2 support</br>
 2. All Nylas APIs have been implemented within this SDK.</br>
 3. Support send & get message in raw type</br>
 4. Support async batch upload & download</br>
@@ -38,7 +38,9 @@ Last check at the point: [Dashboard Release for Canada and Ireland](https://chan
 
 **version 3.x for php >= 7.3 (branch 3.0)**
 
-**version 4.x for php >= 7.4 (branch master)**
+**version 4.x for php >= 7.4 (branch 4.0)**
+
+**version 5.x for php >= 8.0 (branch 5.0)**
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
 You can install it by running

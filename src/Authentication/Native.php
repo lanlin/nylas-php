@@ -12,10 +12,17 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/19
  */
 class Native
 {
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @var \Nylas\Utilities\Options
+     */
+    private Options $options;
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -23,15 +30,9 @@ class Native
      */
     private array $providers =
     [
-        'gmail', 'yahoo', 'exchange', 'outlook', 'imap', 'icloud', 'hotmail', 'aol',
+        'gmail', 'yahoo', 'exchange', 'outlook', 'imap',
+        'icloud', 'hotmail', 'aol', 'office365', 'nylas'
     ];
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @var \Nylas\Utilities\Options
-     */
-    private Options $options;
 
     // ------------------------------------------------------------------------------
 
@@ -118,20 +119,26 @@ class Native
     {
         $provider = $params['provider'] ?? 'imap';
 
-        switch ($provider)
+        return match ($provider)
         {
-            case 'aol':
-            case 'yahoo':
-            case 'icloud':
-            case 'hotmail': return $this->knownProviderRule();
+            'imap' => $this->imapProviderRule(),
+            'nylas' => $this->nylasProviderRule(),
+            'gmail' => $this->gmailProviderRule(),
+            'outlook' => $this->outlookProviderRule(),
+            'exchange' => $this->exchangeProviderRule(),
+            'office365' => $this->office365ProviderRule(),
+            'aol', 'yahoo', 'icloud', 'hotmail' => $this->knownProviderRule(),
+        };
+    }
 
-            case 'gmail':    return $this->gmailProviderRule();
+    // ------------------------------------------------------------------------------
 
-            case 'exchange': return $this->exchangeProviderRule();
-
-            case 'imap':
-            default: return $this->imapProviderRule();
-        }
+    /**
+     * @return \Nylas\Utilities\Validator
+     */
+    private function nylasProviderRule(): V
+    {
+        return V::equals([]);
     }
 
     // ------------------------------------------------------------------------------
@@ -147,32 +154,33 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * gmail provider rule
+     * outlook provider rules
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function gmailProviderRule(): V
+    private function outlookProviderRule(): V
     {
         return V::keySet(
-            V::key('google_client_id', V::stringType()->notEmpty()),
-            V::key('google_client_secret', V::stringType()->notEmpty()),
-            V::key('google_refresh_token', V::stringType()->notEmpty())
+            V::key('username', V::stringType()->notEmpty()),
+            V::key('password', V::stringType()->notEmpty()),
+            V::key('exchange_server_host', V::domain())
         );
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * exchange provider rules
+     * office 365 provider rules
      *
      * @return \Nylas\Utilities\Validator
      */
-    private function exchangeProviderRule(): V
+    private function office365ProviderRule(): V
     {
         return V::keySet(
-            V::key('username', V::stringType()->notEmpty()),
-            V::key('password', V::stringType()->notEmpty()),
-            V::key('eas_server_host', V::stringType()->notEmpty())
+            V::key('microsoft_client_id', V::stringType()->notEmpty()),
+            V::key('microsoft_client_secret', V::stringType()->notEmpty()),
+            V::key('microsoft_refresh_token', V::stringType()->notEmpty()),
+            V::key('redirect_uri', V::url())
         );
     }
 
@@ -186,16 +194,77 @@ class Native
     private function imapProviderRule(): V
     {
         return V::keySet(
-            V::key('imap_host', V::stringType()->notEmpty()),
-            V::key('imap_port', V::stringType()->notEmpty()),
+            V::key('imap_host', V::domain()),
+            V::key('imap_port', V::intType()),
             V::key('imap_username', V::stringType()->notEmpty()),
             V::key('imap_password', V::stringType()->notEmpty()),
-            V::key('smtp_host', V::stringType()->notEmpty()),
-            V::key('smtp_port', V::stringType()->notEmpty()),
+            V::key('smtp_host', V::domain()),
+            V::key('smtp_port', V::intType()),
             V::key('smtp_username', V::stringType()->notEmpty()),
             V::key('smtp_password', V::stringType()->notEmpty()),
             V::key('ssl_required', V::boolType())
         );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * gmail provider rule
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function gmailProviderRule(): V
+    {
+        return V::oneOf(
+            V::keySet(
+                V::key('google_client_id', V::stringType()->notEmpty()),
+                V::key('google_client_secret', V::stringType()->notEmpty()),
+                V::key('google_refresh_token', V::stringType()->notEmpty())
+            ),
+            V::keySet(V::key('service_account_json', V::keySet(
+                V::key('type', V::stringType()->notEmpty()),
+                V::key('project_id', V::stringType()->notEmpty()),
+                V::key('private_key_id', V::stringType()->notEmpty()),
+                V::key('private_key', V::stringType()->notEmpty()),
+                V::key('client_email', V::email()),
+                V::key('client_id', V::stringType()->notEmpty()),
+                V::key('auth_uri', V::url()),
+                V::key('token_uri', V::url()),
+                V::key('auth_provider_x509_cert_url', V::url()),
+                V::key('client_x509_cert_url', V::url()),
+            )))
+        );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * exchange provider rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function exchangeProviderRule(): V
+    {
+        return V::oneOf(
+            V::keySet(
+                V::key('username', V::stringType()->notEmpty()),
+                V::key('password', V::stringType()->notEmpty()),
+                V::key('exchange_server_host', V::domain())
+            ),
+            V::keySet(
+                V::key('username', V::stringType()->notEmpty()),
+                V::key('password', V::stringType()->notEmpty()),
+                V::key('service_account', V::boolType())
+            ),
+            V::keySet(
+                V::key('microsoft_client_id', V::stringType()->notEmpty()),
+                V::key('microsoft_client_secret', V::stringType()->notEmpty()),
+                V::key('microsoft_refresh_token', V::stringType()->notEmpty()),
+                V::key('redirect_uri', V::url()),
+                V::key('service_account', V::boolType())
+            ),
+        );
+
     }
 
     // ------------------------------------------------------------------------------
