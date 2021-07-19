@@ -5,7 +5,9 @@ namespace Nylas\Utilities;
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
 use Nylas\Accounts\Account;
+use GuzzleHttp\HandlerStack;
 use Nylas\Utilities\Validator as V;
+use phpDocumentor\Reflection\Types\Callable_;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/03/18
+ * @change 2021/07/18
  */
 class Options
 {
@@ -33,6 +35,11 @@ class Options
      * @var string
      */
     private string $server;
+
+    /**
+     * @var null|callable
+     */
+    private $handler;
 
     /**
      * @var string
@@ -70,6 +77,7 @@ class Options
     {
         $rules = V::keySet(
             V::key('debug', V::boolType(), false),
+            V::key('handler', V::callableType(), false),
             V::key('region', V::in(['oregon', 'canada', 'ireland']), false),
             V::key('log_file', $this->getLogFileRule(), false),
             V::key('account_id', V::stringType()->notEmpty(), false),
@@ -86,9 +94,34 @@ class Options
         // optional
         $this->setDebug($options['debug'] ?? false);
         $this->setServer($options['region'] ?? 'oregon');
+        $this->setHandler($options['handler'] ?? null);
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccountId($options['account_id'] ?? '');
         $this->setAccessToken($options['access_token'] ?? '');
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set guzzle client handler
+     *
+     * @param null|callable $handler
+     */
+    public function setHandler(?callable $handler): void
+    {
+        $this->handler = $handler;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get access token
+     *
+     * @return string
+     */
+    public function getHandler(): ?callable
+    {
+        return $this->handler ?? null;
     }
 
     // ------------------------------------------------------------------------------
@@ -243,6 +276,7 @@ class Options
             'debug'         => $this->debug,
             'log_file'      => $this->logFile,
             'server'        => $this->server,
+            'handler'       => $this->handler,
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
             'account_id'    => $this->accountId,
@@ -259,11 +293,11 @@ class Options
      */
     public function getSync(): Sync
     {
-        $server = $this->getServer();
+        $debug   = $this->getLoggerHandler();
+        $server  = $this->getServer();
+        $handler = $this->getHandler();
 
-        $debug = $this->getLoggerHandler();
-
-        return new Sync($server, $debug);
+        return new Sync($server, $handler, $debug);
     }
 
     // ------------------------------------------------------------------------------
@@ -275,11 +309,11 @@ class Options
      */
     public function getAsync(): Async
     {
-        $server = $this->getServer();
+        $debug   = $this->getLoggerHandler();
+        $server  = $this->getServer();
+        $handler = $this->getHandler();
 
-        $debug = $this->getLoggerHandler();
-
-        return new Async($server, $debug);
+        return new Async($server, $handler, $debug);
     }
 
     // ------------------------------------------------------------------------------

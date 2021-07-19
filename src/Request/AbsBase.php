@@ -1,6 +1,7 @@
 <?php namespace Nylas\Request;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Errors;
@@ -12,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/03/18
+ * @change 2021/07/18
  */
 trait AbsBase
 {
@@ -47,16 +48,22 @@ trait AbsBase
     /**
      * Request constructor.
      *
-     * @param string|NULL $server
+     * @param string|null $server
+     * @param null|callable $handler
      * @param bool|resource $debug
      */
-    public function __construct(?string $server = null, $debug = false)
+    public function __construct(?string $server = null, $handler = null, $debug = false)
     {
         $option =
         [
             'verify'   => true,
             'base_uri' => trim($server ?? API::SERVER['oregon']),
         ];
+
+        if (\is_callable($handler))
+        {
+            $option['handler'] = HandlerStack::create($handler);
+        }
 
         $this->debug  = $debug;
         $this->guzzle = new Client($option);
