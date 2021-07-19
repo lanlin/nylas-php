@@ -1,6 +1,6 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Utilities;
 
 use Nylas\Utilities\Options;
 use PHPUnit\Framework\TestCase;

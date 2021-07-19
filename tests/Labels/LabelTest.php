@@ -1,12 +1,13 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Labels;
 
 use Exception;
+use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------
- * Folder Test
+ * Label Test
  * ----------------------------------------------------------------------------------
  *
  * @update lanlin
@@ -14,64 +15,68 @@ use Exception;
  *
  * @internal
  */
-class FolderTest extends AbsCase
+class LabelTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetFolderList(): void
+    public function testGetLabelList(): void
     {
-        $data = $this->client->Folders()->Folder()->getFoldersList();
+        $data = $this->client->Labels()->Label()->getLabelsList();
 
         $this->assertIsArray($data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFolder(): void
+    public function testGetLabel(): void
     {
-        $id = 'ejom4k3o5qor5ooyh8yx7hgbw';
+        $id = 'aenlhdgl3o55sc37a6fxjgjmo';
 
-        $data = $this->client->Folders()->Folder()->getFolder($id);
+        $data = $this->client->Labels()->Label()->getLabel($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testAddFolder(): void
+    public function testAddLabel(): void
     {
-        $name = 'test_folder'.\uniqid();
+        $name = 'test_label'.\uniqid();
 
-        $data = $this->client->Folders()->Folder()->addFolder($name);
+        $data = $this->client->Labels()->Label()->addLabel($name);
 
         $this->assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateFolder(): void
+    public function testUpdateLabel(): void
     {
         $params =
         [
-            'id'           => '47137b6urkg0cf738o7is2aa3',
-            'display_name' => 'woo---',
+            'id'           => 'aenlhdgl3o55sc37a6fxjgjmo',
+            'display_name' => 'woo'.\uniqid(),
         ];
 
-        $data = $this->client->Folders()->Folder()->updateFolder($params);
+        $data = $this->client->Labels()->Label()->updateLabel($params);
 
         $this->assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteFolder(): void
+    public function testDeleteLabel(): void
     {
-        $id = '47137b6urkg0cf738o7is2aa3';
+        $name = 'test_label'.\uniqid();
+        $data = $this->client->Labels()->Label()->addLabel($name);
+
+        $params['id']           = $data['id'];
+        $params['display_name'] = 'wooTTT'.\uniqid();
 
         try
         {
             $back = true;
-            $this->client->Folders()->Folder()->deleteFolder($id);
+            $this->client->Labels()->Label()->deleteLabel($params);
         }
         catch (Exception $e)
         {

@@ -1,8 +1,9 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Events;
 
 use Exception;
+use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------

@@ -1,6 +1,8 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Deltas;
+
+use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------

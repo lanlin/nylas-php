@@ -1,6 +1,8 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Accounts;
+
+use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -18,6 +20,10 @@ class AccountTest extends AbsCase
 
     public function testGetAccount(): void
     {
+        $this->mockResponse([
+
+        ]);
+
         $data = $this->client->Accounts()->Account()->getAccount();
 
         $this->assertArrayHasKey('id', $data);

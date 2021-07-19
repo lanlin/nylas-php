@@ -1,6 +1,8 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Authentication;
+
+use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -34,20 +36,32 @@ class HostedTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
-    /*
-     *  $data
-     *
-     * [httpStatus] => 200
-     * [invalidJson] => 1
-     * [contentType] => text/html; charset=utf-8
-     * [contentBody] =>
-     */
-    // public function testPostOAuthRevoke(): void
-    // {
-    //     $data = $this->client->Authentication()->Hosted()->postOAuthRevoke();
+    public function testPostOAuthToken(): void
+    {
+        $code = 'sfjalgjaldgjl';
 
-    //     $this->assertTrue(\is_string($data));
-    // }
+        $this->mockResponse([
+            'client_id'      => 'dfasdflasd',
+            'client_secret'  => 'sdflajdlf',
+            'grant_type'     => 'authorization_code',
+            'code'           => 'fadfldglajl',
+        ]);
+
+        $data = $this->client->Authentication()->Hosted()->postOAuthToken($code);
+
+        $this->assertTrue(!empty($data['client_id']));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testPostOAuthRevoke(): void
+    {
+        $this->mockResponse(['success' => true]);
+
+        $data = $this->client->Authentication()->Hosted()->postOAuthRevoke();
+
+        $this->assertTrue($data['success']);
+    }
 
     // ------------------------------------------------------------------------------
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace Nylas\Tests;
+namespace Tests\Webhooks;
 
 use Throwable;
+use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------
