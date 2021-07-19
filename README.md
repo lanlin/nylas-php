@@ -40,7 +40,7 @@ Last check at the point: [Dashboard Release for Canada and Ireland](https://chan
 
 **version 4.x for php >= 7.4 (branch 4.0)**
 
-**version 5.x for php >= 8.0 (branch 5.0)**
+**version 5.x for php >= 8.0 (branch master)**
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
 You can install it by running
