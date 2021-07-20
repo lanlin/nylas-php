@@ -57,7 +57,7 @@ trait AbsBase
         $option =
         [
             'verify'   => true,
-            'base_uri' => trim($server ?? API::SERVER['oregon']),
+            'base_uri' => trim($server ?? API::SERVER['us']),
         ];
 
         if (\is_callable($handler))

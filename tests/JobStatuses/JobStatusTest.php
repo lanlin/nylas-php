@@ -9,7 +9,7 @@ use Tests\AbsCase;
  * JobStatus Test
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
+ * @author lanlin
  * @change 2021/05/05
  *
  * @internal

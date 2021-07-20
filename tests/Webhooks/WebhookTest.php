@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * Webhook Test
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
+ * @author lanlin
  * @change 2020/06/27
  *
  * @internal

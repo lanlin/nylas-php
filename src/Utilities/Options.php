@@ -4,10 +4,8 @@ namespace Nylas\Utilities;
 
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
-use Nylas\Accounts\Account;
-use GuzzleHttp\HandlerStack;
+use Nylas\Management\Account;
 use Nylas\Utilities\Validator as V;
-use phpDocumentor\Reflection\Types\Callable_;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -22,11 +20,6 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * @var mixed
-     */
-    private $logFile;
-
-    /**
      * @var bool
      */
     private bool $debug = false;
@@ -35,11 +28,6 @@ class Options
      * @var string
      */
     private string $server;
-
-    /**
-     * @var null|callable
-     */
-    private $handler;
 
     /**
      * @var string
@@ -57,14 +45,19 @@ class Options
     private string $accessToken;
 
     /**
-     * @var string
-     */
-    private string $accountId;
-
-    /**
      * @var array
      */
     private array $accountInfo;
+
+    /**
+     * @var mixed
+     */
+    private $logFile;
+
+    /**
+     * @var null|callable
+     */
+    private $handler;
 
     // ------------------------------------------------------------------------------
 
@@ -76,28 +69,23 @@ class Options
     public function __construct(array $options)
     {
         $rules = V::keySet(
-            V::key('debug', V::boolType(), false),
-            V::key('handler', V::callableType(), false),
-            V::key('region', V::in(['oregon', 'canada', 'ireland']), false),
-            V::key('log_file', $this->getLogFileRule(), false),
-            V::key('account_id', V::stringType()->notEmpty(), false),
-            V::key('access_token', V::stringType()->notEmpty(), false),
             V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty())
+            V::key('client_secret', V::stringType()->notEmpty()),
+            V::keyOptional('debug', V::boolType()),
+            V::keyOptional('region', V::in(['us', 'canada', 'ireland'])),
+            V::keyOptional('handler', V::callableType()),
+            V::keyOptional('log_file', $this->getLogFileRule()),
+            V::keyOptional('access_token', V::stringType()->notEmpty()),
         );
 
         V::doValidate($rules, $options);
 
-        // required
-        $this->setClientApps($options['client_id'], $options['client_secret']);
-
-        // optional
         $this->setDebug($options['debug'] ?? false);
-        $this->setServer($options['region'] ?? 'oregon');
+        $this->setServer($options['region'] ?? 'us');
         $this->setHandler($options['handler'] ?? null);
         $this->setLogFile($options['log_file'] ?? null);
-        $this->setAccountId($options['account_id'] ?? '');
         $this->setAccessToken($options['access_token'] ?? '');
+        $this->setClientApps($options['client_id'], $options['client_secret']);
     }
 
     // ------------------------------------------------------------------------------
@@ -158,37 +146,13 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * set account id
-     *
-     * @param string $id
-     */
-    public function setAccountId(string $id): void
-    {
-        $this->accountId = $id;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get account id
-     *
-     * @return string
-     */
-    public function getAccountId(): ?string
-    {
-        return $this->accountId ?? null;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * @param null|string $region
      */
     public function setServer(?string $region = null): void
     {
-        $region = $region ?? 'oregon';
+        $region = $region ?? 'us';
 
-        $this->server = API::SERVER[$region] ?? API::SERVER['oregon'];
+        $this->server = API::SERVER[$region] ?? API::SERVER['us'];
     }
 
     // ------------------------------------------------------------------------------
@@ -279,7 +243,6 @@ class Options
             'handler'       => $this->handler,
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'account_id'    => $this->accountId,
             'access_token'  => $this->accessToken,
         ];
     }
@@ -340,7 +303,7 @@ class Options
 
         if (empty($this->accountInfo) && !empty($this->accessToken))
         {
-            $this->accountInfo = (new Account($this))->getAccount();
+            $this->accountInfo = (new Account($this))->getAccountDetail();
         }
 
         return \array_merge($temp, $this->accountInfo);

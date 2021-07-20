@@ -71,7 +71,7 @@ use Nylas\Client;
 $options =
 [
     'debug'            => true,
-    'region'           => 'oregon',   // server region, can be oregon, ireland or canada, default is oregon
+    'region'           => 'us',   // server region, can be us, ireland or canada, default is us
     'log_file'         => dirname(__FILE__) . '/test.log',  // a file path or a resource handler
     'account_id'       => 'your account id',
     'access_token'     => 'your access token',

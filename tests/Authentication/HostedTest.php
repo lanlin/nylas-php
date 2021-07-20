@@ -9,8 +9,9 @@ use Tests\AbsCase;
  * Hosted Test
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
- * @change 2020/06/24
+ * @link https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
+ * @author lanlin
+ * @change 2021/07/20
  *
  * @internal
  */
@@ -56,11 +57,11 @@ class HostedTest extends AbsCase
 
     public function testPostOAuthRevoke(): void
     {
-        $this->mockResponse(['success' => true]);
+        $this->mockResponse(['success' => 'true']);
 
         $data = $this->client->Authentication()->Hosted()->postOAuthRevoke();
 
-        $this->assertTrue($data['success']);
+        $this->assertTrue(!empty($data['success']));
     }
 
     // ------------------------------------------------------------------------------

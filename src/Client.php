@@ -10,7 +10,6 @@ use Nylas\Exceptions\NylasException;
  * Nylas Client
  * ----------------------------------------------------------------------------------
  *
- * @method Accounts\Abs       Accounts()
  * @method Authentication\Abs Authentication()
  * @method Calendars\Abs      Calendars()
  * @method Contacts\Abs       Contacts()
@@ -20,13 +19,14 @@ use Nylas\Exceptions\NylasException;
  * @method Files\Abs          Files()
  * @method Folders\Abs        Folders()
  * @method Labels\Abs         Labels()
+ * @method Management\Abs     Management()
  * @method Messages\Abs       Messages()
  * @method Threads\Abs        Threads()
  * @method Webhooks\Abs       Webhooks()
  * @method JobStatuses\Abs    JobStatuses()
  *
  * @author lanlin
- * @change 2021/03/18
+ * @change 2021/07/20
  */
 class Client
 {
@@ -45,7 +45,7 @@ class Client
      * @param array $options
      *                       [
      *                       'debug'            => bool,
-     *                       'region'           => 'oregon',
+     *                       'region'           => 'us',
      *                       'log_file'         => 'log file path',
      *                       'account_id'       => '',
      *                       'access_token'     => '',

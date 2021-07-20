@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * Folder Test
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
+ * @author lanlin
  * @change 2020/04/26
  *
  * @internal

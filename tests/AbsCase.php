@@ -16,7 +16,8 @@ use GuzzleHttp\Handler\MockHandler;
  * Account Test
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
+ * @link https://developer.nylas.com/docs/api/#overview
+ * @author lanlin
  * @change 2021/07/18
  *
  * @internal
@@ -42,12 +43,11 @@ class AbsCase extends TestCase
         $options =
         [
             'debug'         => true,
-            'region'        => 'oregon',
+            'region'        => 'us',
             'log_file'      => __DIR__.'/test.log',
-            'account_id'    => 'fgajlgadlfjlsfdl',
-            'access_token'  => 'fdsalfjadlsfjlasdl',
             'client_id'     => 'falfjsdalflsdfdsf',
             'client_secret' => 'sdafadlsfaldsfjlsl',
+            'access_token'  => 'fdsalfjadlsfjlasdl',
         ];
 
         $this->client = new Client($options);

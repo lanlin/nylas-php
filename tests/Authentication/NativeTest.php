@@ -9,8 +9,9 @@ use Tests\AbsCase;
  * Hosted Test
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
- * @change 2020/07/19
+ * @link   https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
+ * @author lanlin
+ * @change 2021/07/19
  *
  * @internal
  */
@@ -122,11 +123,11 @@ class NativeTest extends AbsCase
             'Authenticate Exchange Account using a Service Account via Password' => [[
                 'client_id'     => 'nylas_client_id',
                 'name'          => 'Nyla the Cheetah',
-                'email_address' => 'nyla@nylas.com', // Account to authenticate
+                'email_address' => 'nyla@nylas.com',
                 'provider'      => 'exchange',
                 'settings'      => [
-                    'username'        => 'username', // Service account username
-                    'password'        => 'password', // Service account password
+                    'username'        => 'username',
+                    'password'        => 'password',
                     'service_account' => true,
                 ],
                 'scopes' => 'calendar.read_only',
@@ -134,12 +135,12 @@ class NativeTest extends AbsCase
             'Authenticate Exchange Account using a Service Account via OAuth' => [[
                 'client_id'     => 'nylas_client_id',
                 'name'          => 'Nyla the Cheetah',
-                'email_address' => 'nyla@nylas.com',   // Account to authenticate
+                'email_address' => 'nyla@nylas.com',
                 'provider'      => 'exchange',
                 'settings'      => [
                     'microsoft_client_id'     => '[microsoft_client_id]',
                     'microsoft_client_secret' => '[microsoft_client_secret]',
-                    'microsoft_refresh_token' => '[microsoft_refresh_token]', // Service account refresh token!
+                    'microsoft_refresh_token' => '[microsoft_refresh_token]',
                     'redirect_uri'            => 'https://example.com/redirect',
                     'service_account'         => true,
                 ],

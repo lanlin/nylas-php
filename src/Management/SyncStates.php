@@ -1,6 +1,6 @@
 <?php
 
-namespace Nylas\Accounts;
+namespace Nylas\Management;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -8,7 +8,7 @@ namespace Nylas\Accounts;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/20
  */
 class SyncStates
 {

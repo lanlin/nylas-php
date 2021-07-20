@@ -10,10 +10,10 @@ namespace Nylas\Utilities;
  * @see https://changelog.nylas.com/
  * @see https://docs.nylas.com/reference#api-changelog
  *
- * @version 2.1 (2020/09/30)
+ * @version 2.2 (2020/09/30)
  *
  * @author lanlin
- * @change 2021/03/18
+ * @change 2021/07/20
  */
 class API
 {
@@ -23,7 +23,7 @@ class API
      * nylas server list array
      */
     public const SERVER = [
-        'oregon'  => 'https://api.nylas.com',
+        'us'      => 'https://api.nylas.com',
         'canada'  => 'https://canada.api.nylas.com',
         'ireland' => 'https://ireland.api.nylas.com',
     ];
@@ -42,15 +42,15 @@ class API
         'connectToken'      => '/connect/token',
         'connectAuthorize'  => '/connect/authorize',
 
-        // Accounts
+        // management
         'account'            => '/account',
         'manageApp'          => '/a/%s',
-        'tokenInfo'          => '/a/%s/accounts/%s/token-info',
-        'ipAddresses'        => '/a/%s/accounts/%s/ip_addresses',
-        'listAnAccount'      => '/a/%s/accounts/%s',
+        'ipAddresses'        => '/a/%s/ip_addresses',
         'listAllAccounts'    => '/a/%s/accounts',
+        'listAnAccount'      => '/a/%s/accounts/%s',
         'cancelAnAccount'    => '/a/%s/accounts/%s/downgrade',
         'revokeAllTokens'    => '/a/%s/accounts/%s/revoke-all',
+        'tokenInfo'          => '/a/%s/accounts/%s/token-info',
         'reactiveAnAccount'  => '/a/%s/accounts/%s/upgrade',
 
         // Threads

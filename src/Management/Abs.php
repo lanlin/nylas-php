@@ -1,33 +1,25 @@
 <?php
 
-namespace Tests\Accounts;
+namespace Nylas\Management;
 
-use Tests\AbsCase;
+use Nylas\Utilities\Abs as AbsTrait;
 
 /**
  * ----------------------------------------------------------------------------------
- * Account Test
+ * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @update lanlin
- * @change 2020/04/26
+ * @method Account      Account()
+ * @method Application  Application()
  *
- * @internal
+ * @author lanlin
+ * @change 2021/07/20
  */
-class AccountTest extends AbsCase
+class Abs
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetAccount(): void
-    {
-        $this->mockResponse([
-
-        ]);
-
-        $data = $this->client->Accounts()->Account()->getAccount();
-
-        $this->assertArrayHasKey('id', $data);
-    }
+    use AbsTrait;
 
     // ------------------------------------------------------------------------------
 }
