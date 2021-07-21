@@ -35,9 +35,9 @@ class NativeTest extends AbsCase
             'sync_state'        => 'running',
         ]);
 
-        $code = 'sdfadfafl';
+        $code = $this->faker->postcode;
 
-        $data = $this->client->Authentication()->Native()->postConnectToken($code);
+        $data = $this->client->Authentication->Native->postConnectToken($code);
 
         $this->assertTrue(!empty($data['email_address']));
     }
@@ -51,9 +51,9 @@ class NativeTest extends AbsCase
      */
     public function testPostConnectAuthorize(array $para): void
     {
-        $this->mockResponse(['code' => 'sdfadslgalds']);
+        $this->mockResponse(['code' => $this->faker->postcode]);
 
-        $data = $this->client->Authentication()->Native()->postConnectAuthorize($para);
+        $data = $this->client->Authentication->Native->postConnectAuthorize($para);
 
         $this->assertTrue(!empty($data['code']));
     }

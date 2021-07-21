@@ -21,7 +21,7 @@ class EventTest extends AbsCase
 
     public function testGetEventList(): void
     {
-        $data = $this->client->Events()->Event()->getEventsList();
+        $data = $this->client->Events->Event->getEventsList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -32,7 +32,7 @@ class EventTest extends AbsCase
     {
         $params = ['id' => 'ejom4k3o5qor5ooyh8yx7hgbw'];
 
-        $data = $this->client->Events()->Event()->getEvent($params);
+        $data = $this->client->Events->Event->getEvent($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -48,7 +48,7 @@ class EventTest extends AbsCase
             'title'       => 'nothing...',
         ];
 
-        $data = $this->client->Events()->Event()->addEvent($params);
+        $data = $this->client->Events->Event->addEvent($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -63,7 +63,7 @@ class EventTest extends AbsCase
             'when'    => ['time' => \time()],
         ];
 
-        $data = $this->client->Events()->Event()->updateEvent($params);
+        $data = $this->client->Events->Event->updateEvent($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -80,7 +80,7 @@ class EventTest extends AbsCase
         try
         {
             $back = true;
-            $this->client->Events()->Event()->deleteEvent($params);
+            $this->client->Events->Event->deleteEvent($params);
         }
         catch (Exception $e)
         {

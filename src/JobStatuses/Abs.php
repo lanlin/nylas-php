@@ -9,10 +9,10 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method JobStatus JobStatus()
+ * @property JobStatus JobStatus
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/21
  */
 class Abs
 {

@@ -20,7 +20,7 @@ class DeltaTest extends AbsCase
 
     public function testGetLatestCursor(): void
     {
-        $data = $this->client->Deltas()->Delta()->getLatestCursor();
+        $data = $this->client->Deltas->Delta->getLatestCursor();
 
         $this->assertArrayHasKey('cursor', $data);
     }
@@ -35,7 +35,7 @@ class DeltaTest extends AbsCase
             'exclude_types'  => 'message',
         ];
 
-        $data = $this->client->Deltas()->Delta()->getSetOfDeltas($params);
+        $data = $this->client->Deltas->Delta->getSetOfDeltas($params);
 
         $this->assertArrayHasKey('deltas', $data);
     }
@@ -51,7 +51,7 @@ class DeltaTest extends AbsCase
             'exclude_types'  => 'message',
         ];
 
-        $data = $this->client->Deltas()->Delta()->longPollingDelta($params);
+        $data = $this->client->Deltas->Delta->longPollingDelta($params);
 
         $this->assertArrayHasKey('deltas', $data);
     }
@@ -66,7 +66,7 @@ class DeltaTest extends AbsCase
             'exclude_types'  => 'message',
         ];
 
-        $data = $this->client->Deltas()->Delta()->streamingDelta($params);
+        $data = $this->client->Deltas->Delta->streamingDelta($params);
 
         $this->assertArrayHasKey('deltas', $data);
     }

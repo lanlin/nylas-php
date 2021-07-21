@@ -25,12 +25,12 @@ class HostedTest extends AbsCase
          [
              'state'         => 'testing',
              'scopes'        => 'email,contacts,calendar',
-             'login_hint'    => 'test@gmail.com',
-             'redirect_uri'  => 'https://www.test.com/redirect_callback',
+             'login_hint'    => $this->faker->email,
+             'redirect_uri'  => $this->faker->url,
              'response_type' => 'code',
          ];
 
-        $data = $this->client->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
+        $data = $this->client->Authentication->Hosted->getOAuthAuthorizeUrl($params);
 
         $this->assertTrue(\is_string($data));
     }
@@ -39,16 +39,16 @@ class HostedTest extends AbsCase
 
     public function testPostOAuthToken(): void
     {
-        $code = 'sfjalgjaldgjl';
+        $code = $this->faker->postcode;
 
         $this->mockResponse([
-            'client_id'      => 'dfasdflasd',
-            'client_secret'  => 'sdflajdlf',
+            'client_id'      => $this->faker->uuid,
+            'client_secret'  => $this->faker->email,
             'grant_type'     => 'authorization_code',
-            'code'           => 'fadfldglajl',
+            'code'           => $this->faker->postcode,
         ]);
 
-        $data = $this->client->Authentication()->Hosted()->postOAuthToken($code);
+        $data = $this->client->Authentication->Hosted->postOAuthToken($code);
 
         $this->assertTrue(!empty($data['client_id']));
     }
@@ -59,7 +59,7 @@ class HostedTest extends AbsCase
     {
         $this->mockResponse(['success' => 'true']);
 
-        $data = $this->client->Authentication()->Hosted()->postOAuthRevoke();
+        $data = $this->client->Authentication->Hosted->postOAuthRevoke();
 
         $this->assertTrue(!empty($data['success']));
     }

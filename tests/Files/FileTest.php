@@ -20,7 +20,7 @@ class FileTest extends AbsCase
 
     public function testGetFileList(): void
     {
-        $data = $this->client->Files()->File()->getFilesList();
+        $data = $this->client->Files->File->getFilesList();
 
         $this->assertIsArray($data);
     }
@@ -31,7 +31,7 @@ class FileTest extends AbsCase
     {
         $id = '6i1hjmlao8s2b5oi7fsntq9va';
 
-        $data = $this->client->Files()->File()->getFileInfo($id);
+        $data = $this->client->Files->File->getFileInfo($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -52,7 +52,7 @@ class FileTest extends AbsCase
             'filename' => 'test_clound.png',
         ];
 
-        $data = $this->client->Files()->File()->uploadFile($file);
+        $data = $this->client->Files->File->uploadFile($file);
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -73,7 +73,7 @@ class FileTest extends AbsCase
             'path' => __DIR__.'/b.png',
         ];
 
-        $data = $this->client->Files()->File()->downloadFile($file);
+        $data = $this->client->Files->File->downloadFile($file);
 
         $this->assertTrue(\count($data) > 0);
     }

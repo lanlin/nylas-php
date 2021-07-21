@@ -10,7 +10,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2021/07/21
  */
 trait Abs
 {
@@ -36,7 +36,21 @@ trait Abs
     // ------------------------------------------------------------------------------
 
     /**
-     * call nylas apis
+     * call nylas apis with __get
+     *
+     * @param string $name
+     *
+     * @return object
+     */
+    public function __get(string $name): object
+    {
+        return $this->callSubClass($name);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * call nylas apis with __call
      *
      * @param string $name
      * @param array  $arguments
@@ -44,6 +58,21 @@ trait Abs
      * @return object
      */
     public function __call(string $name, array $arguments): object
+    {
+        return $this->callSubClass($name, $arguments);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * call sub class
+     *
+     * @param  string  $name
+     * @param  array   $arguments
+     *
+     * @return object
+     */
+    private function callSubClass(string $name, array $arguments = []): object
     {
         $nmSpace  = \trim(\get_class($this), 'Abs');
         $nmSpace  = \trim($nmSpace, '\\');
@@ -55,7 +84,7 @@ trait Abs
             throw new NylasException(null, "class {$subClass} not found!");
         }
 
-        return new $subClass($this->options);
+        return new $subClass($this->options, ...$arguments);
     }
 
     // ------------------------------------------------------------------------------

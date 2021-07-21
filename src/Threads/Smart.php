@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/27
+ * @change 2021/07/21
  */
 class Smart
 {
@@ -48,7 +48,7 @@ class Smart
      *
      * @return array
      */
-    public function addLabels(string $threadId, $labels): array
+    public function addLabels(string $threadId, mixed $labels): array
     {
         return $this->updateLabels($threadId, $labels);
     }
@@ -63,7 +63,7 @@ class Smart
      *
      * @return array
      */
-    public function removeLabels(string $threadId, $labels): array
+    public function removeLabels(string $threadId, mixed $labels): array
     {
         return $this->updateLabels($threadId, null, $labels);
     }
@@ -143,7 +143,7 @@ class Smart
      *
      * @return array
      */
-    public function star($threadId): array
+    public function star(mixed $threadId): array
     {
         $params = ['starred' => true];
 
@@ -159,7 +159,7 @@ class Smart
      *
      * @return array
      */
-    public function unstar($threadId): array
+    public function unstar(mixed $threadId): array
     {
         $params = ['starred' => false];
 
@@ -175,7 +175,7 @@ class Smart
      *
      * @return array
      */
-    public function markAsRead($threadId): array
+    public function markAsRead(mixed $threadId): array
     {
         $params = ['unread' => false];
 
@@ -191,7 +191,7 @@ class Smart
      *
      * @return array
      */
-    public function markAsUnread($threadId): array
+    public function markAsUnread(mixed $threadId): array
     {
         $params = ['unread' => true];
 
@@ -208,7 +208,7 @@ class Smart
      *
      * @return array
      */
-    public function moveToFolder($threadId, string $folderId): array
+    public function moveToFolder(mixed $threadId, string $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -229,7 +229,7 @@ class Smart
      *
      * @return array
      */
-    public function moveToLabel($threadId, array $labelIds): array
+    public function moveToLabel(mixed $threadId, array $labelIds): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -278,7 +278,7 @@ class Smart
      *
      * @return array
      */
-    private function updateLabels(string $threadId, $add = [], $del = []): array
+    private function updateLabels(string $threadId, mixed $add = [], mixed $del = []): array
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
@@ -327,7 +327,7 @@ class Smart
      *
      * @return array
      */
-    private function updateOneField($threadId, array $params): array
+    private function updateOneField(mixed $threadId, array $params): array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();

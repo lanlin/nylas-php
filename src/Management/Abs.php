@@ -9,8 +9,8 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method Account      Account()
- * @method Application  Application()
+ * @property Account      Account
+ * @property Application  Application
  *
  * @author lanlin
  * @change 2021/07/20

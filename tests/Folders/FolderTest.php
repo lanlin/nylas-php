@@ -21,7 +21,7 @@ class FolderTest extends AbsCase
 
     public function testGetFolderList(): void
     {
-        $data = $this->client->Folders()->Folder()->getFoldersList();
+        $data = $this->client->Folders->Folder->getFoldersList();
 
         $this->assertIsArray($data);
     }
@@ -32,7 +32,7 @@ class FolderTest extends AbsCase
     {
         $id = 'ejom4k3o5qor5ooyh8yx7hgbw';
 
-        $data = $this->client->Folders()->Folder()->getFolder($id);
+        $data = $this->client->Folders->Folder->getFolder($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -43,7 +43,7 @@ class FolderTest extends AbsCase
     {
         $name = 'test_folder'.\uniqid();
 
-        $data = $this->client->Folders()->Folder()->addFolder($name);
+        $data = $this->client->Folders->Folder->addFolder($name);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -58,7 +58,7 @@ class FolderTest extends AbsCase
             'display_name' => 'woo---',
         ];
 
-        $data = $this->client->Folders()->Folder()->updateFolder($params);
+        $data = $this->client->Folders->Folder->updateFolder($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -72,7 +72,7 @@ class FolderTest extends AbsCase
         try
         {
             $back = true;
-            $this->client->Folders()->Folder()->deleteFolder($id);
+            $this->client->Folders->Folder->deleteFolder($id);
         }
         catch (Exception $e)
         {

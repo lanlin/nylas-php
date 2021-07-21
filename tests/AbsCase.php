@@ -4,6 +4,8 @@ namespace Tests;
 
 use Mockery;
 use Nylas\Client;
+use Faker\Factory;
+use Faker\Generator;
 use ReflectionMethod;
 use Mockery\MockInterface;
 use GuzzleHttp\Psr7\Response;
@@ -31,6 +33,11 @@ class AbsCase extends TestCase
      */
     protected Client $client;
 
+    /**
+     * @var Generator
+     */
+    protected Generator $faker;
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -40,14 +47,16 @@ class AbsCase extends TestCase
     {
         parent::setUp();
 
+        $this->faker = Factory::create();
+
         $options =
         [
-            'debug'         => true,
-            'region'        => 'us',
+            'debug'         => $this->faker->randomElement([true, false]),
+            'region'        => $this->faker->randomElement(['us', 'canada', 'ireland']),
             'log_file'      => __DIR__.'/test.log',
-            'client_id'     => 'falfjsdalflsdfdsf',
-            'client_secret' => 'sdafadlsfaldsfjlsl',
-            'access_token'  => 'fdsalfjadlsfjlasdl',
+            'client_id'     => $this->faker->uuid,
+            'client_secret' => $this->faker->password,
+            'access_token'  => $this->faker->password,
         ];
 
         $this->client = new Client($options);

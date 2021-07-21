@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/21
  */
 class Thread
 {
@@ -52,8 +52,7 @@ class Thread
         V::doValidate($this->getThreadsRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $query =
-        [
+        $query = [
             'limit'  => $params['limit'] ?? 100,
             'offset' => $params['offset'] ?? 0,
         ];
@@ -73,16 +72,16 @@ class Thread
     /**
      * update thread
      *
-     * @param array $params
+     * @param string $threadId
+     * @param array  $params
      *
      * @return array
      */
-    public function updateThread(array $params): array
+    public function updateThread(string $threadId, array $params): array
     {
         $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
@@ -92,14 +91,11 @@ class Thread
         V::doValidate($rules, $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $path   = $params['id'];
         $header = ['Authorization' => $accessToken];
-
-        unset($params['id']);
 
         return $this->options
             ->getSync()
-            ->setPath($path)
+            ->setPath($threadId)
             ->setFormParams($params)
             ->setHeaderParams($header)
             ->put(API::LIST['oneThread']);
@@ -114,7 +110,7 @@ class Thread
      *
      * @return array
      */
-    public function getThread($threadId): array
+    public function getThread(mixed $threadId): array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
@@ -158,23 +154,24 @@ class Thread
     private function getThreadsRules(): V
     {
         return V::keySet(
-            V::keyOptional('in', V::stringType()->notEmpty()),
             V::keyOptional('to', V::email()),
-            V::keyOptional('from', V::email()),
             V::keyOptional('cc', V::email()),
             V::keyOptional('bcc', V::email()),
+            V::keyOptional('from', V::email()),
+            V::keyOptional('in', V::stringType()->notEmpty()),
+            V::keyOptional('not_in', V::stringType()->notEmpty()),
+            V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
             V::keyOptional('subject', V::stringType()->notEmpty()),
+            V::keyOptional('filename', V::stringType()->notEmpty()),
             V::keyOptional('any_email', V::stringType()->notEmpty()),
             V::keyOptional('started_after', V::timestampType()),
             V::keyOptional('started_before', V::timestampType()),
             V::keyOptional('last_message_after', V::timestampType()),
             V::keyOptional('last_message_before', V::timestampType()),
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
-            V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
-            V::keyOptional('unread', V::boolType()),
-            V::keyOptional('starred', V::boolType()),
-            V::keyOptional('filename', V::stringType()->notEmpty())
         );
     }
 

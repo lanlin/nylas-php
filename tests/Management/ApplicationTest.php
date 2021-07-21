@@ -29,7 +29,7 @@ class ApplicationTest extends AbsCase
             ],
         ]);
 
-        $data = $this->client->Management()->Application()->getApplication();
+        $data = $this->client->Management->Application->getApplication();
 
         $this->assertTrue(!empty($data['application_name']));
     }
@@ -49,7 +49,7 @@ class ApplicationTest extends AbsCase
             'redirect_uris'    => ['http://www.test-nylas-test.com'],
         ];
 
-        $data = $this->client->Management()->Application()->updateApplication($param);
+        $data = $this->client->Management->Application->updateApplication($param);
 
         $this->assertTrue(!empty($data['application_name']));
     }
@@ -59,6 +59,7 @@ class ApplicationTest extends AbsCase
     public function testGetIpAddress(): void
     {
         $this->mockResponse([
+            'updated_at' => 1544658529,
             'ip_addresses' => [
                 '52.25.153.17',
                 '52.26.120.161',
@@ -69,10 +70,9 @@ class ApplicationTest extends AbsCase
                 '54.69.11.122',
                 '54.149.110.158',
             ],
-            'updated_at' => 1544658529,
         ]);
 
-        $data = $this->client->Management()->Application()->getIpAddresses();
+        $data = $this->client->Management->Application->getIpAddresses();
 
         $this->assertTrue(!empty($data['updated_at']));
     }

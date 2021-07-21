@@ -9,11 +9,11 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method Hosted Hosted()
- * @method Native Native()
+ * @property Hosted Hosted
+ * @property Native Native
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/21
  */
 class Abs
 {

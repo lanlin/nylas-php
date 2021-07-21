@@ -21,7 +21,7 @@ class ContactTest extends AbsCase
 
     public function testGetContactsList(): void
     {
-        $data = $this->client->Contacts()->Contact()->getContactsList();
+        $data = $this->client->Contacts->Contact->getContactsList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -32,7 +32,7 @@ class ContactTest extends AbsCase
     {
         $id = 'p8yaokbz6oh8bd45jcs1vt74';
 
-        $data = $this->client->Contacts()->Contact()->getContact($id);
+        $data = $this->client->Contacts->Contact->getContact($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -43,7 +43,7 @@ class ContactTest extends AbsCase
     {
         $params = $this->getContactInfo();
 
-        $data = $this->client->Contacts()->Contact()->addContact($params);
+        $data = $this->client->Contacts->Contact->addContact($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -60,7 +60,7 @@ class ContactTest extends AbsCase
             'surname'      => 'Chou',
         ];
 
-        $data = $this->client->Contacts()->Contact()->updateContact($params);
+        $data = $this->client->Contacts->Contact->updateContact($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -76,12 +76,12 @@ class ContactTest extends AbsCase
             'surname'      => 'Chou',
         ];
 
-        $data = $this->client->Contacts()->Contact()->addContact($params);
+        $data = $this->client->Contacts->Contact->addContact($params);
 
         try
         {
             $back = true;
-            $this->client->Contacts()->Contact()->deleteContact($data['id']);
+            $this->client->Contacts->Contact->deleteContact($data['id']);
         }
         catch (Exception $e)
         {
@@ -95,7 +95,7 @@ class ContactTest extends AbsCase
 
     public function testGetContactGroups(): void
     {
-        $data = $this->client->Contacts()->Contact()->getContactGroups();
+        $data = $this->client->Contacts->Contact->getContactGroups();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -110,7 +110,7 @@ class ContactTest extends AbsCase
             'path' => __DIR__.'/temp',
         ];
 
-        $data = $this->client->Contacts()->Contact()->getContactPicture($params);
+        $data = $this->client->Contacts->Contact->getContactPicture($params);
 
         $this->assertTrue(\count($data) > 0);
     }

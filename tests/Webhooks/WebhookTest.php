@@ -21,7 +21,7 @@ class WebhookTest extends AbsCase
 
     public function testGetWebhookList(): void
     {
-        $data = $this->client->Webhooks()->Webhook()->getWebhookList();
+        $data = $this->client->Webhooks->Webhook->getWebhookList();
 
         $this->assertTrue(\count($data) > 0);
     }
@@ -37,7 +37,7 @@ class WebhookTest extends AbsCase
             'callback_url' => 'http://www.test-nylas-api.com',
         ];
 
-        $data = $this->client->Webhooks()->Webhook()->createWebhook($para);
+        $data = $this->client->Webhooks->Webhook->createWebhook($para);
 
         $this->assertArrayHasKey('id', $data);
 
@@ -51,7 +51,7 @@ class WebhookTest extends AbsCase
     {
         $id = $id ?: \uniqid();
 
-        $data = $this->client->Webhooks()->Webhook()->updateWebhook($id);
+        $data = $this->client->Webhooks->Webhook->updateWebhook($id);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -62,7 +62,7 @@ class WebhookTest extends AbsCase
     {
         $id = $id ?: \uniqid();
 
-        $data = $this->client->Webhooks()->Webhook()->getWebhook($id);
+        $data = $this->client->Webhooks->Webhook->getWebhook($id);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -75,7 +75,7 @@ class WebhookTest extends AbsCase
         {
             $id = $id ?: \uniqid();
 
-            $this->client->Webhooks()->Webhook()->deleteWebhook($id);
+            $this->client->Webhooks->Webhook->deleteWebhook($id);
             $this->assertTrue(true);
         }
         catch (Throwable $e)

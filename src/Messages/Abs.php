@@ -9,13 +9,13 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method Smart   Smart()
- * @method Search  Search()
- * @method Message Message()
- * @method Sending Sending()
+ * @property Smart   Smart
+ * @property Search  Search
+ * @property Message Message
+ * @property Sending Sending
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/21
  */
 class Abs
 {

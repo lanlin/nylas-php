@@ -9,11 +9,11 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @method Draft   Draft()
- * @method Sending Sending()
+ * @property Draft   Draft
+ * @property Sending Sending
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/07/21
  */
 class Abs
 {

@@ -32,7 +32,7 @@ class AccountTest extends AbsCase
             'email_address'     => 'dorothy@spacetech.com',
         ]);
 
-        $data = $this->client->Management()->Account()->getAccountDetail();
+        $data = $this->client->Management->Account->getAccountDetail();
 
         $this->assertTrue(!empty($data['id']));
     }
@@ -64,7 +64,7 @@ class AccountTest extends AbsCase
             'limit'  => 10,
         ];
 
-        $data = $this->client->Management()->Account()->getAccountsList($para);
+        $data = $this->client->Management->Account->getAccountsList($para);
 
         $this->assertTrue(!empty($data[0]['id']));
     }
@@ -73,6 +73,8 @@ class AccountTest extends AbsCase
 
     public function testGetAccountInfo(): void
     {
+        $id = $this->faker->uuid;
+
         $this->mockResponse([
             'account_id'    => '123rvgm1iccsgnjj7nn6jwu1',
             'billing_state' => 'paid',
@@ -83,7 +85,7 @@ class AccountTest extends AbsCase
             'trial'         => false,
         ]);
 
-        $data = $this->client->Management()->Account()->getAccountInfo('sfadfadg');
+        $data = $this->client->Management->Account->getAccountInfo($id);
 
         $this->assertTrue(!empty($data['id']));
     }
@@ -94,7 +96,9 @@ class AccountTest extends AbsCase
     {
         $this->mockResponse([]);
 
-        $this->client->Management()->Account()->deleteAccount('sdfadgasdg');
+        $id = $this->faker->uuid;
+
+        $this->client->Management->Account->deleteAccount($id);
 
         $this->assertPassed();
     }
@@ -110,7 +114,9 @@ class AccountTest extends AbsCase
             'updated_at' => 1563496685,
         ]);
 
-        $data = $this->client->Management()->Account()->getTokenInfo('sfasdgdag');
+        $id = $this->faker->uuid;
+
+        $data = $this->client->Management->Account->getTokenInfo($id);
 
         $this->assertTrue(!empty($data['state']));
     }
@@ -121,7 +127,9 @@ class AccountTest extends AbsCase
     {
         $this->mockResponse(['success' => 'true']);
 
-        $data = $this->client->Management()->Account()->reactiveAccount('safadgad');
+        $id = $this->faker->uuid;
+
+        $data = $this->client->Management->Account->reactiveAccount($id);
 
         $this->assertTrue(!empty($data['success']));
     }
