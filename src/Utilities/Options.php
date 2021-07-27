@@ -6,6 +6,7 @@ use Nylas\Request\Sync;
 use Nylas\Request\Async;
 use Nylas\Management\Account;
 use Nylas\Utilities\Validator as V;
+use Nylas\Exceptions\UnauthorizedException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,11 +14,21 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/18
+ * @change 2021/07/27
  */
 class Options
 {
     // ------------------------------------------------------------------------------
+
+    /**
+     * @var mixed
+     */
+    private mixed $logFile;
+
+    /**
+     * @var null|callable
+     */
+    private mixed $handler;
 
     /**
      * @var bool
@@ -48,16 +59,6 @@ class Options
      * @var array
      */
     private array $accountInfo;
-
-    /**
-     * @var mixed
-     */
-    private $logFile;
-
-    /**
-     * @var null|callable
-     */
-    private $handler;
 
     // ------------------------------------------------------------------------------
 
@@ -115,37 +116,6 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * set access token
-     *
-     * @param string $token
-     */
-    public function setAccessToken(string $token): void
-    {
-        $this->accessToken = $token;
-
-        if (!$token)
-        {
-            return;
-        }
-
-        $this->accountInfo = [];
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get access token
-     *
-     * @return string
-     */
-    public function getAccessToken(): ?string
-    {
-        return $this->accessToken ?? null;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * @param null|string $region
      */
     public function setServer(?string $region = null): void
@@ -186,7 +156,7 @@ class Options
      *
      * @param mixed $logFile
      */
-    public function setLogFile($logFile): void
+    public function setLogFile(mixed $logFile): void
     {
         if (null !== $logFile)
         {
@@ -224,6 +194,42 @@ class Options
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
         ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set access token
+     *
+     * @param string $token
+     */
+    public function setAccessToken(string $token): void
+    {
+        $this->accessToken = $token;
+
+        if (!$token)
+        {
+            return;
+        }
+
+        $this->accountInfo = [];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get access token
+     *
+     * @return string
+     */
+    public function getAccessToken(): string
+    {
+        if (!$this->accessToken)
+        {
+            throw new UnauthorizedException();
+        }
+
+        return $this->accessToken;
     }
 
     // ------------------------------------------------------------------------------
@@ -288,25 +294,12 @@ class Options
      */
     public function getAccount(): array
     {
-        $temp =
-        [
-            'id'                => '',
-            'account_id'        => '',
-            'email_address'     => '',
-            'name'              => '',
-            'object'            => '',
-            'provider'          => '',
-            'linked_at'         => null,
-            'sync_state'        => '',
-            'organization_unit' => '',
-        ];
-
-        if (empty($this->accountInfo) && !empty($this->accessToken))
+        if (empty($this->accountInfo))
         {
             $this->accountInfo = (new Account($this))->getAccountDetail();
         }
 
-        return \array_merge($temp, $this->accountInfo);
+        return $this->accountInfo;
     }
 
     // ------------------------------------------------------------------------------
@@ -331,19 +324,15 @@ class Options
      *
      * @return mixed
      */
-    private function getLoggerHandler()
+    private function getLoggerHandler(): mixed
     {
-        switch (true)
+        return match (true)
         {
-            case \is_string($this->logFile):
-            return \fopen($this->logFile, 'ab');
+            \is_string($this->logFile)   => \fopen($this->logFile, 'ab'),
+            \is_resource($this->logFile) => $this->logFile,
 
-            case \is_resource($this->logFile):
-            return $this->logFile;
-
-            default:
-            return $this->debug;
-        }
+            default => $this->debug,
+        };
     }
 
     // ------------------------------------------------------------------------------

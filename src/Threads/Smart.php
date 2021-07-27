@@ -11,7 +11,7 @@ use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
- * Nylas Threads Start Update
+ * Nylas Threads Smart Update
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin

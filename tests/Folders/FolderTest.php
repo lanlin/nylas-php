@@ -10,6 +10,8 @@ use Tests\AbsCase;
  * Folder Test
  * ----------------------------------------------------------------------------------
  *
+ * @see https://developer.nylas.com/docs/api/#tag--Folders
+ *
  * @author lanlin
  * @change 2020/04/26
  *

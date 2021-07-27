@@ -16,7 +16,7 @@ use ZBateson\MailMimeParser\MailMimeParser;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/07/27
  */
 class Message
 {
@@ -111,16 +111,16 @@ class Message
     /**
      * update message status & flags
      *
-     * @param array $params
+     * @param string $messageId
+     * @param array  $params
      *
      * @return array
      */
-    public function updateMessage(array $params): array
+    public function updateMessage(string $messageId, array $params): array
     {
         $accessToken = $this->options->getAccessToken();
 
         $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
@@ -130,14 +130,11 @@ class Message
         V::doValidate($rules, $params);
         V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $path   = $params['id'];
         $header = ['Authorization' => $accessToken];
-
-        unset($params['id']);
 
         return $this->options
             ->getSync()
-            ->setPath($path)
+            ->setPath($messageId)
             ->setFormParams($params)
             ->setHeaderParams($header)
             ->put(API::LIST['oneMessage']);
@@ -153,7 +150,7 @@ class Message
      *
      * @return array
      */
-    public function getMessage($messageId, bool $expanded = false): array
+    public function getMessage(mixed $messageId, bool $expanded = false): array
     {
         $messageId   = Helper::fooToArray($messageId);
         $accessToken = $this->options->getAccessToken();
@@ -201,15 +198,15 @@ class Message
         return V::keySet(
             V::keyOptional('in', V::stringType()->notEmpty()),
             V::keyOptional('to', V::email()),
-            V::keyOptional('from', V::email()),
             V::keyOptional('cc', V::email()),
             V::keyOptional('bcc', V::email()),
+            V::keyOptional('from', V::email()),
             V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('any_email', V::stringType()->notEmpty()),
             V::keyOptional('thread_id', V::stringType()->notEmpty()),
             V::keyOptional('received_after', V::timestampType()),
             V::keyOptional('received_before', V::timestampType()),
-            V::keyOptional('has_attachment', V::boolType()),
+            V::keyOptional('has_attachment', V::equals(true)),
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),

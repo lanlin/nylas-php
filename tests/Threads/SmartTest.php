@@ -6,7 +6,7 @@ use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------
- * Thread Search Test
+ * Thread Smart Test
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
@@ -14,7 +14,7 @@ use Tests\AbsCase;
  *
  * @internal
  */
-class SearchTest extends AbsCase
+class SmartTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ class SearchTest extends AbsCase
     {
         $q = 'test@test.com';
 
-        $this->mockResponse($this->getSearchData());
+        $this->mockResponse($this->getThreadBaseData());
 
         $data = $this->client->Threads->Search->threads($q);
 
@@ -31,7 +31,7 @@ class SearchTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
-    private function getSearchData(): array
+    private function getThreadBaseData(): array
     {
         return [[
             'account_id'                      => '43jf3n4es3i***',
