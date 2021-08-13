@@ -84,6 +84,7 @@ class API
         // Calendars
         'calendars'     => '/calendars',
         'oneCalendar'   => '/calendars/%s',
+        'freeBusy'      => '/calendars/free-busy',
 
         // Events
         'events'       => '/events',
