@@ -144,8 +144,9 @@ class API
         'downloadFile' => '/files/%s/download',
 
         // Calendars
-        'calendars'   => '/calendars',
-        'oneCalendar' => '/calendars/%s',
+        'calendars'     => '/calendars',
+        'oneCalendar'   => '/calendars/%s',
+        'freeBusy'      => '/calendars/free-busy',
 
         // Events
         'events'   => '/events',
