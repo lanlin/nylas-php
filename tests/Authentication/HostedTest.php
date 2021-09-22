@@ -11,7 +11,7 @@ use Tests\AbsCase;
  *
  * @link https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
  * @author lanlin
- * @change 2021/07/20
+ * @change 2021/09/22
  *
  * @internal
  */
@@ -19,7 +19,7 @@ class HostedTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetOAuthAuthorize(): void
+    public function testAuthenticateUser(): void
     {
         $params =
          [
@@ -30,14 +30,14 @@ class HostedTest extends AbsCase
              'response_type' => 'code',
          ];
 
-        $data = $this->client->Authentication->Hosted->getOAuthAuthorizeUrl($params);
+        $data = $this->client->Authentication->Hosted->authenticateUser($params);
 
         $this->assertTrue(\is_string($data));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testPostOAuthToken(): void
+    public function testSendAuthorizationCode(): void
     {
         $code = $this->faker->postcode;
 
@@ -48,18 +48,18 @@ class HostedTest extends AbsCase
             'code'           => $this->faker->postcode,
         ]);
 
-        $data = $this->client->Authentication->Hosted->postOAuthToken($code);
+        $data = $this->client->Authentication->Hosted->sendAuthorizationCode($code);
 
         $this->assertTrue(!empty($data['client_id']));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testPostOAuthRevoke(): void
+    public function testRevokeAccessTokens(): void
     {
         $this->mockResponse(['success' => 'true']);
 
-        $data = $this->client->Authentication->Hosted->postOAuthRevoke();
+        $data = $this->client->Authentication->Hosted->revokeAccessTokens();
 
         $this->assertTrue(!empty($data['success']));
     }

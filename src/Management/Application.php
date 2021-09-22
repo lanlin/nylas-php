@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/20
+ * @change 2021/09/22
  */
 class Application
 {
@@ -39,11 +39,13 @@ class Application
     // ------------------------------------------------------------------------------
 
     /**
-     * get ip addresses
+     * Return application IP addresses.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/a/client_id/ip_addresses
      *
      * @return array
      */
-    public function getIpAddresses(): array
+    public function returnApplicationIPAddresses(): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -58,13 +60,15 @@ class Application
     // ------------------------------------------------------------------------------
 
     /**
-     * get information about a Nylas application
+     * Return information about a Nylas application.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/a/client_id
      *
      * @throws Exception
      *
      * @return array
      */
-    public function getApplication(): array
+    public function returnApplicationDetails(): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -79,7 +83,9 @@ class Application
     // ------------------------------------------------------------------------------
 
     /**
-     * update details of a Nylas application
+     * Update application details.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/a/client_id
      *
      * @param array $params
      *
@@ -87,7 +93,7 @@ class Application
      *
      * @return array
      */
-    public function updateApplication(array $params): array
+    public function updateApplicationDetails(array $params): array
     {
         $rules = V::keySet(
             V::keyOptional('application_name', V::stringType()->notEmpty()),

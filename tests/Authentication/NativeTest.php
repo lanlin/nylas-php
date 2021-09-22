@@ -11,7 +11,7 @@ use Tests\AbsCase;
  *
  * @link   https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
  * @author lanlin
- * @change 2021/07/19
+ * @change 2021/09/22
  *
  * @internal
  */
@@ -19,7 +19,26 @@ class NativeTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testPostConnectToken(): void
+    /**
+     * @dataProvider dataParams
+     *
+     * @param array $para
+     */
+    public function testSendAuthorization(array $para): void
+    {
+        $this->mockResponse(['code' => $this->faker->postcode]);
+
+        $data = $this->client->Authentication->Native->sendAuthorization($para);
+
+        $this->assertTrue(!empty($data['code']));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * test exchange the token
+     */
+    public function testExchangeTheToken(): void
     {
         $this->mockResponse([
             'access_token'      => 'token',
@@ -37,25 +56,9 @@ class NativeTest extends AbsCase
 
         $code = $this->faker->postcode;
 
-        $data = $this->client->Authentication->Native->postConnectToken($code);
+        $data = $this->client->Authentication->Native->exchangeTheToken($code);
 
         $this->assertTrue(!empty($data['email_address']));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @dataProvider dataParams
-     *
-     * @param array $para
-     */
-    public function testPostConnectAuthorize(array $para): void
-    {
-        $this->mockResponse(['code' => $this->faker->postcode]);
-
-        $data = $this->client->Authentication->Native->postConnectAuthorize($para);
-
-        $this->assertTrue(!empty($data['code']));
     }
 
     // ------------------------------------------------------------------------------

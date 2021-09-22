@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/20
+ * @change 2021/09/22
  *
  * @internal
  */
@@ -18,7 +18,7 @@ class AccountTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountDetail(): void
+    public function testReturnAccountDetails(): void
     {
         $this->mockResponse([
             'id'                => 'awa6ltos76vz5hvphkp8k17nt',
@@ -32,14 +32,14 @@ class AccountTest extends AbsCase
             'email_address'     => 'dorothy@spacetech.com',
         ]);
 
-        $data = $this->client->Management->Account->getAccountDetail();
+        $data = $this->client->Management->Account->returnAccountDetails();
 
         $this->assertTrue(!empty($data['id']));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountList(): void
+    public function testReturnAllAccounts(): void
     {
         $this->mockResponse([[
             'account_id'    => '622x1k5v1ujh55t6ucel7av4',
@@ -64,14 +64,14 @@ class AccountTest extends AbsCase
             'limit'  => 10,
         ];
 
-        $data = $this->client->Management->Account->getAccountsList($para);
+        $data = $this->client->Management->Account->returnAllAccounts($para);
 
         $this->assertTrue(!empty($data[0]['id']));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetAccountInfo(): void
+    public function testReturnAnAccount(): void
     {
         $id = $this->faker->uuid;
 
@@ -85,27 +85,40 @@ class AccountTest extends AbsCase
             'trial'         => false,
         ]);
 
-        $data = $this->client->Management->Account->getAccountInfo($id);
+        $data = $this->client->Management->Account->returnAnAccount($id);
 
         $this->assertTrue(!empty($data['id']));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteAccount(): void
+    public function testDeleteAnAccount(): void
     {
         $this->mockResponse([]);
 
         $id = $this->faker->uuid;
 
-        $this->client->Management->Account->deleteAccount($id);
+        $this->client->Management->Account->deleteAnAccount($id);
 
         $this->assertPassed();
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetTokenInfo(): void
+    public function testReactiveAnAccount(): void
+    {
+        $this->mockResponse(['success' => 'true']);
+
+        $id = $this->faker->uuid;
+
+        $data = $this->client->Management->Account->reactiveAnAccount($id);
+
+        $this->assertTrue(!empty($data['success']));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testReturnTokenInformation(): void
     {
         $this->mockResponse([
             'created_at' => 1563496685,
@@ -116,22 +129,9 @@ class AccountTest extends AbsCase
 
         $id = $this->faker->uuid;
 
-        $data = $this->client->Management->Account->getTokenInfo($id);
+        $data = $this->client->Management->Account->returnTokenInformation($id);
 
         $this->assertTrue(!empty($data['state']));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testReactiveAccount(): void
-    {
-        $this->mockResponse(['success' => 'true']);
-
-        $id = $this->faker->uuid;
-
-        $data = $this->client->Management->Account->reactiveAccount($id);
-
-        $this->assertTrue(!empty($data['success']));
     }
 
     // ------------------------------------------------------------------------------

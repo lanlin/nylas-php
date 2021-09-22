@@ -11,7 +11,7 @@ use Tests\AbsCase;
  *
  * @link https://developer.nylas.com/docs/api/#post/labels
  * @author lanlin
- * @change 2021/07/21
+ * @change 2021/09/22
  *
  * @internal
  */
@@ -19,7 +19,7 @@ class ThreadTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetThreadList(): void
+    public function testReturnAllThreads(): void
     {
         $para = [
             'to'                  => $this->faker->email,
@@ -44,27 +44,27 @@ class ThreadTest extends AbsCase
 
         $this->mockResponse([$this->getThreadBaseData()]);
 
-        $data = $this->client->Threads->Thread->getThreadsList($para);
+        $data = $this->client->Threads->Thread->returnsAllThreads($para);
 
         $this->assertTrue(!empty($data[0]['id']));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetThread(): void
+    public function testReturnAThread(): void
     {
         $id = $this->faker->uuid;
 
         $this->mockResponse([$id => $this->getThreadBaseData()]);
 
-        $data = $this->client->Threads->Thread->getThread($id);
+        $data = $this->client->Threads->Thread->returnsAThread($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateThread(): void
+    public function testUpdateAThread(): void
     {
         $id = $this->faker->uuid;
 
@@ -77,7 +77,7 @@ class ThreadTest extends AbsCase
 
         $this->mockResponse($this->getThreadBaseData());
 
-        $data = $this->client->Threads->Thread->updateThread($id, $params);
+        $data = $this->client->Threads->Thread->updateAThread($id, $params);
 
         $this->assertArrayHasKey('id', $data);
     }

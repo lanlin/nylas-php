@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/19
+ * @change 2021/09/22
  */
 class Native
 {
@@ -22,17 +22,6 @@ class Native
      * @var \Nylas\Utilities\Options
      */
     private Options $options;
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @var array
-     */
-    private array $providers =
-    [
-        'gmail', 'yahoo', 'exchange', 'outlook', 'imap',
-        'icloud', 'hotmail', 'aol', 'office365', 'nylas'
-    ];
 
     // ------------------------------------------------------------------------------
 
@@ -49,36 +38,15 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * connect token
+     * Send Authorization
      *
-     * @param string $code
-     *
-     * @return array
-     */
-    public function postConnectToken(string $code): array
-    {
-        V::doValidate(V::stringType()->notEmpty(), $code);
-
-        $params = $this->options->getClientApps();
-
-        $params['code'] = $code;
-
-        return $this->options
-            ->getSync()
-            ->setFormParams($params)
-            ->post(API::LIST['connectToken']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * connect authorize
+     * @see https://developer.nylas.com/docs/api/#post/connect/authorize
      *
      * @param array $params
      *
      * @return array
      */
-    public function postConnectAuthorize(array $params): array
+    public function sendAuthorization(array $params): array
     {
         $setting = $this->settingsRules($params);
 
@@ -87,11 +55,11 @@ class Native
         $rules = V::keySet(
             V::key('name', V::stringType()->notEmpty()),
             V::key('settings', $setting),
-            V::key('provider', V::in($this->providers)),
+            V::key('provider', V::in(API::PROVIDERS)),
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('email_address', V::email()),
 
-            // @see https://docs.nylas.com/docs/authentication-scopes
+            // optional scopes
             V::keyOptional('scopes', V::stringType()->notEmpty()),
 
             // re-authenticate existing account id
@@ -104,6 +72,31 @@ class Native
             ->getSync()
             ->setFormParams($params)
             ->post(API::LIST['connectAuthorize']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Exchange the Token
+     *
+     * @see https://developer.nylas.com/docs/api/#post/connect/token
+     *
+     * @param string $code
+     *
+     * @return array
+     */
+    public function exchangeTheToken(string $code): array
+    {
+        V::doValidate(V::stringType()->notEmpty(), $code);
+
+        $params = $this->options->getClientApps();
+
+        $params['code'] = $code;
+
+        return $this->options
+            ->getSync()
+            ->setFormParams($params)
+            ->post(API::LIST['connectToken']);
     }
 
     // ------------------------------------------------------------------------------
@@ -128,6 +121,7 @@ class Native
             'exchange' => $this->exchangeProviderRule(),
             'office365' => $this->office365ProviderRule(),
             'aol', 'yahoo', 'icloud', 'hotmail' => $this->knownProviderRule(),
+
         };
     }
 

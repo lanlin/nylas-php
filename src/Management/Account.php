@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/20
+ * @change 2021/09/22
  */
 class Account
 {
@@ -38,11 +38,13 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * get account detail
+     * Return Account Details
+     *
+     * @see https://developer.nylas.com/docs/api/#get/account
      *
      * @return array
      */
-    public function getAccountDetail(): array
+    public function returnAccountDetails(): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -57,13 +59,15 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * get accounts list
+     * Return All Accounts
+     *
+     * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts
      *
      * @param array $params
      *
      * @return array
      */
-    public function getAccountsList(array $params = []): array
+    public function returnAllAccounts(array $params = []): array
     {
         $rules = V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
@@ -92,13 +96,15 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * get an account info
+     * Returns details from a single account.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts/id
      *
      * @param string $accountId
      *
      * @return array
      */
-    public function getAccountInfo(string $accountId): array
+    public function returnAnAccount(string $accountId): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -113,13 +119,15 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * delete an account
+     * Deletes an account. Accounts deleted using this method are immediately unavailable.
+     *
+     * @see https://developer.nylas.com/docs/api/#delete/a/client_id/accounts/id
      *
      * @param string $accountId
      *
      * @return array
      */
-    public function deleteAccount(string $accountId): array
+    public function deleteAnAccount(string $accountId): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -134,13 +142,15 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * cancel account
+     * Cancels a paid Nylas account. Accounts that are cancelled instead of deleted, can be recovered within 3 days.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/downgrade
      *
      * @param string $accountId
      *
      * @return array
      */
-    public function cancelAccount(string $accountId): array
+    public function cancelAnAccount(string $accountId): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -155,7 +165,32 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * revoke all tokens
+     * Reactivate a cancelled account.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/upgrade
+     *
+     * @param string $accountId
+     *
+     * @return array
+     */
+    public function reactiveAnAccount(string $accountId): array
+    {
+        $client = $this->options->getClientApps();
+        $header = ['Authorization' => $client['client_secret']];
+
+        return $this->options
+            ->getSync()
+            ->setPath($client['client_id'], $accountId)
+            ->setHeaderParams($header)
+            ->post(API::LIST['reactiveAnAccount']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Revoke all access tokens for an account.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/revoke-all
      *
      * @param string $accountId
      * @param array  $params
@@ -184,13 +219,15 @@ class Account
     // ------------------------------------------------------------------------------
 
     /**
-     * get information about an account's access_token
+     * Return information about an accounts access token.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/token-info
      *
      * @param string $accountId
      *
      * @return array
      */
-    public function getTokenInfo(string $accountId): array
+    public function returnTokenInformation(string $accountId): array
     {
         $client = $this->options->getClientApps();
         $header = ['Authorization' => $client['client_secret']];
@@ -200,27 +237,6 @@ class Account
             ->setPath($client['client_id'], $accountId)
             ->setHeaderParams($header)
             ->get(API::LIST['tokenInfo']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * re-active account
-     *
-     * @param string $accountId
-     *
-     * @return array
-     */
-    public function reactiveAccount(string $accountId): array
-    {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
-        return $this->options
-            ->getSync()
-            ->setPath($client['client_id'], $accountId)
-            ->setHeaderParams($header)
-            ->post(API::LIST['reactiveAnAccount']);
     }
 
     // ------------------------------------------------------------------------------

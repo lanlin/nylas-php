@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/21
+ * @change 2021/09/22
  */
 class Thread
 {
@@ -39,13 +39,15 @@ class Thread
     // ------------------------------------------------------------------------------
 
     /**
-     * get threads list
+     * Returns one or more threads that match the filter specified by the query parameters
+     *
+     * @see https://developer.nylas.com/docs/api/#get/threads
      *
      * @param array $params
      *
      * @return array
      */
-    public function getThreadsList(array $params = []): array
+    public function returnsAllThreads(array $params = []): array
     {
         $accessToken = $this->options->getAccessToken();
 
@@ -70,47 +72,15 @@ class Thread
     // ------------------------------------------------------------------------------
 
     /**
-     * update thread
+     * Returns the thread by the specified thread ID.
      *
-     * @param string $threadId
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function updateThread(string $threadId, array $params): array
-    {
-        $accessToken = $this->options->getAccessToken();
-
-        $rules = V::keySet(
-            V::keyOptional('unread', V::boolType()),
-            V::keyOptional('starred', V::boolType()),
-            V::keyOptional('folder_id', V::stringType()->notEmpty()),
-            V::keyOptional('label_ids', V::simpleArray(V::stringType()))
-        );
-
-        V::doValidate($rules, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
-
-        return $this->options
-            ->getSync()
-            ->setPath($threadId)
-            ->setFormParams($params)
-            ->setHeaderParams($header)
-            ->put(API::LIST['oneThread']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get thread info
+     * @see https://developer.nylas.com/docs/api/#get/threads/id
      *
      * @param mixed $threadId string|string[]
      *
      * @return array
      */
-    public function getThread(mixed $threadId): array
+    public function returnsAThread(mixed $threadId): array
     {
         $threadId    = Helper::fooToArray($threadId);
         $accessToken = $this->options->getAccessToken();
@@ -140,6 +110,42 @@ class Thread
         $pools = $this->options->getAsync()->pool($queues, false);
 
         return Helper::concatPoolInfos($threadId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * When you update a thread, all message in a thread are updated.
+     *
+     * @see https://developer.nylas.com/docs/api/#put/threads/id
+     *
+     * @param string $threadId
+     * @param array  $params
+     *
+     * @return array
+     */
+    public function updateAThread(string $threadId, array $params): array
+    {
+        $accessToken = $this->options->getAccessToken();
+
+        $rules = V::keySet(
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
+            V::keyOptional('folder_id', V::stringType()->notEmpty()),
+            V::keyOptional('label_ids', V::simpleArray(V::stringType()))
+        );
+
+        V::doValidate($rules, $params);
+        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+
+        $header = ['Authorization' => $accessToken];
+
+        return $this->options
+            ->getSync()
+            ->setPath($threadId)
+            ->setFormParams($params)
+            ->setHeaderParams($header)
+            ->put(API::LIST['oneThread']);
     }
 
     // ------------------------------------------------------------------------------

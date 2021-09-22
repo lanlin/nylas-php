@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/24
+ * @change 2021/09/22
  */
 class Hosted
 {
@@ -38,13 +38,15 @@ class Hosted
     // ------------------------------------------------------------------------------
 
     /**
-     * get oauth authorize url
+     * Authenticate your user using Hosted Authentication
+     *
+     * @see https://developer.nylas.com/docs/api/#get/oauth/authorize
      *
      * @param array $params
      *
      * @return string
      */
-    public function getOAuthAuthorizeUrl(array $params): string
+    public function authenticateUser(array $params): string
     {
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
@@ -69,13 +71,15 @@ class Hosted
     // ------------------------------------------------------------------------------
 
     /**
-     * post oauth token
+     * Send authorization code. An access token will return as part of the response.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/oauth/token
      *
      * @param string $code
      *
      * @return array
      */
-    public function postOAuthToken(string $code): array
+    public function sendAuthorizationCode(string $code): array
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
@@ -95,11 +99,13 @@ class Hosted
     // ------------------------------------------------------------------------------
 
     /**
-     * post oauth revoke
+     * Revoke access tokens.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/oauth/revoke
      *
      * @return array
      */
-    public function postOAuthRevoke(): array
+    public function revokeAccessTokens(): array
     {
         $accessToken = $this->options->getAccessToken();
 
