@@ -47,13 +47,10 @@ class Application
      */
     public function returnApplicationIPAddresses(): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'])
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'])
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['ipAddresses']);
     }
 
@@ -70,13 +67,10 @@ class Application
      */
     public function returnApplicationDetails(): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'])
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'])
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['manageApp']);
     }
 
@@ -95,21 +89,16 @@ class Application
      */
     public function updateApplicationDetails(array $params): array
     {
-        $rules = V::keySet(
-            V::keyOptional('application_name', V::stringType()->notEmpty()),
+        V::doValidate(V::keySet(
             V::key('redirect_uris', V::simpleArray(V::url())),
-        );
-
-        V::doValidate($rules, $params);
-
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
+            V::keyOptional('application_name', V::stringType()->notEmpty()),
+        ), $params);
 
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'])
+            ->setPath($this->options->getClientApps()['client_id'])
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->put(API::LIST['manageApp']);
     }
 

@@ -49,25 +49,18 @@ class Label
     {
         Helper::checkProviderUnit($this->options, true);
 
-        $params = [
-            'view'         => $view,
-            'access_token' => $this->options->getAccessToken(),
-        ];
+        $params = ['view' => $view];
 
-        $rule = V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
-            V::keyOptional('view', V::in(['ids', 'count'])),
-        );
+        V::doValidate(V::keySet(
+            V::keyOptional('view', V::in(['ids', 'count']))
+        ), $params);
 
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-        $query  = empty($params['view']) ? [] : ['view' => $params['view']];
+        $query = empty($params['view']) ? [] : ['view' => $params['view']];
 
         return $this->options
             ->getSync()
             ->setQuery($query)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['labels']);
     }
 
@@ -84,20 +77,12 @@ class Label
     {
         Helper::checkProviderUnit($this->options, true);
 
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::stringType()->notEmpty();
-
-        V::doValidate($rule, $displayName);
-        V::doValidate($rule, $accessToken);
-
-        $header = ['Authorization' => $accessToken];
-        $params = ['display_name'  => $displayName];
+        V::doValidate(V::stringType()->notEmpty(), $displayName);
 
         return $this->options
             ->getSync()
-            ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setFormParams(['display_name' => $displayName])
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['labels']);
     }
 
@@ -114,18 +99,12 @@ class Label
     {
         Helper::checkProviderUnit($this->options, true);
 
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::keySet(
+        V::doValidate(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('display_name', V::stringType()->notEmpty())
-        );
+        ), $params);
 
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $path   = $params['id'];
-        $header = ['Authorization' => $accessToken];
+        $path = $params['id'];
 
         unset($params['id']);
 
@@ -133,7 +112,7 @@ class Label
             ->getSync()
             ->setPath($path)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneLabel']);
     }
 
@@ -146,28 +125,23 @@ class Label
      *
      * @return array
      */
-    public function getLabel($labelId): array
+    public function getLabel(mixed $labelId): array
     {
         Helper::checkProviderUnit($this->options, true);
 
-        $labelId     = Helper::fooToArray($labelId);
-        $accessToken = $this->options->getAccessToken();
+        $labelId = Helper::fooToArray($labelId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $labelId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelId);
 
         $queues = [];
         $target = API::LIST['oneLabel'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($labelId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -193,20 +167,15 @@ class Label
     {
         Helper::checkProviderUnit($this->options, true);
 
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
-        $rule = V::simpleArray(V::keySet(
+        V::doValidate(V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('display_name', V::stringType()->notEmpty())
-        ));
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        )), $params);
 
         $queues = [];
         $target = API::LIST['oneLabel'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
@@ -214,7 +183,7 @@ class Label
                 ->getAsync()
                 ->setPath($item['id'])
                 ->setFormParams(['display_name' => $item['display_name']])
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {

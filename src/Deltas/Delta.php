@@ -44,15 +44,9 @@ class Delta
      */
     public function getLatestCursor(): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
-
         return $this->options
             ->getSync()
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['deltaLatestCursor']);
     }
 
@@ -67,19 +61,12 @@ class Delta
      */
     public function getSetOfDeltas(array $params): array
     {
-        $rules = $this->getBaseRules();
-
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(...$this->getBaseRules()), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['delta']);
     }
 
@@ -94,20 +81,15 @@ class Delta
      */
     public function longPollingDelta(array $params): array
     {
-        $rules   = $this->getBaseRules();
-        $rules[] = V::key('timeout', V::intType()->min(1));
-
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(
+            V::key('timeout', V::intType()->min(1)),
+            ...$this->getBaseRules(),
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['deltaLongpoll']);
     }
 
@@ -122,19 +104,12 @@ class Delta
      */
     public function streamingDelta(array $params)
     {
-        $rules = $this->getBaseRules();
-
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(...$this->getBaseRules()), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['deltaStreaming']);
     }
 

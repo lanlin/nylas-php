@@ -48,24 +48,17 @@ class File
      */
     public function getFilesList(array $params = []): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::keySet(
+        V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('filename', V::stringType()->notEmpty()),
             V::keyOptional('message_id', V::stringType()->notEmpty()),
             V::keyOptional('content_type', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['files']);
     }
 
@@ -78,26 +71,21 @@ class File
      *
      * @return array
      */
-    public function getFileInfo($fileId): array
+    public function getFileInfo(mixed $fileId): array
     {
-        $fileId      = Helper::fooToArray($fileId);
-        $accessToken = $this->options->getAccessToken();
+        $fileId = Helper::fooToArray($fileId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $fileId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
 
         $queues = [];
         $target = API::LIST['oneFile'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($fileId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -119,26 +107,21 @@ class File
      *
      * @return array
      */
-    public function deleteFile($fileId): array
+    public function deleteFile(mixed $fileId): array
     {
-        $fileId      = Helper::fooToArray($fileId);
-        $accessToken = $this->options->getAccessToken();
+        $fileId = Helper::fooToArray($fileId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $fileId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
 
         $queues = [];
         $target = API::LIST['oneFile'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($fileId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -163,14 +146,11 @@ class File
     public function uploadFile(array $file): array
     {
         $fileUploads = Helper::arrayToMulti($file);
-        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->multipartRules(), $fileUploads);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $upload = [];
         $target = API::LIST['files'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($fileUploads as $item)
         {
@@ -184,7 +164,7 @@ class File
             $request = $this->options
                 ->getAsync()
                 ->setFormFiles($item)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $upload[] = static function () use ($request, $target)
             {
@@ -209,14 +189,11 @@ class File
     public function downloadFile(array $params): array
     {
         $downloadArr = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->downloadRules(), $downloadArr);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $method = [];
         $target = API::LIST['downloadFile'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($downloadArr as $item)
         {
@@ -225,7 +202,7 @@ class File
             $request = $this->options
                 ->getAsync()
                 ->setPath($item['id'])
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $method[] = static function () use ($request, $target, $sink)
             {

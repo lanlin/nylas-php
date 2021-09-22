@@ -50,19 +50,16 @@ class Hosted
     {
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::key('scopes', V::stringType()->notEmpty()),
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('redirect_uri', V::url()),
             V::key('response_type', V::in(['code', 'token'])),
             V::keyOptional('state', V::stringType()->length(1, 255)),
             V::keyOptional('login_hint', V::email())
-        );
+        ), $params);
 
-        V::doValidate($rules, $params);
-
-        $query = \http_build_query($params, null, '&', PHP_QUERY_RFC3986);
-
+        $query  = \http_build_query($params, null, '&', PHP_QUERY_RFC3986);
         $apiUrl = \trim($this->options->getServer(), '/').API::LIST['oAuthAuthorize'];
 
         return \trim($apiUrl, '/').'?'.$query;
@@ -83,12 +80,8 @@ class Hosted
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
-        $params = $this->options->getClientApps();
-
-        $params['code'] = $code;
-
-        $query = ['grant_type' => 'authorization_code'];
-        $query = \array_merge($query, $params);
+        $query = ['code' => $code, 'grant_type' => 'authorization_code'];
+        $query = \array_merge($query, $this->options->getClientApps());
 
         return $this->options
             ->getSync()
@@ -107,15 +100,9 @@ class Hosted
      */
     public function revokeAccessTokens(): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
-
         return $this->options
             ->getSync()
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['oAuthRevoke']);
     }
 

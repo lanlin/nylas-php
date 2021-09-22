@@ -48,7 +48,7 @@ class Smart
      *
      * @return array
      */
-    public function addLabels(string $messageId, $labels): array
+    public function addLabels(string $messageId, mixed $labels): array
     {
         return $this->updateLabels($messageId, $labels);
     }
@@ -63,7 +63,7 @@ class Smart
      *
      * @return array
      */
-    public function removeLabels(string $messageId, $labels): array
+    public function removeLabels(string $messageId, mixed $labels): array
     {
         return $this->updateLabels($messageId, [], $labels);
     }
@@ -143,7 +143,7 @@ class Smart
      *
      * @return array
      */
-    public function star($messageId): array
+    public function star(mixed $messageId): array
     {
         $params = ['starred' => true];
 
@@ -159,7 +159,7 @@ class Smart
      *
      * @return array
      */
-    public function unstar($messageId): array
+    public function unstar(mixed $messageId): array
     {
         $params = ['starred' => false];
 
@@ -175,7 +175,7 @@ class Smart
      *
      * @return array
      */
-    public function markAsRead($messageId): array
+    public function markAsRead(mixed $messageId): array
     {
         $params = ['unread' => false];
 
@@ -191,7 +191,7 @@ class Smart
      *
      * @return array
      */
-    public function markAsUnread($messageId): array
+    public function markAsUnread(mixed $messageId): array
     {
         $params = ['unread' => true];
 
@@ -208,7 +208,7 @@ class Smart
      *
      * @return array
      */
-    public function moveToFolder($messageId, string $folderId): array
+    public function moveToFolder(mixed $messageId, string $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -229,7 +229,7 @@ class Smart
      *
      * @return array
      */
-    public function moveToLabel($messageId, array $labelIds): array
+    public function moveToLabel(mixed $messageId, array $labelIds): array
     {
         Helper::checkProviderUnit($this->options, true);
 
@@ -253,7 +253,7 @@ class Smart
     private function updateFolder(string $messageId, string $folder): array
     {
         $folderId   = null;
-        $allFolders = (new Folder($this->options))->getFoldersList();
+        $allFolders = (new Folder($this->options))->returnAllFolders();
 
         foreach ($allFolders as $row)
         {
@@ -278,11 +278,11 @@ class Smart
      *
      * @return array
      */
-    private function updateLabels(string $messageId, $add = [], $del = []): array
+    private function updateLabels(string $messageId, mixed $add = [], mixed $del = []): array
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
-        $emailData = (new Message($this->options))->getMessage($messageId);
+        $emailData = (new Message($this->options))->returnAMessage($messageId);
         $nowLabels = $emailData[$messageId]['labels'] ?? [];
 
         $add = Helper::fooToArray($add);
@@ -327,19 +327,14 @@ class Smart
      *
      * @return array
      */
-    private function updateOneField($messageId, array $params): array
+    private function updateOneField(mixed $messageId, array $params): array
     {
-        $messageId    = Helper::fooToArray($messageId);
-        $accessToken  = $this->options->getAccessToken();
+        $messageId = Helper::fooToArray($messageId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $messageId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
 
         $queues = [];
         $target = API::LIST['oneMessage'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($messageId as $id)
         {
@@ -347,7 +342,7 @@ class Smart
                 ->getAsync()
                 ->setPath($id)
                 ->setFormParams($params)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {

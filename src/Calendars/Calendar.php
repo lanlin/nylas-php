@@ -48,23 +48,16 @@ class Calendar
      */
     public function getCalendarsList(array $params = []): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::keySet(
+        V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0))
-        );
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['calendars']);
     }
 
@@ -79,19 +72,12 @@ class Calendar
      */
     public function addCalendar(array $params): array
     {
-        $rules = $this->addCalendarRules();
-
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(...$this->addCalendarRules()), $params);
 
         return $this->options
             ->getSync()
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['calendars']);
     }
 
@@ -104,19 +90,15 @@ class Calendar
      *
      * @return array
      */
-    public function getCalendar($calendarId): array
+    public function getCalendar(mixed $calendarId): array
     {
-        $calendarId  = Helper::fooToArray($calendarId);
-        $accessToken = $this->options->getAccessToken();
+        $calendarId = Helper::fooToArray($calendarId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $calendarId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $calendarId);
 
         $queues = [];
         $target = API::LIST['oneCalendar'];
-        $header = ['Authorization' => $accessToken];
+        $header = $this->options->getAuthorizationHeader();
 
         foreach ($calendarId as $id)
         {
@@ -147,23 +129,16 @@ class Calendar
      */
     public function getFreeBusyList(array $params = []): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::keySet(
+        V::doValidate(V::keySet(
             V::keyOptional('start_time', V::timestampType()),
             V::keyOptional('end_time', V::timestampType()),
             V::keyOptional('emails', V::arrayType()->each(V::stringType()))
-        );
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['freeBusy']);
     }
 
@@ -177,12 +152,12 @@ class Calendar
     private function addCalendarRules(): array
     {
         return
-            [
-                V::key('name', V::stringType()->notEmpty()),
-                V::keyOptional('description', V::stringType()->notEmpty()),
-                V::keyOptional('location', V::stringType()->notEmpty()),
-                V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
-            ];
+        [
+            V::key('name', V::stringType()->notEmpty()),
+            V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
+        ];
     }
 
     // ------------------------------------------------------------------------------

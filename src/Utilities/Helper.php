@@ -92,11 +92,11 @@ class Helper
     /**
      * something foo to array
      *
-     * @param $foo
+     * @param mixed $foo
      *
      * @return array
      */
-    public static function fooToArray($foo): array
+    public static function fooToArray(mixed $foo): array
     {
         if (!$foo)
         {

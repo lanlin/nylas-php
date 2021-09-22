@@ -53,20 +53,15 @@ class JobStatus
      */
     public function getJobStatusesList(array $params = []): array
     {
-        $rules = $this->getBaseRules();
-
-        $rules[]     = V::keyOptional('view', V::in(['ids', 'count']));
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(
+            V::keyOptional('view', V::in(['ids', 'count'])),
+            ...$this->getBaseRules(),
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['jobStatuses']);
     }
 
@@ -81,21 +76,15 @@ class JobStatus
      */
     public function getJobStatus(array $params): array
     {
-        $rules       = $this->getBaseRules();
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
-        $rules = V::simpleArray(V::keySet(
+        V::doValidate(V::simpleArray(V::keySet(
             V::key('job_status_id', V::stringType()->notEmpty()),
-            ...$rules
-        ));
-
-        V::doValidate($rules, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+            ...$this->getBaseRules()
+        )), $params);
 
         $queues = [];
         $target = API::LIST['oneJobStatus'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
@@ -106,7 +95,7 @@ class JobStatus
                 ->getAsync()
                 ->setPath($id)
                 ->setFormParams($item)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {

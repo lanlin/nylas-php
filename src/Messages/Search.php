@@ -46,26 +46,12 @@ class Search
      */
     public function messages(string $q): array
     {
-        $params =
-        [
-            'q'            => $q,
-            'access_token' => $this->options->getAccessToken(),
-        ];
-
-        $rules = V::keySet(
-            V::key('q', V::stringType()->notEmpty()),
-            V::key('access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $query  = ['q' => $params['q']];
-        $header = ['Authorization' => $params['access_token']];
+        V::doValidate(V::stringType()->notEmpty(), $q);
 
         return $this->options
             ->getSync()
-            ->setQuery($query)
-            ->setHeaderParams($header)
+            ->setQuery(['q' => $q])
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['searchMessages']);
     }
 

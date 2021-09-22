@@ -49,20 +49,15 @@ class Event
      */
     public function getEventsList(array $params = []): array
     {
-        $rules = $this->getBaseRules();
-
-        $rules[]     = V::keyOptional('view', V::in(['ids', 'count']));
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(
+            V::keyOptional('view', V::in(['ids', 'count'])),
+            ...$this->getBaseRules()
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['events']);
     }
 
@@ -77,13 +72,9 @@ class Event
      */
     public function addEvent(array $params): array
     {
-        $accessToken = $this->options->getAccessToken();
-
         V::doValidate($this->addEventRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $notify = 'notify_participants';
-        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
         unset($params['notify_participants']);
@@ -92,7 +83,7 @@ class Event
             ->getSync()
             ->setQuery($query)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['events']);
     }
 
@@ -107,14 +98,10 @@ class Event
      */
     public function updateEvent(array $params): array
     {
-        $accessToken = $this->options->getAccessToken();
-
         V::doValidate($this->updateEventRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $path   = $params['id'];
         $notify = 'notify_participants';
-        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
         unset($params['id'], $params['notify_participants']);
@@ -124,7 +111,7 @@ class Event
             ->setPath($path)
             ->setQuery($query)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneEvent']);
     }
 
@@ -139,22 +126,16 @@ class Event
      */
     public function rsvping(array $params)
     {
-        $params['account_id'] = $params['account_id'] ?? $this->options->getAccountId();
+        $params['account_id'] = $params['account_id'] ?? $this->options->getAccount()['account_id'];
 
-        $accessToken = $this->options->getAccessToken();
-
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
             V::key('event_id', V::stringType()->notEmpty()),
             V::key('account_id', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
-        );
-
-        V::doValidate($rules, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        ), $params);
 
         $notify = 'notify_participants';
-        $header = ['Authorization' => $accessToken];
         $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
 
         unset($params['notify_participants']);
@@ -163,7 +144,7 @@ class Event
             ->getSync()
             ->setQuery($query)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['oneEvent']);
     }
 
@@ -178,21 +159,15 @@ class Event
      */
     public function getEvent(array $params): array
     {
-        $rules       = $this->getBaseRules();
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
-        $rules = V::simpleArray(V::keySet(
+        V::doValidate(V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            ...$rules
-        ));
-
-        V::doValidate($rules, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+            ...$this->getBaseRules(),
+        )), $params);
 
         $queues = [];
         $target = API::LIST['oneEvent'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
@@ -203,7 +178,7 @@ class Event
                 ->getAsync()
                 ->setPath($id)
                 ->setFormParams($item)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -228,21 +203,16 @@ class Event
      */
     public function deleteEvent(array $params): array
     {
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
-        $rule = V::simpleArray(V::keySet(
+        V::doValidate(V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::keyOptional('notify_participants', V::boolType())
-        ));
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        )), $params);
 
         $queues = [];
         $target = API::LIST['oneEvent'];
         $notify = 'notify_participants';
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
@@ -252,7 +222,7 @@ class Event
                 ->getAsync()
                 ->setPath($item['id'])
                 ->setQuery($query)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -307,23 +277,23 @@ class Event
     private function getBaseRules(): array
     {
         return
-            [
-                V::keyOptional('limit', V::intType()->min(1)),
-                V::keyOptional('offset', V::intType()->min(0)),
-                V::keyOptional('event_id', V::stringType()->notEmpty()),
-                V::keyOptional('calendar_id', V::stringType()->notEmpty()),
+        [
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('event_id', V::stringType()->notEmpty()),
+            V::keyOptional('calendar_id', V::stringType()->notEmpty()),
 
-                V::keyOptional('title', V::stringType()->notEmpty()),
-                V::keyOptional('location', V::stringType()->notEmpty()),
-                V::keyOptional('description', V::stringType()->notEmpty()),
-                V::keyOptional('show_cancelled', V::boolType()),
-                V::keyOptional('expand_recurring', V::boolType()),
+            V::keyOptional('title', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('show_cancelled', V::boolType()),
+            V::keyOptional('expand_recurring', V::boolType()),
 
-                V::keyOptional('ends_after', V::timestampType()),
-                V::keyOptional('ends_before', V::timestampType()),
-                V::keyOptional('starts_after', V::timestampType()),
-                V::keyOptional('starts_before', V::timestampType()),
-            ];
+            V::keyOptional('ends_after', V::timestampType()),
+            V::keyOptional('ends_before', V::timestampType()),
+            V::keyOptional('starts_after', V::timestampType()),
+            V::keyOptional('starts_before', V::timestampType()),
+        ];
     }
 
     // ------------------------------------------------------------------------------

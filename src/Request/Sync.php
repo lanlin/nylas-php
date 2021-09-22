@@ -173,7 +173,7 @@ class Sync
      *
      * @return array
      */
-    public function getSink(string $api, $sink): array
+    public function getSink(string $api, mixed $sink): array
     {
         $rules = V::oneOf(
             V::resourceType(),

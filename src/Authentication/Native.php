@@ -48,25 +48,19 @@ class Native
      */
     public function sendAuthorization(array $params): array
     {
-        $setting = $this->settingsRules($params);
-
         $params['client_id'] = $this->options->getClientApps()['client_id'];
 
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::key('name', V::stringType()->notEmpty()),
-            V::key('settings', $setting),
             V::key('provider', V::in(API::PROVIDERS)),
+            V::key('settings', $this->settingsRules($params)),
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('email_address', V::email()),
-
-            // optional scopes
             V::keyOptional('scopes', V::stringType()->notEmpty()),
 
             // re-authenticate existing account id
             V::keyOptional('reauth_account_id', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
+        ), $params);
 
         return $this->options
             ->getSync()
@@ -114,14 +108,15 @@ class Native
 
         return match ($provider)
         {
-            'imap' => $this->imapProviderRule(),
-            'nylas' => $this->nylasProviderRule(),
-            'gmail' => $this->gmailProviderRule(),
-            'outlook' => $this->outlookProviderRule(),
-            'exchange' => $this->exchangeProviderRule(),
+            'nylas'     => $this->nylasProviderRule(),
+            'gmail'     => $this->gmailProviderRule(),
+            'outlook'   => $this->outlookProviderRule(),
+            'exchange'  => $this->exchangeProviderRule(),
             'office365' => $this->office365ProviderRule(),
             'aol', 'yahoo', 'icloud', 'hotmail' => $this->knownProviderRule(),
 
+            // imap & others
+            default => $this->imapProviderRule(),
         };
     }
 
@@ -258,7 +253,6 @@ class Native
                 V::key('service_account', V::boolType())
             ),
         );
-
     }
 
     // ------------------------------------------------------------------------------

@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/09/22
  */
 class Folder
 {
@@ -39,35 +39,41 @@ class Folder
     // ------------------------------------------------------------------------------
 
     /**
-     * get folders list
+     * Returns all folders.
      *
-     * @param string $view ids|count
+     * @see https://developer.nylas.com/docs/api/#get/folders
+     *
+     * @param int    $offset zero base
+     * @param int    $limit  default 100
+     * @param string $view   ids|count
      *
      * @return array
      */
-    public function getFoldersList(?string $view = null): array
+    public function returnAllFolders(int $offset = 0, int $limit = 100, ?string $view = null): array
     {
         Helper::checkProviderUnit($this->options, false);
 
         $params = [
-            'view'         => $view,
-            'access_token' => $this->options->getAccessToken(),
+            'view'   => $view,
+            'limit'  => $limit,
+            'offset' => $offset,
         ];
 
-        $rule = V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
+        V::doValidate(V::keySet(
+            V::key('limit', V::intType()),
+            V::key('offset', V::intType()),
             V::keyOptional('view', V::in(['ids', 'count'])),
-        );
+        ), $params);
 
-        V::doValidate($rule, $params);
-
-        $header = ['Authorization' => $params['access_token']];
-        $query  = empty($params['view']) ? [] : ['view' => $params['view']];
+        if (empty($params['view']))
+        {
+            unset($params['view']);
+        }
 
         return $this->options
             ->getSync()
-            ->setQuery($query)
-            ->setHeaderParams($header)
+            ->setQuery($params)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['folders']);
     }
 
@@ -80,22 +86,26 @@ class Folder
      *
      * @return array
      */
-    public function addFolder(?string $displayName = null): array
+    public function createAFolder(?string $displayName = null, ?string $name = null): array
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $params = !empty($displayName) ? ['display_name' => $displayName] : [];
+        $params = ['name' => $name, 'display_name' => $displayName];
 
-        $accessToken = $this->options->getAccessToken();
+        if (empty($name))
+        {
+            unset($params['name']);
+        }
 
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        if (empty($displayName))
+        {
+            unset($params['display_name']);
+        }
 
         return $this->options
             ->getSync()
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['folders']);
     }
 
@@ -112,18 +122,12 @@ class Folder
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::keySet(
+        V::doValidate(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::keyOptional('display_name', V::stringType()->notEmpty())
-        );
+        ), $params);
 
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $path   = $params['id'];
-        $header = ['Authorization' => $accessToken];
+        $path = $params['id'];
 
         unset($params['id']);
 
@@ -131,7 +135,7 @@ class Folder
             ->getSync()
             ->setPath($path)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneFolder']);
     }
 
@@ -144,28 +148,23 @@ class Folder
      *
      * @return array
      */
-    public function getFolder($folderId): array
+    public function getFolder(mixed $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $folderId    = Helper::fooToArray($folderId);
-        $accessToken = $this->options->getAccessToken();
+        $folderId = Helper::fooToArray($folderId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $folderId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
 
         $queues = [];
         $target = API::LIST['oneFolder'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($folderId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -187,28 +186,23 @@ class Folder
      *
      * @return array
      */
-    public function deleteFolder($folderId): array
+    public function deleteFolder(mixed $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $folderId    = Helper::fooToArray($folderId);
-        $accessToken = $this->options->getAccessToken();
+        $folderId = Helper::fooToArray($folderId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $folderId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
 
         $queues = [];
         $target = API::LIST['oneFolder'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($folderId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {

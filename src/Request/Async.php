@@ -134,7 +134,7 @@ class Async
      *
      * @return PromiseInterface
      */
-    public function getSink(string $api, $sink): PromiseInterface
+    public function getSink(string $api, mixed $sink): PromiseInterface
     {
         $rules = V::oneOf(
             V::resourceType(),
@@ -159,9 +159,9 @@ class Async
      * @param array $funcs
      * @param bool  $headers
      *
-     * @return mixed
+     * @return array
      */
-    public function pool(array $funcs, bool $headers = false)
+    public function pool(array $funcs, bool $headers = false): array
     {
         foreach ($funcs as $func)
         {
@@ -249,7 +249,7 @@ class Async
             return $exception;
         }
 
-        if ($exception && $exception->getPrevious())
+        if ($exception->getPrevious())
         {
             return $this->checkIfHasNylasException($exception->getPrevious());
         }

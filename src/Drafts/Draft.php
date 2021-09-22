@@ -48,29 +48,22 @@ class Draft
      *
      * @return array
      */
-    public function getDraftsList($anyEmail = null, ?string $view = null): array
+    public function getDraftsList(mixed $anyEmail = null, ?string $view = null): array
     {
         $params = [
-            'view'         => $view,
-            'any_email'    => Helper::fooToArray($anyEmail),
-            'access_token' => $this->options->getAccessToken(),
+            'view'      => $view,
+            'any_email' => Helper::fooToArray($anyEmail),
         ];
 
-        $rule = V::keySet(
-            V::key('access_token', V::stringType()->notEmpty()),
+        V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count'])),
             V::keyOptional('any_email', V::simpleArray(V::email()))
-        );
-
-        V::doValidate($rule, $params);
-
-        $query  = $this->getListQuery($params);
-        $header = ['Authorization' => $params['access_token']];
+        ), $params);
 
         return $this->options
             ->getSync()
-            ->setQuery($query)
-            ->setHeaderParams($header)
+            ->setQuery($this->getListQuery($params))
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['drafts']);
     }
 
@@ -85,19 +78,12 @@ class Draft
      */
     public function addDraft(array $params): array
     {
-        $rules = $this->getBaseRules();
-
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(...$this->getBaseRules()), $params);
 
         return $this->options
             ->getSync()
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['drafts']);
     }
 
@@ -112,14 +98,9 @@ class Draft
      */
     public function updateDraft(array $params): array
     {
-        $rules = $this->getUpdateRules();
+        V::doValidate(V::keySet(...$this->getUpdateRules()), $params);
 
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-
-        $path   = $params['id'];
-        $header = ['Authorization' => $accessToken];
+        $path = $params['id'];
 
         unset($params['id']);
 
@@ -127,7 +108,7 @@ class Draft
             ->getSync()
             ->setPath($path)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneDraft']);
     }
 
@@ -140,26 +121,21 @@ class Draft
      *
      * @return array
      */
-    public function getDraft($draftId): array
+    public function getDraft(mixed $draftId): array
     {
-        $draftId     = Helper::fooToArray($draftId);
-        $accessToken = $this->options->getAccessToken();
+        $draftId = Helper::fooToArray($draftId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $draftId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $draftId);
 
         $queues = [];
         $target = API::LIST['oneDraft'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($draftId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -183,20 +159,15 @@ class Draft
      */
     public function deleteDraft(array $params): array
     {
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
-        $rule = V::simpleArray(V::keySet(
+        V::doValidate(V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('version', V::intType()->min(0))
-        ));
-
-        V::doValidate($rule, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        )), $params);
 
         $queues = [];
         $target = API::LIST['oneDraft'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
@@ -204,7 +175,7 @@ class Draft
                 ->getAsync()
                 ->setPath($item['id'])
                 ->setFormParams(['version' => $item['version']])
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {

@@ -47,22 +47,19 @@ class Sending
      */
     public function sendDraft(array $params): array
     {
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
         V::doValidate($this->getDraftRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
         $target = API::LIST['sending'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
             $request = $this->options
                 ->getAsync()
                 ->setFormParams($item)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {

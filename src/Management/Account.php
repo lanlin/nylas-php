@@ -46,13 +46,9 @@ class Account
      */
     public function returnAccountDetails(): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        $header = ['Authorization' => $accessToken];
-
         return $this->options
             ->getSync()
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['account']);
     }
 
@@ -63,33 +59,20 @@ class Account
      *
      * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts
      *
-     * @param array $params
+     * @param int   $offset
+     * @param int   $limit
      *
      * @return array
      */
-    public function returnAllAccounts(array $params = []): array
+    public function returnAllAccounts(int $offset = 0, int $limit = 100): array
     {
-        $rules = V::keySet(
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0))
-        );
-
-        V::doValidate($rules, $params);
-
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
-        $pagination =
-        [
-            'limit'  => $params['limit'] ?? 100,
-            'offset' => $params['offset'] ?? 0,
-        ];
+        $pagination = ['limit' => $limit, 'offset' => $offset];
 
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'])
+            ->setPath($this->options->getClientApps()['client_id'])
             ->setQuery($pagination)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['listAllAccounts']);
     }
 
@@ -106,13 +89,10 @@ class Account
      */
     public function returnAnAccount(string $accountId): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'], $accountId)
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['listAnAccount']);
     }
 
@@ -129,13 +109,10 @@ class Account
      */
     public function deleteAnAccount(string $accountId): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'], $accountId)
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->delete(API::LIST['listAnAccount']);
     }
 
@@ -152,13 +129,10 @@ class Account
      */
     public function cancelAnAccount(string $accountId): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'], $accountId)
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['cancelAnAccount']);
     }
 
@@ -175,13 +149,10 @@ class Account
      */
     public function reactiveAnAccount(string $accountId): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'], $accountId)
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['reactiveAnAccount']);
     }
 
@@ -199,20 +170,15 @@ class Account
      */
     public function revokeAllTokens(string $accountId, array $params = []): array
     {
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::keyOptional('keep_access_token', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
+        ), $params);
 
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'], $accountId)
+            ->setPath($this->options->getClientApps()['client_id'], $accountId)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['revokeAllTokens']);
     }
 
@@ -229,13 +195,10 @@ class Account
      */
     public function returnTokenInformation(string $accountId): array
     {
-        $client = $this->options->getClientApps();
-        $header = ['Authorization' => $client['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($client['client_id'], $accountId)
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['tokenInfo']);
     }
 

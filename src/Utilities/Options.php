@@ -69,7 +69,7 @@ class Options
      */
     public function __construct(array $options)
     {
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::key('client_id', V::stringType()->notEmpty()),
             V::key('client_secret', V::stringType()->notEmpty()),
             V::keyOptional('debug', V::boolType()),
@@ -77,9 +77,7 @@ class Options
             V::keyOptional('handler', V::callableType()),
             V::keyOptional('log_file', $this->getLogFileRule()),
             V::keyOptional('access_token', V::stringType()->notEmpty()),
-        );
-
-        V::doValidate($rules, $options);
+        ), $options);
 
         $this->setDebug($options['debug'] ?? false);
         $this->setServer($options['region'] ?? 'us');
@@ -235,6 +233,21 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * get authorization header
+     *
+     * @param bool $isAccessToken
+     * @return array
+     */
+    public function getAuthorizationHeader(bool $isAccessToken = true): array
+    {
+        $auth = $isAccessToken ? $this->getAccessToken() : $this->clientSecret;
+
+        return ['Authorization' => $auth];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get all configure options
      *
      * @return array
@@ -296,7 +309,7 @@ class Options
     {
         if (empty($this->accountInfo))
         {
-            $this->accountInfo = (new Account($this))->getAccountDetail();
+            $this->accountInfo = (new Account($this))->returnAccountDetails();
         }
 
         return $this->accountInfo;

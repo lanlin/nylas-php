@@ -49,23 +49,19 @@ class Thread
      */
     public function returnsAllThreads(array $params = []): array
     {
-        $accessToken = $this->options->getAccessToken();
-
         V::doValidate($this->getThreadsRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $query = [
             'limit'  => $params['limit'] ?? 100,
             'offset' => $params['offset'] ?? 0,
         ];
 
-        $query  = \array_merge($params, $query);
-        $header = ['Authorization' => $accessToken];
+        $query = \array_merge($params, $query);
 
         return $this->options
             ->getSync()
             ->setQuery($query)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['threads']);
     }
 
@@ -82,24 +78,19 @@ class Thread
      */
     public function returnsAThread(mixed $threadId): array
     {
-        $threadId    = Helper::fooToArray($threadId);
-        $accessToken = $this->options->getAccessToken();
+        $threadId = Helper::fooToArray($threadId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $threadId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $threadId);
 
         $queues = [];
         $target = API::LIST['oneThread'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($threadId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -126,25 +117,18 @@ class Thread
      */
     public function updateAThread(string $threadId, array $params): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
             V::keyOptional('label_ids', V::simpleArray(V::stringType()))
-        );
-
-        V::doValidate($rules, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setPath($threadId)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneThread']);
     }
 

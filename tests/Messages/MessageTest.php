@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/27
+ * @change 2021/09/22
  *
  * @internal
  */
@@ -18,7 +18,7 @@ class MessageTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetMessagesList(): void
+    public function testReturnAllMessages(): void
     {
         $para = [
             'to'              => $this->faker->email,
@@ -42,40 +42,40 @@ class MessageTest extends AbsCase
 
         $this->mockResponse([$this->getMessageBaseData()]);
 
-        $data = $this->client->Messages->Message->getMessagesList($para);
+        $data = $this->client->Messages->Message->returnAllMessages($para);
 
         $this->assertTrue(\count($data) > 0);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetMessage(): void
+    public function testReturnAMessage(): void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
         $this->mockResponse($this->getMessageBaseData()[0]);
 
-        $data = $this->client->Messages->Message->getMessage($id);
+        $data = $this->client->Messages->Message->returnAMessage($id);
 
         $this->assertTrue(!empty($data[$id]));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetRawMessage(): void
+    public function testReturnARawMessage(): void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
         $this->mockResponse($this->getMessageBaseData()[0]);
 
-        $data = $this->client->Messages->Message->getRawMessage($id);
+        $data = $this->client->Messages->Message->returnARawMessage($id);
 
         $this->assertTrue(\is_object($data));
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateMessage(): void
+    public function testUpdateAMessage(): void
     {
         $id = $this->faker->uuid;
 
@@ -88,7 +88,7 @@ class MessageTest extends AbsCase
 
         $this->mockResponse($this->getMessageBaseData()[0]);
 
-        $data = $this->client->Messages->Message->updateMessage($id, $params);
+        $data = $this->client->Messages->Message->updateAMessage($id, $params);
 
         $this->assertArrayHasKey('id', $data);
     }

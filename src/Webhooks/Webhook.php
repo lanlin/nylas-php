@@ -125,7 +125,7 @@ class Webhook
         $errs = JSON_ERROR_NONE !== \json_last_error();
 
         // when not close the decode error
-        if ($errs && !$this->options->getOffDecodeError())
+        if ($errs && $this->options->getAllOptions()['debug'])
         {
             $msg = 'Unable to parse response body into JSON: ';
 
@@ -150,21 +150,10 @@ class Webhook
      */
     public function getWebhookList(): array
     {
-        $params = $this->options->getClientApps();
-
-        $rules = V::keySet(
-            V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $header = ['Authorization' => $params['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($params['client_id'])
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'])
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['webhooks']);
     }
 
@@ -179,24 +168,10 @@ class Webhook
      */
     public function getWebhook(string $webhookId): array
     {
-        $params = $this->options->getClientApps();
-
-        $params['id'] = $webhookId;
-
-        $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $header = ['Authorization' => $params['client_secret']];
-
         return $this->options
             ->getSync()
-            ->setPath($params['client_id'], $params['id'])
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $webhookId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['oneWebhook']);
     }
 
@@ -211,29 +186,17 @@ class Webhook
      */
     public function createWebhook(array $data): array
     {
-        $params = $this->options->getClientApps();
-
-        $rulesA = V::keySet(
-            V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty())
-        );
-
-        $rulesB = V::keySet(
+        V::doValidate(V::keySet(
             V::key('state', V::in(['active', 'inactive'])),
             V::key('triggers', V::simpleArray()),
             V::key('callback_url', V::url())
-        );
-
-        V::doValidate($rulesA, $params);
-        V::doValidate($rulesB, $data);
-
-        $header = ['Authorization' => $params['client_secret']];
+        ), $data);
 
         return $this->options
             ->getSync()
-            ->setPath($params['client_id'])
+            ->setPath($this->options->getClientApps()['client_id'])
             ->setFormParams($data)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['webhooks']);
     }
 
@@ -251,26 +214,13 @@ class Webhook
      */
     public function updateWebhook(string $webhookId, bool $enable = true): array
     {
-        $params = $this->options->getClientApps();
-
-        $params['id'] = $webhookId;
-
-        $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $state  = $enable ? 'active' : 'inactive';
-        $header = ['Authorization' => $params['client_secret']];
+        $params = ['state' => $enable ? 'active' : 'inactive'];
 
         return $this->options
             ->getSync()
-            ->setPath($params['client_id'], $params['id'])
-            ->setFormParams(\compact('state'))
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $webhookId)
+            ->setFormParams($params)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->put(API::LIST['oneWebhook']);
     }
 
@@ -285,24 +235,10 @@ class Webhook
      */
     public function deleteWebhook(string $webhookId): void
     {
-        $params = $this->options->getClientApps();
-
-        $params['id'] = $webhookId;
-
-        $rules = V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty())
-        );
-
-        V::doValidate($rules, $params);
-
-        $header = ['Authorization' => $params['client_secret']];
-
         $this->options
             ->getSync()
-            ->setPath($params['client_id'], $params['id'])
-            ->setHeaderParams($header)
+            ->setPath($this->options->getClientApps()['client_id'], $webhookId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->delete(API::LIST['oneWebhook']);
     }
 

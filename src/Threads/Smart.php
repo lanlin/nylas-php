@@ -253,7 +253,7 @@ class Smart
     private function updateFolder(string $threadId, string $folder): array
     {
         $folderId   = null;
-        $allFolders = (new Folder($this->options))->getFoldersList();
+        $allFolders = (new Folder($this->options))->returnAllFolders();
 
         foreach ($allFolders as $row)
         {
@@ -282,7 +282,7 @@ class Smart
     {
         $tmpLabels = [];
         $allLabels = (new Label($this->options))->getLabelsList();
-        $threadMsg = (new Thread($this->options))->getThread($threadId);
+        $threadMsg = (new Thread($this->options))->returnsAThread($threadId);
         $nowLabels = $threadMsg[$threadId]['labels'] ?? [];
 
         $add = Helper::fooToArray($add);
@@ -301,7 +301,7 @@ class Smart
         }
 
         // check current thread labels
-        foreach ($nowLabels as $index => $label)
+        foreach ($nowLabels as $label)
         {
             $secA = !empty($label['name']) && \in_array($label['name'], $del, true);
             $secB = empty($label['name'])  && \in_array($label['display_name'], $del, true);
@@ -330,7 +330,7 @@ class Smart
     private function updateOneField(mixed $threadId, array $params): array
     {
         $threadId    = Helper::fooToArray($threadId);
-        $accessToken = $this->options->getAccessToken();
+        $accessToken = $this->options->getAuthorizationHeader();
 
         $rule = V::simpleArray(V::stringType()->notEmpty());
 

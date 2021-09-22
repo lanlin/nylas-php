@@ -50,17 +50,12 @@ class Contact
      */
     public function getContactsList(array $params = []): array
     {
-        $accessToken = $this->options->getAccessToken();
-
         V::doValidate($this->getBaseRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
 
         return $this->options
             ->getSync()
             ->setQuery($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['contacts']);
     }
 
@@ -75,19 +70,12 @@ class Contact
      */
     public function addContact(array $params): array
     {
-        $rules = $this->addContactRules();
-
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        V::doValidate(V::keySet(...$this->addContactRules()), $params);
 
         return $this->options
             ->getSync()
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['contacts']);
     }
 
@@ -102,16 +90,12 @@ class Contact
      */
     public function updateContact(array $params): array
     {
-        $rules   = $this->addContactRules();
-        $rules[] = V::key('id', V::stringType()->notEmpty());
+        V::doValidate(V::keySet(
+            V::key('id', V::stringType()->notEmpty()),
+            ...$this->addContactRules(),
+        ), $params);
 
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::keySet(...$rules), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $path   = $params['id'];
-        $header = ['Authorization' => $accessToken];
+        $path = $params['id'];
 
         unset($params['id']);
 
@@ -119,7 +103,7 @@ class Contact
             ->getSync()
             ->setPath($path)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneContact']);
     }
 
@@ -132,26 +116,21 @@ class Contact
      *
      * @return array
      */
-    public function getContact($contactId): array
+    public function getContact(mixed $contactId): array
     {
-        $contactId   = Helper::fooToArray($contactId);
-        $accessToken = $this->options->getAccessToken();
+        $contactId = Helper::fooToArray($contactId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $contactId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $contactId);
 
         $queues = [];
         $target = API::LIST['oneContact'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($contactId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -173,26 +152,21 @@ class Contact
      *
      * @return array
      */
-    public function deleteContact($contactId): array
+    public function deleteContact(mixed $contactId): array
     {
-        $contactId   = Helper::fooToArray($contactId);
-        $accessToken = $this->options->getAccessToken();
+        $contactId = Helper::fooToArray($contactId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $contactId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $contactId);
 
         $queues = [];
         $target = API::LIST['oneContact'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($contactId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -214,15 +188,9 @@ class Contact
      */
     public function getContactGroups(): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
-
         return $this->options
             ->getSync()
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['contactsGroups']);
     }
 
@@ -238,14 +206,11 @@ class Contact
     public function getContactPicture(array $params): array
     {
         $downloadArr = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
 
         V::doValidate($this->pictureRules(), $downloadArr);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $method = [];
         $target = API::LIST['contactPic'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($downloadArr as $item)
         {
@@ -254,7 +219,7 @@ class Contact
             $request = $this->options
                 ->getAsync()
                 ->setPath($item['id'])
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $method[] = static function () use ($request, $target, $sink)
             {

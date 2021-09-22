@@ -48,22 +48,19 @@ class Sending
      */
     public function sendDirectly(array $params): array
     {
-        $params      = Helper::arrayToMulti($params);
-        $accessToken = $this->options->getAccessToken();
+        $params = Helper::arrayToMulti($params);
 
         V::doValidate($this->getMessageRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
         $queues = [];
         $target = API::LIST['sending'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($params as $item)
         {
             $request = $this->options
                 ->getAsync()
                 ->setFormParams($item)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $target)
             {
@@ -87,24 +84,17 @@ class Sending
      *
      * @return mixed
      */
-    public function sendRawMIME($content)
+    public function sendRawMIME(mixed $content)
     {
-        $rule = V::oneOf(
+        V::doValidate(V::oneOf(
             V::resourceType(),
             V::stringType()->notEmpty(),
             V::instance(StreamInterface::class)
-        );
+        ), $content);
 
-        $accessToken = $this->options->getAccessToken();
+        $header = $this->options->getAuthorizationHeader();
 
-        V::doValidate($rule, $content);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header =
-        [
-            'Content-Type'  => 'message/rfc822',
-            'Authorization' => $accessToken,
-        ];
+        $header['Content-Type'] = 'message/rfc822';
 
         return $this->options
             ->getSync()

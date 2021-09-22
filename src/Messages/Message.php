@@ -6,6 +6,7 @@ use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use ZBateson\MailMimeParser\Message as MSG;
 use ZBateson\MailMimeParser\MailMimeParser;
 
 /**
@@ -16,7 +17,7 @@ use ZBateson\MailMimeParser\MailMimeParser;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2021/07/27
+ * @change 2021/09/22
  */
 class Message
 {
@@ -42,58 +43,77 @@ class Message
     // ------------------------------------------------------------------------------
 
     /**
-     * get messages list
+     * Returns all messages. Use the query parameters to filter the data.
      *
      * @param array $params
      *
      * @return array
      */
-    public function getMessagesList(array $params = []): array
+    public function returnAllMessages(array $params = []): array
     {
-        $accessToken = $this->options->getAccessToken();
-
         V::doValidate($this->getMessagesRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
 
-        $query =
-        [
+        $query = [
             'limit'  => $params['limit'] ?? 100,
             'offset' => $params['offset'] ?? 0,
         ];
 
-        $query  = \array_merge($params, $query);
-        $header = ['Authorization' => $accessToken];
+        $query = \array_merge($params, $query);
 
         return $this->options
             ->getSync()
             ->setQuery($query)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['messages']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * get raw message info
+     * Returns a message by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/messages/id
+     *
+     * @param mixed $messageId string|string[]
+     * @param bool  $expanded  true|false
+     *
+     * @return array
+     */
+    public function returnAMessage(mixed $messageId, bool $expanded = false): array
+    {
+        $messageId = Helper::fooToArray($messageId);
+
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+
+        $messageId = \implode(',', $messageId);
+        $queryPara = $expanded ? ['view' => 'expanded'] : [];
+
+        return $this->options
+            ->getSync()
+            ->setPath($messageId)
+            ->setQuery($queryPara)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
+            ->get(API::LIST['oneMessage']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * This will return the message in RFC 2822 format, including all MIME body subtypes and attachments.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/messages/id
      *
      * @param string $messageId
      *
-     * @return \ZBateson\MailMimeParser\Message
+     * @return MSG
      */
-    public function getRawMessage(string $messageId): \ZBateson\MailMimeParser\Message
+    public function returnARawMessage(string $messageId): MSG
     {
-        $rule = V::stringType()->notEmpty();
+        $header = $this->options->getAuthorizationHeader();
 
-        $accessToken = $this->options->getAccessToken();
+        V::doValidate(V::stringType()->notEmpty(), $messageId);
 
-        V::doValidate($rule, $messageId);
-        V::doValidate($rule, $accessToken);
-
-        $header =
-        [
-            'Accept'        => 'message/rfc822',        // RFC-2822 message object
-            'Authorization' => $accessToken,
-        ];
+        $header['Accept'] = 'message/rfc822'; // RFC-2822 message object
 
         $rawStream = $this->options
             ->getSync()
@@ -109,87 +129,36 @@ class Message
     // ------------------------------------------------------------------------------
 
     /**
-     * update message status & flags
+     * Update a message by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#put/messages/id
      *
      * @param string $messageId
      * @param array  $params
      *
      * @return array
      */
-    public function updateMessage(string $messageId, array $params): array
+    public function updateAMessage(string $messageId, array $params): array
     {
-        $accessToken = $this->options->getAccessToken();
-
-        $rules = V::keySet(
+        V::doValidate(V::keySet(
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
             V::keyOptional('label_ids', V::simpleArray(V::stringType()))
-        );
-
-        V::doValidate($rules, $params);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $header = ['Authorization' => $accessToken];
+        ), $params);
 
         return $this->options
             ->getSync()
             ->setPath($messageId)
             ->setFormParams($params)
-            ->setHeaderParams($header)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneMessage']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * get message info
-     *
-     * @param mixed $messageId string|string[]
-     * @param bool  $expanded  true|false
-     *
-     * @return array
-     */
-    public function getMessage(mixed $messageId, bool $expanded = false): array
-    {
-        $messageId   = Helper::fooToArray($messageId);
-        $accessToken = $this->options->getAccessToken();
-
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $messageId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
-
-        $queues = [];
-        $target = API::LIST['oneMessage'];
-        $header = ['Authorization' => $accessToken];
-        $query  = $expanded ? ['view' => 'expanded'] : [];
-
-        foreach ($messageId as $id)
-        {
-            $request = $this->options
-                ->getAsync()
-                ->setPath($id)
-                ->setQuery($query)
-                ->setHeaderParams($header);
-
-            $queues[] = static function () use ($request, $target)
-            {
-                return $request->get($target);
-            };
-        }
-
-        $pools = $this->options->getAsync()->pool($queues, false);
-
-        return Helper::concatPoolInfos($messageId, $pools);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * get messages list filter rules
-     *
-     * @see https://docs.nylas.com/reference#messages-1
      *
      * @return \Nylas\Utilities\Validator
      */

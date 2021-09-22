@@ -52,7 +52,7 @@ trait AbsBase
      * @param null|callable $handler
      * @param bool|resource $debug
      */
-    public function __construct(?string $server = null, $handler = null, $debug = false)
+    public function __construct(?string $server = null, mixed $handler = null, mixed $debug = false)
     {
         $option =
         [
@@ -92,7 +92,7 @@ trait AbsBase
      * @param string|resource|\Psr\Http\Message\StreamInterface $body
      * @return $this
      */
-    public function setBody($body) : self
+    public function setBody(mixed $body) : self
     {
         $this->bodyContents = ['body' => $body];
 
@@ -301,14 +301,14 @@ trait AbsBase
         $data = $response->getBody()->getContents();
 
         // when not json type
-        if (strpos(strtolower(current($type)), $expc) === false)
+        if (\strpos(\strtolower(\current($type)), $expc) === false)
         {
             return $this->concatForInvalidJsonData($type, $code, $data);
         }
 
         // decode json data
-        $temp = json_decode(trim(utf8_encode($data)), true, 512);
-        $errs = JSON_ERROR_NONE !== json_last_error();
+        $temp = \json_decode(\trim(\utf8_encode($data)), true, 512);
+        $errs = JSON_ERROR_NONE !== \json_last_error();
 
         // not throw when decode error
         if ($errs)

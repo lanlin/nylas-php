@@ -260,7 +260,7 @@ class Validator extends AllOf
      *
      * @throws \Nylas\Exceptions\NylasException
      */
-    public static function doValidate(Validatable $validatable, $input): void
+    public static function doValidate(Validatable $validatable, mixed $input): void
     {
         try
         {
