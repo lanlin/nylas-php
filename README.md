@@ -83,7 +83,7 @@ $nylas = new Client($options);
 You can modify options with methods of `\Nylas\Utilities\Options`
 
 ```php
-$nylas->Options()->setXxx();
+$nylas->Options->setXxx();
 ```
 
 ### Batch Request
