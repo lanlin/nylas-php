@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/21
+ * @change 2021/09/22
  */
 class Smart
 {

@@ -70,7 +70,7 @@ class Account
 
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'])
+            ->setPath($this->options->getClientId())
             ->setQuery($pagination)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['listAllAccounts']);
@@ -91,7 +91,7 @@ class Account
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['listAnAccount']);
     }
@@ -111,7 +111,7 @@ class Account
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->delete(API::LIST['listAnAccount']);
     }
@@ -131,7 +131,7 @@ class Account
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['cancelAnAccount']);
     }
@@ -151,7 +151,7 @@ class Account
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['reactiveAnAccount']);
     }
@@ -168,16 +168,12 @@ class Account
      *
      * @return array
      */
-    public function revokeAllTokens(string $accountId, array $params = []): array
+    public function revokeAllTokens(string $accountId, ?string $keepAccessToken = null): array
     {
-        V::doValidate(V::keySet(
-            V::keyOptional('keep_access_token', V::stringType()->notEmpty())
-        ), $params);
-
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $accountId)
-            ->setFormParams($params)
+            ->setPath($this->options->getClientId(), $accountId)
+            ->setFormParams(['keep_access_token' => $keepAccessToken])
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['revokeAllTokens']);
     }
@@ -197,7 +193,7 @@ class Account
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $accountId)
+            ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['tokenInfo']);
     }

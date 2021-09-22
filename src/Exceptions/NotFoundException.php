@@ -8,7 +8,7 @@ namespace Nylas\Exceptions;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/09/22
  */
 class NotFoundException extends NylasException
 {

@@ -13,7 +13,7 @@ use Tests\AbsCase;
  * @see https://developer.nylas.com/docs/api/#tag--Folders
  *
  * @author lanlin
- * @change 2020/04/26
+ * @change 2021/09/22
  *
  * @internal
  */

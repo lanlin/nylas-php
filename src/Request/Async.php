@@ -17,7 +17,7 @@ use GuzzleHttp\Promise\PromiseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2021/09/22
  */
 class Async
 {

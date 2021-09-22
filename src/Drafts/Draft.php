@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/09/22
  */
 class Draft
 {

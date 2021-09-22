@@ -20,7 +20,7 @@ use GuzzleHttp\Handler\MockHandler;
  *
  * @link https://developer.nylas.com/docs/api/#overview
  * @author lanlin
- * @change 2021/07/18
+ * @change 2021/09/22
  *
  * @internal
  */

@@ -48,7 +48,7 @@ class Native
      */
     public function sendAuthorization(array $params): array
     {
-        $params['client_id'] = $this->options->getClientApps()['client_id'];
+        $params['client_id'] = $this->options->getClientId();
 
         V::doValidate(V::keySet(
             V::key('name', V::stringType()->notEmpty()),
@@ -83,9 +83,11 @@ class Native
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
-        $params = $this->options->getClientApps();
-
-        $params['code'] = $code;
+        $params = [
+            'code'          => $code,
+            'client_id'     => $this->options->getClientId(),
+            'client_secret' => $this->options->getClientSecret(),
+        ];
 
         return $this->options
             ->getSync()

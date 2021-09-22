@@ -13,7 +13,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/27
+ * @change 2021/09/22
  */
 class Webhook
 {
@@ -101,9 +101,9 @@ class Webhook
      */
     public function xSignatureVerification(string $code, string $data): bool
     {
-        $conf = $this->options->getClientApps();
+        $conf = $this->options->getClientSecret();
 
-        $hash = \hash_hmac('sha256', $data, $conf['client_secret']);
+        $hash = \hash_hmac('sha256', $data, $conf);
 
         return $code === $hash;
     }
@@ -152,7 +152,7 @@ class Webhook
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'])
+            ->setPath($this->options->getClientId())
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['webhooks']);
     }
@@ -170,7 +170,7 @@ class Webhook
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $webhookId)
+            ->setPath($this->options->getClientId(), $webhookId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['oneWebhook']);
     }
@@ -194,7 +194,7 @@ class Webhook
 
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'])
+            ->setPath($this->options->getClientId())
             ->setFormParams($data)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['webhooks']);
@@ -218,7 +218,7 @@ class Webhook
 
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $webhookId)
+            ->setPath($this->options->getClientId(), $webhookId)
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->put(API::LIST['oneWebhook']);
@@ -237,7 +237,7 @@ class Webhook
     {
         $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'], $webhookId)
+            ->setPath($this->options->getClientId(), $webhookId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->delete(API::LIST['oneWebhook']);
     }

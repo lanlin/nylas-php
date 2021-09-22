@@ -12,7 +12,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property JobStatus JobStatus
  *
  * @author lanlin
- * @change 2021/07/21
+ * @change 2021/09/22
  */
 class Abs
 {

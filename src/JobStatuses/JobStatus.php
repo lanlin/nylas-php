@@ -17,7 +17,7 @@ use Nylas\Utilities\Validator as V;
  *
  * @author lanlin
  * @update jeremygriffin
- * @change 2021/05/05
+ * @change 2021/09/22
  */
 class JobStatus
 {

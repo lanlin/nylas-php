@@ -26,7 +26,7 @@ use Nylas\Exceptions\NylasException;
  * @property JobStatuses\Abs    JobStatuses
  *
  * @author lanlin
- * @change 2021/07/20
+ * @change 2021/09/22
  */
 class Client
 {

@@ -11,7 +11,7 @@ use RuntimeException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/24
+ * @change 2021/09/22
  */
 class NylasException extends RuntimeException
 {

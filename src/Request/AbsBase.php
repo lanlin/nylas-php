@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/18
+ * @change 2021/09/22
  */
 trait AbsBase
 {

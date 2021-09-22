@@ -49,7 +49,7 @@ class Application
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'])
+            ->setPath($this->options->getClientId())
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['ipAddresses']);
     }
@@ -69,7 +69,7 @@ class Application
     {
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'])
+            ->setPath($this->options->getClientId())
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['manageApp']);
     }
@@ -96,7 +96,7 @@ class Application
 
         return $this->options
             ->getSync()
-            ->setPath($this->options->getClientApps()['client_id'])
+            ->setPath($this->options->getClientId())
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->put(API::LIST['manageApp']);

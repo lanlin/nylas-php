@@ -48,7 +48,7 @@ class Hosted
      */
     public function authenticateUser(array $params): string
     {
-        $params['client_id'] = $this->options->getClientApps()['client_id'];
+        $params['client_id'] = $this->options->getClientId();
 
         V::doValidate(V::keySet(
             V::key('scopes', V::stringType()->notEmpty()),
@@ -80,12 +80,19 @@ class Hosted
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
-        $query = ['code' => $code, 'grant_type' => 'authorization_code'];
-        $query = \array_merge($query, $this->options->getClientApps());
+        $query = [
+            'code'       => $code,
+            'grant_type' => 'authorization_code',
+        ];
+
+        $client = [
+            'client_id'     => $this->options->getClientId(),
+            'client_secret' => $this->options->getClientSecret(),
+        ];
 
         return $this->options
             ->getSync()
-            ->setQuery($query)
+            ->setQuery(\array_merge($query, $client))
             ->post(API::LIST['oAuthToken']);
     }
 

@@ -5,6 +5,7 @@ namespace Nylas\Events;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
+use Nylas\Management\Account;
 use Nylas\Utilities\Validator as V;
 
 /**
@@ -15,7 +16,7 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2021/07/15
+ * @change 2021/09/22
  */
 class Event
 {
@@ -126,7 +127,10 @@ class Event
      */
     public function rsvping(array $params)
     {
-        $params['account_id'] = $params['account_id'] ?? $this->options->getAccount()['account_id'];
+        if (empty($params['account_id']))
+        {
+            $params['account_id'] = $this->options->getAccountId();
+        }
 
         V::doValidate(V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),

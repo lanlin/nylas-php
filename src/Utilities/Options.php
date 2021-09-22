@@ -14,7 +14,7 @@ use Nylas\Exceptions\UnauthorizedException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/07/27
+ * @change 2021/09/22
  */
 class Options
 {
@@ -79,12 +79,14 @@ class Options
             V::keyOptional('access_token', V::stringType()->notEmpty()),
         ), $options);
 
+        $this->setClientId($options['client_id']);
+        $this->setClientSecret($options['client_secret']);
+
         $this->setDebug($options['debug'] ?? false);
         $this->setServer($options['region'] ?? 'us');
         $this->setHandler($options['handler'] ?? null);
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccessToken($options['access_token'] ?? '');
-        $this->setClientApps($options['client_id'], $options['client_secret']);
     }
 
     // ------------------------------------------------------------------------------
@@ -167,31 +169,49 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * set client id & secret
+     * set client id
      *
      * @param string $clientId
+     */
+    public function setClientId(string $clientId): void
+    {
+        $this->clientId = $clientId;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * set client secret
+     *
      * @param string $clientSecret
      */
-    public function setClientApps(string $clientId, string $clientSecret): void
+    public function setClientSecret(string $clientSecret): void
     {
-        $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * get client id & secret
+     * get client id
      *
-     * @return array
+     * @return string
      */
-    public function getClientApps(): array
+    public function getClientId(): string
     {
-        return
-        [
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret,
-        ];
+        return $this->clientId;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get client secret
+     *
+     * @return string
+     */
+    public function getClientSecret(): string
+    {
+        return $this->clientSecret;
     }
 
     // ------------------------------------------------------------------------------
@@ -240,9 +260,9 @@ class Options
      */
     public function getAuthorizationHeader(bool $isAccessToken = true): array
     {
-        $auth = $isAccessToken ? $this->getAccessToken() : $this->clientSecret;
+        $authorization = $isAccessToken ? $this->getAccessToken() : $this->clientSecret;
 
-        return ['Authorization' => $auth];
+        return ['Authorization' => $authorization];
     }
 
     // ------------------------------------------------------------------------------
@@ -313,6 +333,25 @@ class Options
         }
 
         return $this->accountInfo;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get account id
+     *
+     * @return string
+     */
+    public function getAccountId(): string
+    {
+        $account = $this->getAccount();
+
+        if (empty($account))
+        {
+            throw new UnauthorizedException();
+        }
+
+        return $this->accessToken;
     }
 
     // ------------------------------------------------------------------------------

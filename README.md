@@ -29,11 +29,6 @@ Last check at the point: [Dashboard Release for Canada and Ireland](https://chan
 6. Support async batch get & delete & send (since version 3.1).
 7. Chained calls and good code hints, easy to use</br>
 
-<div align="center">
-  <img width="664" height="596" src="media/autocomplete.gif" />
-</div>
-
-
 ## Installation (PHP 7.4 required since version 4.0)
 
 **version 3.x for php >= 7.3 (branch 3.0)**
@@ -85,15 +80,11 @@ $nylas = new Client($options);
 
 ### Options Setting
 
-You can modify options with these methods:
+You can modify options with methods of `\Nylas\Utilities\Options`
 
 ```php
-$nylas->Options()->
+$nylas->Options()->setXxx();
 ```
-<div align="center">
-  <img width="515" height="307" src="media/options.png" />
-</div>
-
 
 ### Batch Request
 
@@ -104,12 +95,12 @@ $id  = 'id_xxx';
 $ids = ['id_xxx', 'id_yyy', ...];
 
 // one per time
-$dataA = $nylas->Contacts()->Contact()->getContact($id);
-$dataB = $nylas->Contacts()->Contact()->deleteContact($id);
+$dataA = $nylas->Contacts->Contact->getContact($id);
+$dataB = $nylas->Contacts->Contact->deleteContact($id);
 
 // batch request
-$dataC = $nylas->Contacts()->Contact()->getContact($ids);
-$dataD = $nylas->Contacts()->Contact()->deleteContact($ids);
+$dataC = $nylas->Contacts->Contact->getContact($ids);
+$dataD = $nylas->Contacts->Contact->deleteContact($ids);
 ```
 
 For more detail about the batch request, you should have to read the source code.</br>
@@ -144,7 +135,7 @@ $params =
 ];
 
 // generate the url that your user need be redirect to.
-$url = $nylas->Authentication()->Hosted()->getOAuthAuthorizeUrl($params);
+$url = $nylas->Authentication->Hosted->authenticateUser($params);
 ```
 
 **Step 2: your user logs in:**</br>
@@ -154,11 +145,11 @@ Please implement the above 2 & 3 steps yourself.</br>
 **Step 4: Get authorization token with access code:**
 
 ```php
-$data = $nylas->Authentication()->Hosted()->postOAuthToken($params);
+$data = $nylas->Authentication->Hosted->sendAuthorizationCode($params);
 
 // save your token some where
 // or update the client option
-$nylas->Options()->setAccessToken("pass the token you got");
+$nylas->Options->setAccessToken("pass the token you got");
 ```
 
 
@@ -241,170 +232,18 @@ $nylas->Options()->setAccessToken("pass the token you got");
 4. Another way to run tests: `./tests/do.sh foo.php --filter fooMethod`, see `tests/do.sh`
 
 
-## Supported Methods
+## Methods & Parameters
 
 The parameters that required by methods almost the same as nylas official api required.
 
 For more detail, you can view the tests or the source code of validation rules for that method.
 
-### [Accounts](https://docs.nylas.com/reference#accounts)
+### Apis Of Accounts & Account Management & Application Management
 
 ```php
-$nylas->Accounts()->Account()->xxx();
-$nylas->Accounts()->Manage()->xxx();
+$nylas->Management->Account->xxx();
+$nylas->Management->Application->xxx();
 ```
-
-
-### [Authentication](https://docs.nylas.com/reference#authentication)
-
-```php
-$nylas->Authentication()->Hosted()->xxx();
-$nylas->Authentication()->Native()->xxx();
-```
-
-
-### [Calendars](https://docs.nylas.com/reference#calendars)
-
-```php
-$nylas->Calendars()->Calendar()->xxx();
-```
-
-
-### [Contacts](https://docs.nylas.com/reference#contacts-intro)
-
-```php
-$nylas->Contacts()->Contact()->xxx();
-```
-
-```php
-// multiple contact pictures download
-$params =
-[
-    [
-        'id'   => 'contact id',
-        'path' => 'this can be a file path, resource or stream handle',
-    ],
-    [
-        'id'   => 'xxxx',
-        'path' => dirname(__FILE__) . '/correct.png',
-    ],
-    // ...
-];
-
-$nylas->Contacts()->Contact()->getContactPicture($params);
-```
-
-
-### [Deltas](https://docs.nylas.com/reference#deltas)
-
-```php
-$nylas->Deltas()->Delta()->xxx();
-```
-
-
-### [Draft](https://docs.nylas.com/reference#drafts)
-
-```php
-$nylas->Drafts()->Draft()->xxx();
-$nylas->Drafts()->Sending()->xxx();
-```
-
-
-### [Events](https://docs.nylas.com/reference#events)
-
-```php
-$nylas->Events()->Event()->xxx();
-```
-
-
-### [Files](https://docs.nylas.com/reference#files)
-
-```php
-$nylas->Files()->File()->xxx();
-```
-
-
-```php
-// multiple files download
-$params =
-[
-    [
-        'id'   => 'file id',
-        'path' => 'this can be a file path, resource or stream handle',
-    ],
-    [
-        'id'   => 'xxxx',
-        'path' => dirname(__FILE__) . '/correct.png',
-    ],
-    // ...
-];
-
-$nylas->Files()->File()->downloadFile($params);
-
-
-// multiple files upload
-$params =
-[
-    [
-        'contents' => 'this can be a file path, resource or stream handle',
-        'filename' => 'your file name'
-    ],
-    [
-        'contents' => dirname(__FILE__) . '/correct.png',
-        'filename' => 'test_correct.png'
-    ],
-    // ...
-];
-
-$nylas->Files()->File()->uploadFile($params);
-```
-
-
-### [Folders](https://docs.nylas.com/reference#folders)
-
-```php
-$nylas->Folders()->Folder()->xxx();
-```
-
-
-### [Labels](https://docs.nylas.com/reference#labels)
-
-```php
-$nylas->Labels()->Label()->xxx();
-```
-
-### [Job-Statuses](https://docs.nylas.com/reference#job-statuses)
-
-```php
-$nylas->JobStatuses()->JobStatus()->xxx();
-```
-
-
-### [Messages](https://docs.nylas.com/reference#messages)
-
-```php
-$nylas->Messages()->Message()->xxx();
-$nylas->Messages()->Search()->xxx();
-$nylas->Messages()->Sending()->xxx();
-$nylas->Messages()->Smart()->xxx();
-```
-
-
-### [Threads](https://docs.nylas.com/reference#threads)
-
-```php
-$nylas->Threads()->Search()->xxx();
-$nylas->Threads()->Thread()->xxx();
-$nylas->Threads()->Smart()->xxx();
-```
-
-
-### [Webhooks](https://docs.nylas.com/reference#webhooks)
-
-```php
-$nylas->Webhooks()->Webhook()->xxx();
-```
-
 
 ## Contributing
 

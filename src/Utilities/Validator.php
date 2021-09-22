@@ -166,7 +166,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator zend($validator, array $params = null)
  *
  * @author lanlin
- * @change 2020/06/22
+ * @change 2021/09/22
  */
 class Validator extends AllOf
 {

@@ -13,7 +13,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property Native Native
  *
  * @author lanlin
- * @change 2021/07/21
+ * @change 2021/09/22
  */
 class Abs
 {

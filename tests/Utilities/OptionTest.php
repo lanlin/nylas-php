@@ -15,14 +15,19 @@ class OptionTest extends TestCase
 
     public function testMinimalRequirementOption(): void
     {
-        $optionsData =
-        [
+        $optionsData = [
             'client_id'     => \uniqid(),
             'client_secret' => \uniqid(),
         ];
 
         $options = new Options($optionsData);
-        $this->assertSame($optionsData, $options->getClientApps());
+
+        $optionsResult = [
+            'client_id'     => $options->getClientId(),
+            'client_secret' => $options->getClientSecret(),
+        ];
+
+        $this->assertSame($optionsData, $optionsResult);
     }
 
     // ------------------------------------------------------------------------------

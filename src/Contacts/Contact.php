@@ -16,7 +16,7 @@ use Psr\Http\Message\StreamInterface;
  * @see https://docs.nylas.com/reference#contact-limitations
  *
  * @author lanlin
- * @change 2020/09/30
+ * @change 2021/09/22
  */
 class Contact
 {

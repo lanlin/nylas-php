@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/12/08
+ * @change 2021/09/22
  */
 class Sync
 {
