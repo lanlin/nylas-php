@@ -40,19 +40,21 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * get files list
+     * Returns information about each files metadata.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/files
      *
      * @param array $params
      *
      * @return array
      */
-    public function getFilesList(array $params = []): array
+    public function returnAllFiles(array $params = []): array
     {
         V::doValidate(V::keySet(
-            V::keyOptional('view', V::in(['ids', 'count'])),
+            V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('filename', V::stringType()->notEmpty()),
             V::keyOptional('message_id', V::stringType()->notEmpty()),
-            V::keyOptional('content_type', V::stringType()->notEmpty())
+            V::keyOptional('content_type', V::in([$this->contentTypes()]))
         ), $params);
 
         return $this->options
@@ -65,13 +67,59 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * get file infos (not download file)
+     * Uploads a new file. Uploaded files are valid for 7 days.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/files
+     *
+     * @param array $file
+     *
+     * @return array
+     */
+    public function uploadAFile(array $file): array
+    {
+        $fileUploads = Helper::arrayToMulti($file);
+
+        V::doValidate($this->multipartRules(), $fileUploads);
+
+        $upload = [];
+
+        foreach ($fileUploads as $item)
+        {
+            $item['name'] ??= 'file';
+
+            if (\is_string($item['contents']) && \file_exists($item['contents']))
+            {
+                $item['contents'] = \fopen($item['contents'], 'rb');
+            }
+
+            $request = $this->options
+                ->getAsync()
+                ->setFormFiles($item)
+                ->setHeaderParams($this->options->getAuthorizationHeader());
+
+            $upload[] = static function () use ($request)
+            {
+                return $request->post(API::LIST['files']);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($upload, false);
+
+        return $this->concatUploadInfos($fileUploads, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Returns file metadata by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/files/id
      *
      * @param mixed $fileId string|string[]
      *
      * @return array
      */
-    public function getFileInfo(mixed $fileId): array
+    public function returnsAFile(mixed $fileId): array
     {
         $fileId = Helper::fooToArray($fileId);
 
@@ -100,13 +148,15 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * delete file
+     * Deletes a file by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#delete/files/id
      *
      * @param mixed $fileId string|string[]
      *
      * @return array
      */
-    public function deleteFile(mixed $fileId): array
+    public function deleteAFile(mixed $fileId): array
     {
         $fileId = Helper::fooToArray($fileId);
 
@@ -135,55 +185,15 @@ class File
     // ------------------------------------------------------------------------------
 
     /**
-     * upload file (support multiple upload)
+     * Download a file.
      *
-     * @param array $file
-     *
-     * @return array
-     */
-    public function uploadFile(array $file): array
-    {
-        $fileUploads = Helper::arrayToMulti($file);
-
-        V::doValidate($this->multipartRules(), $fileUploads);
-
-        $upload = [];
-
-        foreach ($fileUploads as $item)
-        {
-            $item['name'] = 'file';
-
-            if (\is_string($item['contents']) && \file_exists($item['contents']))
-            {
-                $item['contents'] = \fopen($item['contents'], 'rb');
-            }
-
-            $request = $this->options
-                ->getAsync()
-                ->setFormFiles($item)
-                ->setHeaderParams($this->options->getAuthorizationHeader());
-
-            $upload[] = static function () use ($request)
-            {
-                return $request->post(API::LIST['files']);
-            };
-        }
-
-        $pools = $this->options->getAsync()->pool($upload, false);
-
-        return $this->concatUploadInfos($fileUploads, $pools);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * download file (support multiple download)
+     * @see https://developer.nylas.com/docs/api/#get/files/id/download
      *
      * @param array $params
      *
      * @return array
      */
-    public function downloadFile(array $params): array
+    public function downloadAFile(array $params): array
     {
         $downloadArr = Helper::arrayToMulti($params);
 
@@ -224,7 +234,7 @@ class File
             V::instance(StreamInterface::class)
         );
 
-        return  V::simpleArray(V::keySet(
+        return V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('path', $path)
         ));
@@ -240,8 +250,9 @@ class File
     private function multipartRules(): V
     {
         return V::simpleArray(V::keyset(
+            V::key('name', V::stringType()->notEmpty(), false),
             V::key('headers', V::arrayType(), false),
-            V::key('filename', V::stringType()->length(1, null), false),
+            V::key('filename', V::stringType()->notEmpty(), false),
             V::key('contents', V::oneOf(
                 V::resourceType(),
                 V::stringType()->notEmpty(),
@@ -313,6 +324,35 @@ class File
         }
 
         return $data;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return string[]
+     */
+    private function contentTypes(): array
+    {
+        return [
+            'text/html',
+            'text/plain',
+
+            'image/png',
+            'image/gif',
+            'image/jpg',
+            'image/jpeg',
+
+            'message/rfc822',
+            'multipart/mixed',
+            'multipart/signed',
+            'multipart/related',
+            'multipart/alternative',
+
+            'application/pdf',
+            'application/msword',
+            'application/octet-stream',
+            'application/pkcs7-signature',
+        ];
     }
 
     // ------------------------------------------------------------------------------

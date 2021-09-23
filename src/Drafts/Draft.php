@@ -41,28 +41,26 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * get drafts list
+     * Returns all drafts.
      *
-     * @param mixed  $anyEmail string|string[]
-     * @param string $view     ids|count
+     * @see https://developer.nylas.com/docs/api/#get/drafts
+     *
+     * @param array $params
      *
      * @return array
      */
-    public function getDraftsList(mixed $anyEmail = null, ?string $view = null): array
+    public function returnAllDrafts(array $params = []): array
     {
-        $params = [
-            'view'      => $view,
-            'any_email' => Helper::fooToArray($anyEmail),
-        ];
+        V::doValidate($this->getQueryRules(), $params);
 
-        V::doValidate(V::keySet(
-            V::keyOptional('view', V::in(['ids', 'count'])),
-            V::keyOptional('any_email', V::simpleArray(V::email()))
-        ), $params);
+        if (!empty($params['any_email']))
+        {
+            $params['any_email'] = \implode(',', $params['any_email']);
+        }
 
         return $this->options
             ->getSync()
-            ->setQuery($this->getListQuery($params))
+            ->setQuery($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['drafts']);
     }
@@ -70,13 +68,15 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * add draft
+     * Creates a new draft.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/drafts
      *
      * @param array $params
      *
      * @return array
      */
-    public function addDraft(array $params): array
+    public function createADraft(array $params): array
     {
         V::doValidate(V::keySet(...$this->getBaseRules()), $params);
 
@@ -90,45 +90,21 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * update draft
+     * Returns a draft by ID.
      *
-     * @param array $params
-     *
-     * @return array
-     */
-    public function updateDraft(array $params): array
-    {
-        V::doValidate(V::keySet(...$this->getUpdateRules()), $params);
-
-        $path = $params['id'];
-
-        unset($params['id']);
-
-        return $this->options
-            ->getSync()
-            ->setPath($path)
-            ->setFormParams($params)
-            ->setHeaderParams($this->options->getAuthorizationHeader())
-            ->put(API::LIST['oneDraft']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get draft
+     * @see https://developer.nylas.com/docs/api/#get/drafts/id
      *
      * @param mixed $draftId string|string[]
      *
      * @return array
      */
-    public function getDraft(mixed $draftId): array
+    public function returnADraft(mixed $draftId): array
     {
         $draftId = Helper::fooToArray($draftId);
 
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $draftId);
 
         $queues = [];
-        $target = API::LIST['oneDraft'];
 
         foreach ($draftId as $id)
         {
@@ -137,9 +113,9 @@ class Draft
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneDraft']);
             };
         }
 
@@ -151,13 +127,44 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * delete draft
+     * Updates an existing draft by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#put/drafts/id
+     *
+     * @param string $draftId
+     * @param array  $params
+     *
+     * @return array
+     */
+    public function updateADraft(string $draftId, array $params): array
+    {
+        V::doValidate(V::stringType()->notEmpty(), $draftId);
+
+        V::doValidate(V::keySet(
+            V::key('version', V::intType()->min(0)),
+            ...$this->getBaseRules()
+        ), $params);
+
+        return $this->options
+            ->getSync()
+            ->setPath($draftId)
+            ->setFormParams($params)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
+            ->put(API::LIST['oneDraft']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Deletes a draft by ID. The draft version must be specified otherwise it will return an error.
+     *
+     * @see https://developer.nylas.com/docs/api/#delete/drafts/id
      *
      * @param array $params
      *
      * @return array
      */
-    public function deleteDraft(array $params): array
+    public function deleteADraft(array $params): array
     {
         $params = Helper::arrayToMulti($params);
 
@@ -167,7 +174,6 @@ class Draft
         )), $params);
 
         $queues = [];
-        $target = API::LIST['oneDraft'];
 
         foreach ($params as $item)
         {
@@ -177,9 +183,9 @@ class Draft
                 ->setFormParams(['version' => $item['version']])
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->delete($target);
+                return $request->delete(API::LIST['oneDraft']);
             };
         }
 
@@ -221,53 +227,6 @@ class Draft
     // ------------------------------------------------------------------------------
 
     /**
-     * rules for update
-     *
-     * @return array
-     */
-    private function getUpdateRules(): array
-    {
-        $rules = $this->getBaseRules();
-
-        $update =
-        [
-            V::key('id', V::stringType()->notEmpty()),
-            V::key('version', V::intType()->min(0)),
-        ];
-
-        return \array_merge($rules, $update);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get list query conditions
-     *
-     * @param array $params
-     *
-     * @return array
-     */
-    private function getListQuery(array $params): array
-    {
-        $query  = [];
-        $emails = \implode(',', $params['any_email']);
-
-        if (!empty($params['view']))
-        {
-            $query['view'] = $params['view'];
-        }
-
-        if (!empty($emails))
-        {
-            $query['any_email'] = $emails;
-        }
-
-        return $query;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * draft base validate rules
      *
      * @return array
@@ -283,10 +242,43 @@ class Draft
             V::keyOptional('reply_to', $this->arrayOfObject()),
             V::keyOptional('reply_to_message_id', V::stringType()->notEmpty()),
 
-            V::keyOptional('file_ids', $this->arrayOfString()),
-            V::keyOptional('subject', V::stringType()),
             V::keyOptional('body', V::stringType()),
+            V::keyOptional('subject', V::stringType()),
+            V::keyOptional('file_ids', $this->arrayOfString()),
         ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get messages list filter rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function getQueryRules(): V
+    {
+        return V::keySet(
+            V::keyOptional('in', V::stringType()->notEmpty()),
+            V::keyOptional('to', V::email()),
+            V::keyOptional('cc', V::email()),
+            V::keyOptional('bcc', V::email()),
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
+
+            V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
+            V::keyOptional('unread', V::boolType()),
+            V::keyOptional('starred', V::boolType()),
+            V::keyOptional('subject', V::stringType()->notEmpty()),
+            V::keyOptional('filename', V::stringType()->notEmpty()),
+            V::keyOptional('thread_id', V::stringType()->notEmpty()),
+            V::keyOptional('any_email', V::simpleArray(V::email())),
+            V::keyOptional('has_attachment', V::equals(true)),
+
+            V::keyOptional('last_message_after', V::timestampType()),
+            V::keyOptional('last_message_before', V::timestampType()),
+            V::keyOptional('started_message_after', V::timestampType()),
+            V::keyOptional('started_message_before', V::timestampType()),
+        );
     }
 
     // ------------------------------------------------------------------------------

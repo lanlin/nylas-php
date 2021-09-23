@@ -39,13 +39,15 @@ class Sending
     // ------------------------------------------------------------------------------
 
     /**
-     * send draft
+     * Send an email draft
+     *
+     * @see https://developer.nylas.com/docs/api/#post/send
      *
      * @param array $params
      *
      * @return array
      */
-    public function sendDraft(array $params): array
+    public function sendAnEmailDraft(array $params): array
     {
         $params = Helper::arrayToMulti($params);
 

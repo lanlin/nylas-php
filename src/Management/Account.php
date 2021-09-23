@@ -4,7 +4,6 @@ namespace Nylas\Management;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
-use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -168,10 +167,12 @@ class Account
      */
     public function revokeAllTokens(string $accountId, ?string $keepAccessToken = null): array
     {
+        $keep = empty($keepAccessToken) ? [] : ['keep_access_token' => $keepAccessToken];
+
         return $this->options
             ->getSync()
             ->setPath($this->options->getClientId(), $accountId)
-            ->setFormParams(['keep_access_token' => $keepAccessToken])
+            ->setFormParams($keep)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->post(API::LIST['revokeAllTokens']);
     }

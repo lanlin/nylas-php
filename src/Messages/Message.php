@@ -102,9 +102,9 @@ class Message
      */
     public function returnARawMessage(string $messageId): MSG
     {
-        $header = $this->options->getAuthorizationHeader();
-
         V::doValidate(V::stringType()->notEmpty(), $messageId);
+
+        $header = $this->options->getAuthorizationHeader();
 
         $header['Accept'] = 'message/rfc822'; // RFC-2822 message object
 

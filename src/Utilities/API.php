@@ -135,6 +135,10 @@ class API
         'drafts'   => '/drafts',
         'oneDraft' => '/drafts/%s',
 
+        // Outbox
+        'outbox'    => '/outbox',
+        'oneOutbox' => '/outbox/%s',
+
         // Sending
         'sending' => '/send',
 
@@ -144,9 +148,11 @@ class API
         'downloadFile' => '/files/%s/download',
 
         // Calendars
-        'calendars'     => '/calendars',
-        'oneCalendar'   => '/calendars/%s',
-        'freeBusy'      => '/calendars/free-busy',
+        'calendars'            => '/calendars',
+        'oneCalendar'          => '/calendars/%s',
+        'calendarFreeBusy'     => '/calendars/free-busy',
+        'calendarAbility'      => '/calendars/availability',
+        'calendarConsecutive'  => '/calendars/availability/consecutive',
 
         // Events
         'events'   => '/events',

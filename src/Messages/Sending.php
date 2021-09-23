@@ -40,13 +40,15 @@ class Sending
     // ------------------------------------------------------------------------------
 
     /**
-     * send message directly
+     * Send an email directly
+     *
+     * @see https://developer.nylas.com/docs/api/#post/send
      *
      * @param array $params
      *
      * @return array
      */
-    public function sendDirectly(array $params): array
+    public function sendAnEmailDirectly(array $params): array
     {
         $params = Helper::arrayToMulti($params);
 
@@ -73,17 +75,18 @@ class Sending
     // ------------------------------------------------------------------------------
 
     /**
-     * send raw mime
+     * Send raw MIME messages
      *
      * Suggest: use zend-mail for raw message
      *
      * @see https://docs.zendframework.com/zend-mail/
+     * @see https://developer.nylas.com/docs/api/#post/send
      *
      * @param \Psr\Http\Message\StreamInterface|resource|string $content
      *
      * @return mixed
      */
-    public function sendRawMIME(mixed $content)
+    public function sendRawMIME(mixed $content): mixed
     {
         V::doValidate(V::oneOf(
             V::resourceType(),

@@ -43,32 +43,19 @@ class Folder
      *
      * @see https://developer.nylas.com/docs/api/#get/folders
      *
-     * @param int    $offset zero base
-     * @param int    $limit  default 100
-     * @param string $view   ids|count
+     * @param array $params
      *
      * @return array
      */
-    public function returnAllFolders(int $offset = 0, int $limit = 100, ?string $view = null): array
+    public function returnAllFolders(array $params = []): array
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $params = [
-            'view'   => $view,
-            'limit'  => $limit,
-            'offset' => $offset,
-        ];
-
         V::doValidate(V::keySet(
-            V::key('limit', V::intType()),
-            V::key('offset', V::intType()),
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
             V::keyOptional('view', V::in(['ids', 'count'])),
         ), $params);
-
-        if (empty($params['view']))
-        {
-            unset($params['view']);
-        }
 
         return $this->options
             ->getSync()
@@ -80,28 +67,22 @@ class Folder
     // ------------------------------------------------------------------------------
 
     /**
-     * add folder
+     * Creates a new folder.
      *
-     * @param string $displayName
-     * @param string $name
+     * @see https://developer.nylas.com/docs/api/#post/folders
+     *
+     * @param array $params
      *
      * @return array
      */
-    public function createAFolder(?string $displayName = null, ?string $name = null): array
+    public function createAFolder(array $params = []): array
     {
         Helper::checkProviderUnit($this->options, false);
 
-        $params = ['name' => $name, 'display_name' => $displayName];
-
-        if (empty($name))
-        {
-            unset($params['name']);
-        }
-
-        if (empty($displayName))
-        {
-            unset($params['display_name']);
-        }
+        V::doValidate(V::keySet(
+            V::keyOptional('name', V::stringType()->notEmpty()),
+            V::keyOptional('display_name', V::stringType()->notEmpty()),
+        ), $params);
 
         return $this->options
             ->getSync()
@@ -113,43 +94,15 @@ class Folder
     // ------------------------------------------------------------------------------
 
     /**
-     * update folder
+     * Returns a folder by ID.
      *
-     * @param array $params
-     *
-     * @return array
-     */
-    public function updateFolder(array $params): array
-    {
-        Helper::checkProviderUnit($this->options, false);
-
-        V::doValidate(V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::keyOptional('display_name', V::stringType()->notEmpty())
-        ), $params);
-
-        $path = $params['id'];
-
-        unset($params['id']);
-
-        return $this->options
-            ->getSync()
-            ->setPath($path)
-            ->setFormParams($params)
-            ->setHeaderParams($this->options->getAuthorizationHeader())
-            ->put(API::LIST['oneFolder']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get folder
+     * @see https://developer.nylas.com/docs/api/#get/folders/id
      *
      * @param mixed $folderId string|string[]
      *
      * @return array
      */
-    public function getFolder(mixed $folderId): array
+    public function returnAFolder(mixed $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
@@ -180,13 +133,46 @@ class Folder
     // ------------------------------------------------------------------------------
 
     /**
-     * delete folder
+     * Updates a folder by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#put/folders/id
+     *
+     * @param string $folderId
+     * @param array  $params
+     *
+     * @return array
+     */
+    public function updateAFolder(string $folderId, array $params = []): array
+    {
+        Helper::checkProviderUnit($this->options, false);
+
+        V::doValidate(V::stringType()->notEmpty(), $folderId);
+
+        V::doValidate(V::keySet(
+            V::keyOptional('name', V::stringType()->notEmpty()),
+            V::keyOptional('display_name', V::stringType()->notEmpty())
+        ), $params);
+
+        return $this->options
+            ->getSync()
+            ->setPath($folderId)
+            ->setFormParams($params)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
+            ->put(API::LIST['oneFolder']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Deletes a folder.
+     *
+     * @see https://developer.nylas.com/docs/api/#delete/folders/id
      *
      * @param mixed $folderId string|string[]
      *
      * @return array
      */
-    public function deleteFolder(mixed $folderId): array
+    public function deleteAFolder(mixed $folderId): array
     {
         Helper::checkProviderUnit($this->options, false);
 
