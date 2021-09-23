@@ -321,23 +321,6 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * get account infos
-     *
-     * @return array
-     */
-    public function getAccount(): array
-    {
-        if (empty($this->accountInfo))
-        {
-            $this->accountInfo = (new Account($this))->returnAccountDetails();
-        }
-
-        return $this->accountInfo;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * get account id
      *
      * @return string
@@ -351,7 +334,26 @@ class Options
             throw new UnauthorizedException();
         }
 
-        return $this->accessToken;
+        return $account['account_id'];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get account id
+     *
+     * @return string
+     */
+    public function getAccountUnit(): string
+    {
+        $account = $this->getAccount();
+
+        if (empty($account))
+        {
+            throw new UnauthorizedException();
+        }
+
+        return $account['organization_unit'];
     }
 
     // ------------------------------------------------------------------------------
@@ -385,6 +387,23 @@ class Options
 
             default => $this->debug,
         };
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get account infos
+     *
+     * @return array
+     */
+    private function getAccount(): array
+    {
+        if (empty($this->accountInfo))
+        {
+            $this->accountInfo = (new Account($this))->returnAccountDetails();
+        }
+
+        return $this->accountInfo;
     }
 
     // ------------------------------------------------------------------------------

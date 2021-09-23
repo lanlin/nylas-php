@@ -329,17 +329,11 @@ class Smart
      */
     private function updateOneField(mixed $threadId, array $params): array
     {
-        $threadId    = Helper::fooToArray($threadId);
-        $accessToken = $this->options->getAuthorizationHeader();
+        $threadId = Helper::fooToArray($threadId);
 
-        $rule = V::simpleArray(V::stringType()->notEmpty());
-
-        V::doValidate($rule, $threadId);
-        V::doValidate(V::stringType()->notEmpty(), $accessToken);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $threadId);
 
         $queues = [];
-        $target = API::LIST['oneThread'];
-        $header = ['Authorization' => $accessToken];
 
         foreach ($threadId as $id)
         {
@@ -347,11 +341,11 @@ class Smart
                 ->getAsync()
                 ->setPath($id)
                 ->setFormParams($params)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->put($target);
+                return $request->put(API::LIST['oneThread']);
             };
         }
 

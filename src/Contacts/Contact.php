@@ -123,7 +123,6 @@ class Contact
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $contactId);
 
         $queues = [];
-        $target = API::LIST['oneContact'];
 
         foreach ($contactId as $id)
         {
@@ -132,9 +131,9 @@ class Contact
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneContact']);
             };
         }
 
@@ -159,7 +158,6 @@ class Contact
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $contactId);
 
         $queues = [];
-        $target = API::LIST['oneContact'];
 
         foreach ($contactId as $id)
         {
@@ -168,9 +166,9 @@ class Contact
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->delete($target);
+                return $request->delete(API::LIST['oneContact']);
             };
         }
 
@@ -209,25 +207,22 @@ class Contact
 
         V::doValidate($this->pictureRules(), $downloadArr);
 
-        $method = [];
-        $target = API::LIST['contactPic'];
+        $queues = [];
 
         foreach ($downloadArr as $item)
         {
-            $sink = $item['path'];
-
             $request = $this->options
                 ->getAsync()
                 ->setPath($item['id'])
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $method[] = static function () use ($request, $target, $sink)
+            $queues[] = static function () use ($request, $item)
             {
-                return $request->getSink($target, $sink);
+                return $request->getSink(API::LIST['contactPic'], $item['path']);
             };
         }
 
-        return $this->options->getAsync()->pool($method, true);
+        return $this->options->getAsync()->pool($queues, true);
     }
 
     // ------------------------------------------------------------------------------

@@ -51,16 +51,9 @@ class Thread
     {
         V::doValidate($this->getThreadsRules(), $params);
 
-        $query = [
-            'limit'  => $params['limit'] ?? 100,
-            'offset' => $params['offset'] ?? 0,
-        ];
-
-        $query = \array_merge($params, $query);
-
         return $this->options
             ->getSync()
-            ->setQuery($query)
+            ->setQuery($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['threads']);
     }
@@ -83,7 +76,6 @@ class Thread
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $threadId);
 
         $queues = [];
-        $target = API::LIST['oneThread'];
 
         foreach ($threadId as $id)
         {
@@ -92,9 +84,9 @@ class Thread
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneThread']);
             };
         }
 

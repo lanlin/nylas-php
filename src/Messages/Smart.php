@@ -301,7 +301,7 @@ class Smart
         }
 
         // check current message labels
-        foreach ($nowLabels as $index => $label)
+        foreach ($nowLabels as $label)
         {
             $secA = !empty($label['name']) && \in_array($label['name'], $del, true);
             $secB = empty($label['name'])  && \in_array($label['display_name'], $del, true);
@@ -334,7 +334,6 @@ class Smart
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
 
         $queues = [];
-        $target = API::LIST['oneMessage'];
 
         foreach ($messageId as $id)
         {
@@ -344,9 +343,9 @@ class Smart
                 ->setFormParams($params)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->put($target);
+                return $request->put(API::LIST['oneMessage']);
             };
         }
 

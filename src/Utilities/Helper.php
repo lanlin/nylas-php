@@ -25,7 +25,7 @@ class Helper
      */
     public static function isLabel(Options $options): bool
     {
-        return 'label' === $options->getAccount()['organization_unit'];
+        return 'label' === $options->getAccountUnit();
     }
 
     // ------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class Helper
     public static function checkProviderUnit(Options $options, bool $label = true): void
     {
         $unitType = $label ? 'label' : 'folder';
-        $thisFine = $options->getAccount()['organization_unit'] === $unitType;
+        $thisFine = $options->getAccountUnit() === $unitType;
 
         if ($thisFine)
         {
@@ -78,7 +78,7 @@ class Helper
     {
         foreach ($arr as $key => $value)
         {
-            if (\is_string($key))
+            if (!\is_int($key))
             {
                 return true;
             }

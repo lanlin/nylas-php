@@ -84,7 +84,6 @@ class JobStatus
         )), $params);
 
         $queues = [];
-        $target = API::LIST['oneJobStatus'];
 
         foreach ($params as $item)
         {
@@ -97,9 +96,9 @@ class JobStatus
                 ->setFormParams($item)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneJobStatus']);
             };
         }
 

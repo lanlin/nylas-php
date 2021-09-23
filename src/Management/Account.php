@@ -66,12 +66,10 @@ class Account
      */
     public function returnAllAccounts(int $offset = 0, int $limit = 100): array
     {
-        $pagination = ['limit' => $limit, 'offset' => $offset];
-
         return $this->options
             ->getSync()
             ->setPath($this->options->getClientId())
-            ->setQuery($pagination)
+            ->setQuery(['limit' => $limit, 'offset' => $offset])
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['listAllAccounts']);
     }

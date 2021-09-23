@@ -5,7 +5,6 @@ namespace Nylas\Events;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
-use Nylas\Management\Account;
 use Nylas\Utilities\Validator as V;
 
 /**
@@ -171,7 +170,6 @@ class Event
         )), $params);
 
         $queues = [];
-        $target = API::LIST['oneEvent'];
 
         foreach ($params as $item)
         {
@@ -184,9 +182,9 @@ class Event
                 ->setFormParams($item)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneEvent']);
             };
         }
 
@@ -215,7 +213,6 @@ class Event
         )), $params);
 
         $queues = [];
-        $target = API::LIST['oneEvent'];
         $notify = 'notify_participants';
 
         foreach ($params as $item)
@@ -228,9 +225,9 @@ class Event
                 ->setQuery($query)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->delete($target);
+                return $request->delete(API::LIST['oneEvent']);
             };
         }
 

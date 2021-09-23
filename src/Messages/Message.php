@@ -53,16 +53,9 @@ class Message
     {
         V::doValidate($this->getMessagesRules(), $params);
 
-        $query = [
-            'limit'  => $params['limit'] ?? 100,
-            'offset' => $params['offset'] ?? 0,
-        ];
-
-        $query = \array_merge($params, $query);
-
         return $this->options
             ->getSync()
-            ->setQuery($query)
+            ->setQuery($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['messages']);
     }

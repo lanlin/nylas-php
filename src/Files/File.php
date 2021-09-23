@@ -78,7 +78,6 @@ class File
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
 
         $queues = [];
-        $target = API::LIST['oneFile'];
 
         foreach ($fileId as $id)
         {
@@ -87,9 +86,9 @@ class File
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneFile']);
             };
         }
 
@@ -114,7 +113,6 @@ class File
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
 
         $queues = [];
-        $target = API::LIST['oneFile'];
 
         foreach ($fileId as $id)
         {
@@ -123,9 +121,9 @@ class File
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->delete($target);
+                return $request->delete(API::LIST['oneFile']);
             };
         }
 
@@ -150,7 +148,6 @@ class File
         V::doValidate($this->multipartRules(), $fileUploads);
 
         $upload = [];
-        $target = API::LIST['files'];
 
         foreach ($fileUploads as $item)
         {
@@ -166,9 +163,9 @@ class File
                 ->setFormFiles($item)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $upload[] = static function () use ($request, $target)
+            $upload[] = static function () use ($request)
             {
-                return $request->post($target);
+                return $request->post(API::LIST['files']);
             };
         }
 
@@ -192,25 +189,22 @@ class File
 
         V::doValidate($this->downloadRules(), $downloadArr);
 
-        $method = [];
-        $target = API::LIST['downloadFile'];
+        $queues = [];
 
         foreach ($downloadArr as $item)
         {
-            $sink = $item['path'];
-
             $request = $this->options
                 ->getAsync()
                 ->setPath($item['id'])
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $method[] = static function () use ($request, $target, $sink)
+            $queues[] = static function () use ($request, $item)
             {
-                return $request->getSink($target, $sink);
+                return $request->getSink(API::LIST['downloadFile'], $item['path']);
             };
         }
 
-        $pools = $this->options->getAsync()->pool($method, true);
+        $pools = $this->options->getAsync()->pool($queues, true);
 
         return $this->concatDownloadInfos($downloadArr, $pools);
     }

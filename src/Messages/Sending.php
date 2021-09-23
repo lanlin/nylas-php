@@ -53,7 +53,6 @@ class Sending
         V::doValidate($this->getMessageRules(), $params);
 
         $queues = [];
-        $target = API::LIST['sending'];
 
         foreach ($params as $item)
         {
@@ -62,9 +61,9 @@ class Sending
                 ->setFormParams($item)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->post($target);
+                return $request->post(API::LIST['sending']);
             };
         }
 

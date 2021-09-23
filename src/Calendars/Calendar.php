@@ -97,19 +97,17 @@ class Calendar
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $calendarId);
 
         $queues = [];
-        $target = API::LIST['oneCalendar'];
-        $header = $this->options->getAuthorizationHeader();
 
         foreach ($calendarId as $id)
         {
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setHeaderParams($header);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneCalendar']);
             };
         }
 
@@ -154,9 +152,9 @@ class Calendar
         return
         [
             V::key('name', V::stringType()->notEmpty()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('location', V::stringType()->notEmpty()),
             V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
+            V::keyOptional('description', V::stringType()->notEmpty()),
         ];
     }
 

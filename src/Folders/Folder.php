@@ -83,6 +83,7 @@ class Folder
      * add folder
      *
      * @param string $displayName
+     * @param string $name
      *
      * @return array
      */
@@ -157,7 +158,6 @@ class Folder
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
 
         $queues = [];
-        $target = API::LIST['oneFolder'];
 
         foreach ($folderId as $id)
         {
@@ -166,9 +166,9 @@ class Folder
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneFolder']);
             };
         }
 
@@ -195,7 +195,6 @@ class Folder
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
 
         $queues = [];
-        $target = API::LIST['oneFolder'];
 
         foreach ($folderId as $id)
         {
@@ -204,9 +203,9 @@ class Folder
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->delete($target);
+                return $request->delete(API::LIST['oneFolder']);
             };
         }
 

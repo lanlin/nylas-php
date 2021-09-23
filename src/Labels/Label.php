@@ -49,13 +49,9 @@ class Label
     {
         Helper::checkProviderUnit($this->options, true);
 
-        $params = ['view' => $view];
+        V::doValidate(V::in(['ids', 'count']), $view);
 
-        V::doValidate(V::keySet(
-            V::keyOptional('view', V::in(['ids', 'count']))
-        ), $params);
-
-        $query = empty($params['view']) ? [] : ['view' => $params['view']];
+        $query = empty($view) ? [] : ['view' => $view];
 
         return $this->options
             ->getSync()
@@ -134,7 +130,6 @@ class Label
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelId);
 
         $queues = [];
-        $target = API::LIST['oneLabel'];
 
         foreach ($labelId as $id)
         {
@@ -143,9 +138,9 @@ class Label
                 ->setPath($id)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->get($target);
+                return $request->get(API::LIST['oneLabel']);
             };
         }
 
@@ -175,7 +170,6 @@ class Label
         )), $params);
 
         $queues = [];
-        $target = API::LIST['oneLabel'];
 
         foreach ($params as $item)
         {
@@ -185,9 +179,9 @@ class Label
                 ->setFormParams(['display_name' => $item['display_name']])
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
-            $queues[] = static function () use ($request, $target)
+            $queues[] = static function () use ($request)
             {
-                return $request->delete($target);
+                return $request->delete(API::LIST['oneLabel']);
             };
         }
 
