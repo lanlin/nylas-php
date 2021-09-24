@@ -20,42 +20,38 @@ class Validation
     // ------------------------------------------------------------------------------
 
     /**
-     * rules for add event
+     * get event base rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
-    public static function addEventRules(): V
+    public static function getEventRules(): V
     {
         return V::keySet(
             V::key('when', self::timeRules()),
-            ...self::getEventBaseRules(),
+            V::key('calendar_id', V::stringType()->notEmpty()),
+            V::keyOptional('busy', V::boolType()),
+            V::keyOptional('read_only', V::boolType()),
+            V::keyOptional('title', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('metadata', V::arrayType()),
+            V::keyOptional('recurrence', self::recurrenceRules()),
+            V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('conferencing', self::conferenceRules()),
+            V::keyOptional('participants', self::participantsRules()),
+            V::keyOptional('notifications', self::notificationRules()),
+            V::keyOptional('reminder_method', V::in(['email', 'popup', 'display', 'sound'])),
+            V::keyOptional('reminder_minutes', V::regex('\[(|-1|[0-9]{1,})\]')),
         );
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * rules for update event
-     *
-     * @return \Nylas\Utilities\Validator
-     */
-    public static function updateEventRules(): V
-    {
-        return V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::keyOptional('when', self::timeRules()),
-            ...self::getEventBaseRules(),
-        );
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * event base validate rules
+     * event filter validate rules
      *
      * @return array
      */
-    public static function getBaseRules(): array
+    public static function getFilterRules(): array
     {
         return
         [
@@ -109,33 +105,6 @@ class Validation
             V::keyOptional('status', V::in(['yes', 'no', 'maybe', 'noreply'])),
             V::keyOptional('comment', V::anyOf(V::nullType(), V::stringType()))
         ));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get event base rules
-     *
-     * @return array
-     */
-    private static function getEventBaseRules(): array
-    {
-        return
-        [
-            V::key('calendar_id', V::stringType()->notEmpty()),
-            V::keyOptional('busy', V::boolType()),
-            V::keyOptional('read_only', V::boolType()),
-            V::keyOptional('title', V::stringType()->notEmpty()),
-            V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('metadata', V::arrayType()),
-            V::keyOptional('recurrence', self::recurrenceRules()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
-            V::keyOptional('conferencing', self::conferenceRules()),
-            V::keyOptional('participants', self::participantsRules()),
-            V::keyOptional('notifications', self::notificationRules()),
-            V::keyOptional('reminder_method', V::in(['email', 'popup', 'display', 'sound'])),
-            V::keyOptional('reminder_minutes', V::regex('\[(|-1|[0-9]{1,})\]')),
-        ];
     }
 
     // ------------------------------------------------------------------------------

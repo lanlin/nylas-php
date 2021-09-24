@@ -159,6 +159,9 @@ class API
         'oneEvent' => '/events/%s',
         'RSVPing'  => '/send-rsvp',
 
+        // Rooms
+        'resource' => '/resources',
+
         // Contacts
         'contacts'       => '/contacts',
         'oneContact'     => '/contacts/%s',

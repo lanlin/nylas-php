@@ -1,6 +1,6 @@
 <?php
 
-namespace Nylas\Calendars;
+namespace Nylas\Rooms;
 
 use Nylas\Utilities\Abs as AbsTrait;
 
@@ -9,11 +9,10 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @property Calendar     Calendar
- * @property Availability Availability
+ * @property Resource Resource
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2021/09/24
  */
 class Abs
 {

@@ -26,6 +26,11 @@ class Event
      */
     private Options $options;
 
+    /**
+     * @var string
+     */
+    private string $notify = 'notify_participants';
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -51,7 +56,7 @@ class Event
     {
         V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count'])),
-            ...Validation::getBaseRules()
+            ...Validation::getFilterRules()
         ), $params);
 
         return $this->options
@@ -69,15 +74,15 @@ class Event
      * @see https://developer.nylas.com/docs/api/#post/events
      *
      * @param array $params
+     * @param bool  $notifyParticipants
      *
      * @return array
      */
     public function createAnEvent(array $params, ?bool $notifyParticipants = null): array
     {
-        V::doValidate(Validation::addEventRules(), $params);
+        V::doValidate(Validation::getEventRules(), $params);
 
-        $notify = 'notify_participants';
-        $query  = \is_null($notifyParticipants) ? [] : [$notify => $notifyParticipants];
+        $query = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
 
         return $this->options
             ->getSync()
@@ -90,25 +95,66 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * update event
+     * Returns an event by ID.
      *
+     * @see https://developer.nylas.com/docs/api/#get/events/id
+     *
+     * @param mixed $eventId
      * @param array $params
      *
      * @return array
      */
-    public function updateEvent(array $params): array
+    public function returnAnEvent(mixed $eventId, array $params): array
     {
-        V::doValidate(Validation::updateEventRules(), $params);
+        $eventId = Helper::fooToArray($eventId);
 
-        $path   = $params['id'];
-        $notify = 'notify_participants';
-        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
+        V::doValidate(V::keySet(...Validation::getFilterRules()), $params);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $eventId);
 
-        unset($params['id'], $params['notify_participants']);
+        $queues = [];
+
+        foreach ($eventId as $id)
+        {
+            $request = $this->options
+                ->getAsync()
+                ->setPath($id)
+                ->setFormParams($params)
+                ->setHeaderParams($this->options->getAuthorizationHeader());
+
+            $queues[] = static function () use ($request)
+            {
+                return $request->get(API::LIST['oneEvent']);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($eventId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Updates an event, conference, or metadata.
+     *
+     * @see https://developer.nylas.com/docs/api/#put/events/id
+     *
+     * @param string $eventId
+     * @param array  $params
+     * @param bool   $notifyParticipants
+     *
+     * @return array
+     */
+    public function updateAnEvent(string $eventId, array $params, ?bool $notifyParticipants = null): array
+    {
+        V::doValidate(Validation::getEventRules(), $params);
+        V::doValidate(V::stringType()->notEmpty(), $eventId);
+
+        $query = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
 
         return $this->options
             ->getSync()
-            ->setPath($path)
+            ->setPath($eventId)
             ->setQuery($query)
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
@@ -118,13 +164,54 @@ class Event
     // ------------------------------------------------------------------------------
 
     /**
-     * rsvping
+     * Deletes an event.
+     *
+     * @see https://developer.nylas.com/docs/api/#delete/events/id
+     *
+     * @param string $eventId
+     * @param array  $params
+     * @param bool   $notifyParticipants
+     *
+     * @return array
+     */
+    public function deleteAnEvent(mixed $eventId, ?bool $notifyParticipants = null): array
+    {
+        V::doValidate(V::stringType()->notEmpty(), $eventId);
+
+        $queues = [];
+        $query  = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
+
+        foreach ($eventId as $id)
+        {
+            $request = $this->options
+                ->getAsync()
+                ->setPath($id)
+                ->setQuery($query)
+                ->setHeaderParams($this->options->getAuthorizationHeader());
+
+            $queues[] = static function () use ($request)
+            {
+                return $request->delete(API::LIST['oneEvent']);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($eventId, $pools);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * The RSVP endpoint allows you to send attendance status updates to event organizers.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/send-rsvp
      *
      * @param array $params
      *
      * @return mixed
      */
-    public function rsvping(array $params)
+    public function sendRSVP(array $params)
     {
         if (empty($params['account_id']))
         {
@@ -135,106 +222,13 @@ class Event
             V::key('status', V::in(['yes', 'no', 'maybe'])),
             V::key('event_id', V::stringType()->notEmpty()),
             V::key('account_id', V::stringType()->notEmpty()),
-            V::keyOptional('notify_participants', V::boolType())
         ), $params);
-
-        $notify = 'notify_participants';
-        $query  = isset($params[$notify]) ? [$notify => $params[$notify]] : [];
-
-        unset($params['notify_participants']);
 
         return $this->options
             ->getSync()
-            ->setQuery($query)
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['oneEvent']);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get event
-     *
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getEvent(array $params): array
-    {
-        $params = Helper::arrayToMulti($params);
-
-        V::doValidate(V::simpleArray(V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            ...Validation::getBaseRules(),
-        )), $params);
-
-        $queues = [];
-
-        foreach ($params as $item)
-        {
-            $id = $item['id'];
-            unset($item['id']);
-
-            $request = $this->options
-                ->getAsync()
-                ->setPath($id)
-                ->setFormParams($item)
-                ->setHeaderParams($this->options->getAuthorizationHeader());
-
-            $queues[] = static function () use ($request)
-            {
-                return $request->get(API::LIST['oneEvent']);
-            };
-        }
-
-        $evtID = Helper::generateArray($params, 'id');
-        $pools = $this->options->getAsync()->pool($queues, false);
-
-        return Helper::concatPoolInfos($evtID, $pools);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * delete event
-     *
-     * @param array $params
-     *
-     * @return array
-     */
-    public function deleteEvent(array $params): array
-    {
-        $params = Helper::arrayToMulti($params);
-
-        V::doValidate(V::simpleArray(V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
-            V::keyOptional('notify_participants', V::boolType())
-        )), $params);
-
-        $queues = [];
-        $notify = 'notify_participants';
-
-        foreach ($params as $item)
-        {
-            $query = isset($item[$notify]) ? [$notify => $item[$notify]] : [];
-
-            $request = $this->options
-                ->getAsync()
-                ->setPath($item['id'])
-                ->setQuery($query)
-                ->setHeaderParams($this->options->getAuthorizationHeader());
-
-            $queues[] = static function () use ($request)
-            {
-                return $request->delete(API::LIST['oneEvent']);
-            };
-        }
-
-        $evtID = Helper::generateArray($params, 'id');
-        $pools = $this->options->getAsync()->pool($queues, false);
-
-        return Helper::concatPoolInfos($evtID, $pools);
     }
 
     // ------------------------------------------------------------------------------

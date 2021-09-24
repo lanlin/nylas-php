@@ -58,8 +58,6 @@ The test projects use configuration files instead, to make it easier to get star
 
 ### Init Nylas-PHP
 
-*TIPS:* 'off_decode_error' has removed since version 4.1.2, see [Error & Exceptions](#error--exceptions)
-
 ```php
 use Nylas\Client;
 
