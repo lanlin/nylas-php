@@ -202,17 +202,10 @@ class Contact
 
         foreach ($downloadArr as $item)
         {
-            $haders = $this->options->getAuthorizationHeader();
-
-            if (!empty($item['auth']))
-            {
-                $haders['authorization'] = $item['auth'];
-            }
-
             $request = $this->options
                 ->getAsync()
                 ->setPath($item['id'])
-                ->setHeaderParams($haders);
+                ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request, $item)
             {

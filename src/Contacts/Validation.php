@@ -24,16 +24,13 @@ class Validation
      */
     public static function pictureRules(): V
     {
-        $path = V::oneOf(
-            V::resourceType(),
-            V::stringType()->notEmpty(),
-            V::instance(StreamInterface::class)
-        );
-
         return  V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
-            V::key('path', $path),
-            V::keyOptional('auth', V::stringType()->notEmpty())
+            V::key('path', V::oneOf(
+                V::resourceType(),
+                V::stringType()->notEmpty(),
+                V::instance(StreamInterface::class)
+            ))
         ));
     }
 

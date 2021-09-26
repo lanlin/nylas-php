@@ -9,7 +9,6 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @property Smart   Smart
  * @property Search  Search
  * @property Message Message
  * @property Sending Sending

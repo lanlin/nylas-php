@@ -18,12 +18,15 @@ use Nylas\Exceptions\NylasException;
  * @property Events\Abs         Events
  * @property Files\Abs          Files
  * @property Folders\Abs        Folders
+ * @property JobStatuses\Abs    JobStatuses
  * @property Labels\Abs         Labels
  * @property Management\Abs     Management
  * @property Messages\Abs       Messages
+ * @property Neural\Abs         Neural
+ * @property Outbox\Abs         Outbox
+ * @property Rooms\Abs          Rooms
  * @property Threads\Abs        Threads
  * @property Webhooks\Abs       Webhooks
- * @property JobStatuses\Abs    JobStatuses
  *
  * @author lanlin
  * @change 2021/09/22
@@ -74,21 +77,6 @@ class Client
     // ------------------------------------------------------------------------------
 
     /**
-     * call nylas apis with __call
-     *
-     * @param string $name
-     * @param array  $arguments
-     *
-     * @return object
-     */
-    public function __call(string $name, array $arguments): object
-    {
-        return $this->callSubClass($name, $arguments);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * get options instance for setting options
      *
      * @return \Nylas\Utilities\Options
@@ -104,11 +92,10 @@ class Client
      * call sub class
      *
      * @param  string  $name
-     * @param  array   $arguments
      *
      * @return object
      */
-    private function callSubClass(string $name, array $arguments = []): object
+    private function callSubClass(string $name): object
     {
         $apiClass = __NAMESPACE__.'\\'.\ucfirst($name).'\\Abs';
 
@@ -118,7 +105,7 @@ class Client
             throw new NylasException(null, "class {$apiClass} not found!");
         }
 
-        return new $apiClass($this->options, ...$arguments);
+        return new $apiClass($this->options);
     }
 
     // ------------------------------------------------------------------------------
