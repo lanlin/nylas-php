@@ -38,19 +38,29 @@ class Search
     // ------------------------------------------------------------------------------
 
     /**
-     * search messages list
+     * Searches messages.
      *
-     * @param string $q
+     * @see https://developer.nylas.com/docs/api/#get/messages/search
+     *
+     * @param string $keyword
+     * @param int    $offset
+     * @param int    $limit
      *
      * @return array
      */
-    public function messages(string $q): array
+    public function searchMessages(string $keyword, int $offset = 0, int $limit = 100): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $q);
+        V::doValidate(V::stringType()->notEmpty(), $keyword);
+
+        $query = [
+            'q'      => $keyword,
+            'limit'  => $limit,
+            'offset' => $offset,
+        ];
 
         return $this->options
             ->getSync()
-            ->setQuery(['q' => $q])
+            ->setQuery($query)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['searchMessages']);
     }

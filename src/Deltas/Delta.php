@@ -38,11 +38,13 @@ class Delta
     // ------------------------------------------------------------------------------
 
     /**
-     * get latest cursor
+     * Return a delta cursor. The delta cursor is used to return data using the other deltas endpoints.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/delta/latest_cursor
      *
      * @return array
      */
-    public function getLatestCursor(): array
+    public function getADeltaCursor(): array
     {
         return $this->options
             ->getSync()
@@ -53,19 +55,21 @@ class Delta
     // ------------------------------------------------------------------------------
 
     /**
-     * get a set of deltas
+     * Returns a set of delta cursors.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/delta
      *
      * @param array $params
      *
      * @return array
      */
-    public function getSetOfDeltas(array $params): array
+    public function requestDeltaCursors(array $params): array
     {
-        V::doValidate(V::keySet(...$this->getBaseRules()), $params);
+        V::doValidate($this->getBaseRules(), $params);
 
         return $this->options
             ->getSync()
-            ->setQuery($params)
+            ->setQuery($this->parseTypesToString($params))
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['delta']);
     }
@@ -73,22 +77,21 @@ class Delta
     // ------------------------------------------------------------------------------
 
     /**
-     * long polling delta updates
+     * Long Polling deltas will instruct the server to keep the connection open until a change comes through or it times out.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/delta/longpoll
      *
      * @param array $params
      *
      * @return array
      */
-    public function longPollingDelta(array $params): array
+    public function returnLongPollingDeltas(array $params): array
     {
-        V::doValidate(V::keySet(
-            V::key('timeout', V::intType()->min(1)),
-            ...$this->getBaseRules(),
-        ), $params);
+        V::doValidate($this->getBaseRules(), $params);
 
         return $this->options
             ->getSync()
-            ->setQuery($params)
+            ->setQuery($this->parseTypesToString($params))
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['deltaLongpoll']);
     }
@@ -96,19 +99,21 @@ class Delta
     // ------------------------------------------------------------------------------
 
     /**
-     * streaming delta updates
+     * Streaming deltas process real-time updates.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/delta/streaming
      *
      * @param array $params
      *
      * @return mixed
      */
-    public function streamingDelta(array $params)
+    public function streamingDeltas(array $params)
     {
-        V::doValidate(V::keySet(...$this->getBaseRules()), $params);
+        V::doValidate($this->getBaseRules(), $params);
 
         return $this->options
             ->getSync()
-            ->setQuery($params)
+            ->setQuery($this->parseTypesToString($params))
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['deltaStreaming']);
     }
@@ -118,20 +123,40 @@ class Delta
     /**
      * get base rules
      *
-     * @return array
+     * @return V
      */
-    private function getBaseRules(): array
+    private function getBaseRules(): V
     {
         $types = ['contact', 'event', 'file', 'message', 'draft', 'thread', 'folder', 'label'];
 
-        return
-        [
+        return V::keySet(
             V::key('cursor', V::stringType()->notEmpty()),
-
             V::keyOptional('view', V::equals('expanded')),
-            V::keyOptional('exclude_types', V::in($types)),
-            V::keyOptional('include_types', V::in($types)),
-        ];
+            V::keyOptional('exclude_types', V::simpleArray(V::in($types))),
+            V::keyOptional('include_types', V::simpleArray(V::in($types))),
+        );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param array $params
+     *
+     * @return array
+     */
+    private function parseTypesToString(array $params): array
+    {
+        if (!empty($params['exclude_types']))
+        {
+            $params['exclude_types'] = \implode(',', $params['exclude_types']);
+        }
+
+        if (!empty($params['include_types']))
+        {
+            $params['include_types'] = \implode(',', $params['include_types']);
+        }
+
+        return $params;
     }
 
     // ------------------------------------------------------------------------------

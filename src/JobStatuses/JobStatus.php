@@ -16,7 +16,6 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#job-statuses
  *
  * @author lanlin
- * @update jeremygriffin
  * @change 2021/09/22
  */
 class JobStatus
@@ -43,24 +42,16 @@ class JobStatus
     // ------------------------------------------------------------------------------
 
     /**
-     * get job-status list
+     * Return all job statuses.
      *
-     * @param array $params
-     *
-     * @throws Exception
+     * @see https://developer.nylas.com/docs/api/#get/job-statuses
      *
      * @return array
      */
-    public function getJobStatusesList(array $params = []): array
+    public function returnAllJobStatuses(): array
     {
-        V::doValidate(V::keySet(
-            V::keyOptional('view', V::in(['ids', 'count'])),
-            ...$this->getBaseRules(),
-        ), $params);
-
         return $this->options
             ->getSync()
-            ->setQuery($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['jobStatuses']);
     }
@@ -68,32 +59,27 @@ class JobStatus
     // ------------------------------------------------------------------------------
 
     /**
-     * get job-status
+     * Return a job status by ID.
+     *
+     * @see https://developer.nylas.com/docs/api/#get/job-statuses/id
      *
      * @param array $params
      *
      * @return array
      */
-    public function getJobStatus(array $params): array
+    public function returnAJobStatus(mixed $jobStatusId): array
     {
-        $params = Helper::arrayToMulti($params);
+        $jobStatusId = Helper::arrayToMulti($jobStatusId);
 
-        V::doValidate(V::simpleArray(V::keySet(
-            V::key('job_status_id', V::stringType()->notEmpty()),
-            ...$this->getBaseRules()
-        )), $params);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $jobStatusId);
 
         $queues = [];
 
-        foreach ($params as $item)
+        foreach ($jobStatusId as $id)
         {
-            $id = $item['job_status_id'];
-            unset($item['job_status_id']);
-
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setFormParams($item)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request)
@@ -102,27 +88,9 @@ class JobStatus
             };
         }
 
-        $jobID = Helper::generateArray($params, 'job_status_id');
         $pools = $this->options->getAsync()->pool($queues, false);
 
-        return Helper::concatPoolInfos($jobID, $pools);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * job-status base validate rules
-     *
-     * @return array
-     */
-    private function getBaseRules(): array
-    {
-        return
-        [
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
-            V::keyOptional('job_status_id', V::stringType()->notEmpty()),
-        ];
+        return Helper::concatPoolInfos($jobStatusId, $pools);
     }
 
     // ------------------------------------------------------------------------------

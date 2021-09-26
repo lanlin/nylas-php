@@ -92,6 +92,35 @@ class API
     // ------------------------------------------------------------------------------
 
     /**
+     * nylas webhook triggers
+     */
+    public const TRIGGERS = [
+        'account.connected',
+        'account.running',
+        'account.stopped',
+        'account.invalid',
+        'account.sync_error',
+        'message.created',
+        'message.updated',
+        'message.opened',
+        'message.link_clicked',
+        'thread.replied',
+        'contact.created',
+        'contact.updated',
+        'contact.deleted',
+        'calendar.created',
+        'calendar.updated',
+        'calendar.deleted',
+        'event.created',
+        'event.updated',
+        'event.deleted',
+        'job.succesful',
+        'job.failed',
+    ];
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * nylas api list array
      *
      * @see https://developer.nylas.com/docs/api/#overview
@@ -168,6 +197,18 @@ class API
         'contactPic'     => '/contacts/%s/picture',
         'contactsGroups' => '/contacts/groups',
 
+        // Neural
+        'neuralOcr'           => '/neural/ocr',
+        'neuralOcrFeedback'   => '/neural/ocr/feedback',
+        'neuralCate'          => '/neural/categorize',
+        'neuralCateFeedback'  => '/neural/categorize/feedback',
+        'neuralConv'          => '/neural/conversation',
+        'neuralConvFeedback'  => '/neural/conversation/feedback',
+        'neuralSign'          => '/neural/signature',
+        'neuralSignFeedback'  => '/neural/signature/feedback',
+        'neuralSment'         => '/neural/sentiment',
+        'neuralSmentFeedback' => '/neural/sentiment/feedback',
+
         // Search
         'searchThreads'  => '/threads/search',
         'searchMessages' => '/messages/search',
@@ -176,16 +217,15 @@ class API
         'webhooks'   => '/a/%s/webhooks',
         'oneWebhook' => '/a/%s/webhooks/%s',
 
+        // JobStatuses
+        'jobStatuses'  => '/job-statuses',
+        'oneJobStatus' => '/job-statuses/%s',
+
         // Deltas
         'delta'             => '/delta',
         'deltaLongpoll'     => '/delta/longpoll',
         'deltaStreaming'    => '/delta/streaming',
         'deltaLatestCursor' => '/delta/latest_cursor',
-
-        // JobStatuses
-        'jobStatuses'  => '/job-statuses',
-        'oneJobStatus' => '/job-statuses/%s',
-
     ];
 
     // ------------------------------------------------------------------------------
