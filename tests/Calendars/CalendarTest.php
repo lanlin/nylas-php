@@ -25,7 +25,7 @@ class CalendarTest extends AbsCase
             'view' => 'count',
         ];
 
-        $data = $this->client->Calendars->Calendar->getCalendarsList($params);
+        $data = $this->client->Calendars->Calendar->returnAllCalendars($params);
 
         $this->assertArrayHasKey('count', $data);
     }
@@ -36,7 +36,7 @@ class CalendarTest extends AbsCase
     {
         $id = 'f0yci053ovp2tit18hwemup33';
 
-        $data = $this->client->Calendars->Calendar->getCalendar($id);
+        $data = $this->client->Calendars->Calendar->createACalendar($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -47,7 +47,7 @@ class CalendarTest extends AbsCase
     {
         $params = $this->getCalendarInfo();
 
-        $data = $this->client->Calendars->Calendar->addCalendar($params);
+        $data = $this->client->Calendars->Calendar->createACalendar($params);
 
         $this->assertArrayHasKey('id', $data);
     }
@@ -66,4 +66,6 @@ class CalendarTest extends AbsCase
             'location'    => 'Front Conference Room',
         ];
     }
+
+    // ------------------------------------------------------------------------------
 }

@@ -21,6 +21,11 @@ trait Abs
      */
     private Options $options;
 
+    /**
+     * @var array
+     */
+    private array $objects = [];
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -50,33 +55,21 @@ trait Abs
     // ------------------------------------------------------------------------------
 
     /**
-     * call nylas apis with __call
-     *
-     * @param string $name
-     * @param array  $arguments
-     *
-     * @return object
-     */
-    public function __call(string $name, array $arguments): object
-    {
-        return $this->callSubClass($name, $arguments);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * call sub class
      *
      * @param  string  $name
-     * @param  array   $arguments
      *
      * @return object
      */
-    private function callSubClass(string $name, array $arguments = []): object
+    private function callSubClass(string $name): object
     {
+        if (!empty($this->objects[$name]))
+        {
+            return $this->objects[$name];
+        }
+
         $nmSpace  = \trim(\get_class($this), 'Abs');
-        $nmSpace  = \trim($nmSpace, '\\');
-        $subClass = $nmSpace.'\\'.\ucfirst($name);
+        $subClass = \trim($nmSpace, '\\').'\\'.\ucfirst($name);
 
         // check class exists
         if (!\class_exists($subClass))
@@ -84,7 +77,7 @@ trait Abs
             throw new NylasException(null, "class {$subClass} not found!");
         }
 
-        return new $subClass($this->options, ...$arguments);
+        return $this->objects[$name] = new $subClass($this->options);
     }
 
     // ------------------------------------------------------------------------------

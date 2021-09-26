@@ -38,7 +38,12 @@ class Client
     /**
      * @var Options
      */
-    private Options $options;
+    public Options $options;
+
+    /**
+     * @var array
+     */
+    private array $objects = [];
 
     // ------------------------------------------------------------------------------
 
@@ -77,18 +82,6 @@ class Client
     // ------------------------------------------------------------------------------
 
     /**
-     * get options instance for setting options
-     *
-     * @return \Nylas\Utilities\Options
-     */
-    public function Options(): Options
-    {
-        return $this->options;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * call sub class
      *
      * @param  string  $name
@@ -97,6 +90,11 @@ class Client
      */
     private function callSubClass(string $name): object
     {
+        if (!empty($this->objects[$name]))
+        {
+            return $this->objects[$name];
+        }
+
         $apiClass = __NAMESPACE__.'\\'.\ucfirst($name).'\\Abs';
 
         // check class exists
@@ -105,7 +103,7 @@ class Client
             throw new NylasException(null, "class {$apiClass} not found!");
         }
 
-        return new $apiClass($this->options);
+        return $this->objects[$name] = new $apiClass($this->options);
     }
 
     // ------------------------------------------------------------------------------
