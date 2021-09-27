@@ -27,11 +27,11 @@ class Validation
     public static function getEventRules(): V
     {
         return V::keySet(
-            V::key('when', self::timeRules()),
+            V::key('when', self::whenRules()),
             V::key('calendar_id', V::stringType()->notEmpty()),
             V::keyOptional('busy', V::boolType()),
-            V::keyOptional('read_only', V::boolType()),
             V::keyOptional('title', V::stringType()->notEmpty()),
+            V::keyOptional('read_only', V::boolType()),
             V::keyOptional('location', V::stringType()->notEmpty()),
             V::keyOptional('metadata', V::arrayType()),
             V::keyOptional('recurrence', self::recurrenceRules()),
@@ -110,30 +110,32 @@ class Validation
     // ------------------------------------------------------------------------------
 
     /**
-     * get event time rules
+     * get event when rules
      *
      * @return \Nylas\Utilities\Validator
      */
-    private static function timeRules(): V
+    private static function whenRules(): V
     {
         return V::anyOf(
             // time
-            V::keySet(V::key('time', V::timestampType())),
+            V::keySet(V::keyOptional('time', V::timestampType())),
 
             // date
-            V::keySet(V::key('date', V::date('Y-m-d'))),
-
-            // timespan
-            V::keySet(
-                V::key('end_time', V::timestampType()),
-                V::key('start_time', V::timestampType())
-            ),
+            V::keySet(V::keyOptional('date', V::date('Y-m-d'))),
 
             // date span
             V::keySet(
-                V::key('end_date', V::date('Y-m-d')),
-                V::key('start_date', V::date('Y-m-d'))
-            )
+                V::keyOptional('end_date', V::date('Y-m-d')),
+                V::keyOptional('start_date', V::date('Y-m-d'))
+            ),
+
+            // timespan
+            V::keySet(
+                V::keyOptional('end_time', V::timestampType()),
+                V::keyOptional('start_time', V::timestampType()),
+                V::keyOptional('end_timezone', V::in(DateTimeZone::listIdentifiers())),
+                V::keyOptional('start_timezone', V::in(DateTimeZone::listIdentifiers()))
+            ),
         );
     }
 
@@ -146,24 +148,24 @@ class Validation
      */
     private static function notificationRules(): V
     {
-        return V::each(V::oneOf(
-            V::keySet(V::key('sms', V::keySet(
-                V::key('type', V::equals('sms')),
-                V::key('message', V::stringType()->notEmpty()),
-                V::key('minutes_before_events', V::intType()),
-            ))),
-            V::keySet(V::key('email', V::keySet(
-                V::key('type', V::equals('email')),
-                V::key('body', V::stringType()->notEmpty()),
-                V::key('subject', V::stringType()->notEmpty()),
-                V::key('minutes_before_events', V::intType()),
-            ))),
-            V::keySet(V::key('webhooks', V::keySet(
-                V::key('url', V::url()),
-                V::key('type', V::equals('webhook')),
-                V::key('payload', V::stringType()->notEmpty()),
-                V::key('minutes_before_events', V::intType()),
-            ))),
+        return V::each(V::anyOf(
+            V::keySet(
+                V::keyOptional('type', V::equals('sms')),
+                V::keyOptional('message', V::stringType()->notEmpty()),
+                V::keyOptional('minutes_before_events', V::intType()),
+            ),
+            V::keySet(
+                V::keyOptional('type', V::equals('email')),
+                V::keyOptional('body', V::stringType()->notEmpty()),
+                V::keyOptional('subject', V::stringType()->notEmpty()),
+                V::keyOptional('minutes_before_events', V::intType()),
+            ),
+            V::keySet(
+                V::keyOptional('url', V::url()),
+                V::keyOptional('type', V::equals('webhook')),
+                V::keyOptional('payload', V::stringType()->notEmpty()),
+                V::keyOptional('minutes_before_events', V::intType()),
+            ),
         ));
     }
 
@@ -176,49 +178,48 @@ class Validation
      */
     private static function conferenceRules(): V
     {
+        $autocreate = V::keySet(
+            V::key('provider', V::in(['Google Meet', 'Zoom Meeting'])),
+            V::key('autocreate', V::arrayType()),
+        );
+
         $webEx = V::keySet(
             V::key('provider', V::equals('WebEx')),
             V::key('details', V::keySet(
-                V::key('password', V::stringType()),
-                V::key('pin', V::stringType()),
-                V::key('url', V::stringType())
+                V::keyOptional('password', V::stringType()),
+                V::keyOptional('pin', V::stringType()),
+                V::keyOptional('url', V::stringType())
             ))
         );
 
         $zoomMeeting = V::keySet(
             V::key('provider', V::equals('Zoom Meeting')),
             V::key('details', V::keySet(
-                V::key('meeting_code', V::stringType()),
-                V::key('password', V::stringType()),
-                V::key('url', V::stringType()),
+                V::keyOptional('meeting_code', V::stringType()),
+                V::keyOptional('password', V::stringType()),
+                V::keyOptional('url', V::stringType()),
             ))
         );
 
         $goToMeeting = V::keySet(
             V::key('provider', V::equals('GoToMeeting')),
             V::key('details', V::keySet(
-                V::key('meeting_code', V::stringType()),
-                V::key('phone', V::simpleArray()),
-                V::key('url', V::stringType()),
+                V::keyOptional('meeting_code', V::stringType()),
+                V::keyOptional('phone', V::simpleArray()),
+                V::keyOptional('url', V::stringType()),
             ))
         );
 
         $googleMeet = V::keySet(
             V::key('provider', V::equals('Google Meet')),
             V::key('details', V::keySet(
-                V::key('phone', V::simpleArray()),
-                V::key('pin', V::stringType()),
-                V::key('url', V::stringType()),
+                V::keyOptional('phone', V::simpleArray()),
+                V::keyOptional('pin', V::stringType()),
+                V::keyOptional('url', V::stringType()),
             ))
         );
 
-        return V::oneOf(
-            V::keySet(V::key('details', V::oneOf($webEx, $zoomMeeting, $goToMeeting, $googleMeet))),
-            V::keySet(V::key('autocreate', V::keySet(
-                V::key('provider', V::in(['Google Meet', 'Zoom Meeting'])),
-                V::key('autocreate', V::arrayType()),
-            ))),
-        );
+        return V::anyOf($autocreate, $webEx, $zoomMeeting, $goToMeeting, $googleMeet);
     }
 
     // ------------------------------------------------------------------------------

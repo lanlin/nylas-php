@@ -2,7 +2,6 @@
 
 namespace Tests\Events;
 
-use Exception;
 use Tests\AbsCase;
 
 /**
@@ -19,75 +18,287 @@ class EventTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetEventList(): void
+    public function testReturnAllEvents(): void
     {
-        $data = $this->client->Events->Event->getEventsList();
+        $this->mockResponse([$this->getEventData()]);
 
-        $this->assertTrue(\count($data) > 0);
+        $data = $this->client->Events->Event->returnAllEvents();
+
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetEvent(): void
+    /**
+     * @dataProvider getProvidData
+     *
+     * @param array $params
+     */
+    public function testCreateAnEvents(array $params): void
     {
-        $params = ['id' => 'ejom4k3o5qor5ooyh8yx7hgbw'];
+        $this->mockResponse($this->getEventData());
 
-        $data = $this->client->Events->Event->getEvent($params);
+        $data = $this->client->Events->Event->createAnEvent($params);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testAddEvent(): void
+    public function testReturnAnEvent(): void
     {
-        $params =
-        [
-            'calendar_id' => '1fskeosmvaffwuffq774enx5p',
-            'when'        => ['time' => \time()],
-            'title'       => 'nothing...',
+        $data = $this->client->Events->Event->returnAnEvent();
+
+        $this->assertArrayHasKey($id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testUpdateAnEvent(): void
+    {
+        $data = $this->client->Events->Event->updateAnEvent();
+
+        $this->assertArrayHasKey($id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testDeleteAnEvent(): void
+    {
+        $data = $this->client->Events->Event->deleteAnEvent();
+
+        $this->assertArrayHasKey($id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testSendRSVP(): void
+    {
+        $data = $this->client->Events->Event->sendRSVP();
+
+        $this->assertArrayHasKey($id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    private function getEventData(): array
+    {
+        return [
+            'account_id'   => '{account_id}',
+            'busy'         => true,
+            'calendar_id'  => '{calendar_id}',
+            'description'  => 'Coffee meeting',
+            'ical_uid'     => '{ical_uid}',
+            'id'           => '{event_id}',
+            'location'     => 'string',
+            'message_id'   => 'string',
+            'object'       => 'event',
+            'owner'        => '<some_email@email.com>',
+            'participants' => [
+                [
+                    'name'    => 'Dorothy Vaughan',
+                    'email'   => 'dorothy@spacetech.com',
+                    'status'  => 'noreply',
+                    'comment' => 'string',
+                ],
+            ],
+            'read_only' => true,
+            'title'     => 'Remote Event: Group Yoga Class',
+            'when'      => [
+                'start_time'     => 1409594400,
+                'end_time'       => 1409598000,
+                'start_timezone' => 'America/New_York',
+                'end_timezone'   => 'America/New_York',
+            ],
+            'status'       => 'confirmed',
+            'conferencing' => [
+                'provider' => 'WebEx',
+                'details'  => [
+                    'password' => 'string',
+                    'pin'      => 'string',
+                    'url'      => 'string',
+                ],
+            ],
+            'job_status_id' => 'string',
+            'recurrence'    => [
+                'rrule' => [
+                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
+                ],
+                'timezone' => 'America/New_York',
+            ],
+            'metadata' => [
+                'your-key' => 'string',
+            ],
+        ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function getProvidData(): array
+    {
+        $event = [
+            'title'        => 'Birthday Party',
+            'calendar_id'  => '947kpa7ih22bfkeujpkfqn5bu',
+            'status'       => 'confirmed',
+            'busy'         => true,
+            'read_only'    => true,
+            'participants' => [
+                [
+                    'name'   => 'Aristotle',
+                    'email'  => 'aristotle@nylas.com',
+                    'status' => 'yes',
+                ],
+            ],
+            'description' => 'Come ready to skate',
+            'when'        => [
+                'object' => 'time',
+                'time'   => 1408875644,
+            ],
+            'location'   => 'Roller Rink',
+            'recurrence' => [
+                'rrule' => [
+                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
+                ],
+                'timezone' => 'America/New_York',
+            ],
         ];
 
-        $data = $this->client->Events->Event->addEvent($params);
-
-        $this->assertArrayHasKey('id', $data);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testUpdateEvent(): void
-    {
-        $params =
-        [
-            'id'      => '47137b6urkg0cf738o7is2aa3',
-            'when'    => ['time' => \time()],
+        $conference = [
+            'title'        => 'Birthday Party',
+            'calendar_id'  => '947kpa7ih22bfkeujpkfqn5bu',
+            'busy'         => true,
+            'read_only'    => true,
+            'participants' => [
+                [
+                    'name'   => 'Dorothy Vaughan',
+                    'email'  => 'dorothy@spacetech.com',
+                    'status' => 'noreply',
+                ],
+            ],
+            'description' => 'Come ready to skate',
+            'when'        => [
+                'time'     => 1408875644,
+                'timezone' => 'America/New_York',
+            ],
+            'location'   => 'Roller Rink',
+            'recurrence' => [
+                'rrule' => [
+                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
+                ],
+                'timezone' => 'America/New_York',
+            ],
+            'conferencing' => [
+                'provider' => 'WebEx',
+                'details'  => [
+                    'password' => 'string',
+                    'pin'      => 'string',
+                    'url'      => 'string',
+                ],
+            ],
+            'reminder_minutes' => '[20]',
+            'reminder_method'  => 'popup',
         ];
 
-        $data = $this->client->Events->Event->updateEvent($params);
-
-        $this->assertArrayHasKey('id', $data);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testDeleteDraft(): void
-    {
-        $params =
-        [
-            'id' => '47137b6urkg0cf738o7is2aa3',
+        $metadata = [
+            'title'        => 'Birthday Party',
+            'location'     => 'Roller Rink',
+            'calendar_id'  => '{calendar_id}',
+            'status'       => 'confirmed',
+            'busy'         => true,
+            'read_only'    => false,
+            'participants' => [
+                [
+                    'name'  => 'Thomas Edison',
+                    'email' => 'tom@brightideas.com',
+                ],
+            ],
+            'description' => 'Lets Party!!!',
+            'when'        => [
+                'start_time' => '1615330800',
+                'end_time'   => '1615334400',
+            ],
+            'metadata' => [
+                'number_of_guests'  => '55',
+                'event_type'        => 'birthday',
+                'internal_event_id' => 'b55469dk',
+            ],
         ];
 
-        try
-        {
-            $back = true;
-            $this->client->Events->Event->deleteEvent($params);
-        }
-        catch (Exception $e)
-        {
-            $back = false;
-        }
+        $zoom = [
+            'title'        => 'Birthday Party',
+            'location'     => 'Roller Rink',
+            'calendar_id'  => 'egtdopqam5jxky7ifrkwcra55',
+            'busy'         => true,
+            'read_only'    => false,
+            'conferencing' => [
+                'provider'   => 'Zoom Meeting',
+                'autocreate' => [
+                    'settings' => [
+                        'password' => '6789011',
+                        'settings' => [
+                            'mute_upon_entry' => true,
+                        ],
+                    ],
+                ],
+            ],
+            'participants' => [
+                [
+                    'name'  => 'Katherine Johnson',
+                    'email' => 'kat@spacetech.com',
+                ],
+            ],
+            'description' => 'Lets celebrate',
+            'when'        => [
+                'start_time' => '1627499520',
+                'end_time'   => '1630245600',
+            ],
+        ];
 
-        $this->assertTrue($back);
+        $notification = [
+            'title'        => 'Lets celebrate',
+            'location'     => 'Roller Rink',
+            'calendar_id'  => 'egtdopqam5jxky7ifrkwcra55',
+            'busy'         => true,
+            'read_only'    => false,
+            'conferencing' => [
+                'provider'   => 'Zoom Meeting',
+                'autocreate' => [
+                    'settings' => ['settings' => []],
+                ],
+            ],
+            'participants' => [
+                [
+                    'name'         => 'Katherine Johnson',
+                    'email'        => 'kat@spacetech.com',
+                    'phone_number' => '+12223456789',
+                ],
+            ],
+            'when' => [
+                'start_time' => '1627499520',
+                'end_time'   => '1630245600',
+            ],
+            'notifications' => [
+                [
+                    'type'                  => 'email',
+                    'minutes_before_events' => '600',
+                    'subject'               => 'Test Event Notification',
+                    'body'                  => 'Reminding you about our meeting.',
+                ],
+                [
+                    'type'                  => 'sms',
+                    'minutes_before_events' => '60',
+                    'message'               => 'Test Event Notfication',
+                ],
+            ],
+        ];
+
+        return [
+            'zoom'         => [$zoom],
+            'event'        => [$event],
+            'metadata'     => [$metadata],
+            'conference'   => [$conference],
+            'notification' => [$notification],
+        ];
     }
 
     // ------------------------------------------------------------------------------

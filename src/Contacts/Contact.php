@@ -155,7 +155,7 @@ class Contact
      *
      * @return array
      */
-    public function deleteContact(mixed $contactId): array
+    public function deleteAContact(mixed $contactId): array
     {
         $contactId = Helper::fooToArray($contactId);
 
@@ -213,7 +213,10 @@ class Contact
             };
         }
 
-        return $this->options->getAsync()->pool($queues, true);
+        $picId = Helper::generateArray($downloadArr, 'id');
+        $pools = $this->options->getAsync()->pool($queues, true);
+
+        return Helper::concatPoolInfos($picId, $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -225,7 +228,7 @@ class Contact
      *
      * @return array
      */
-    public function getContactGroups(): array
+    public function returnContactGroups(): array
     {
         return $this->options
             ->getSync()

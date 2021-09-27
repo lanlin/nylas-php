@@ -154,7 +154,7 @@ trait AbsBase
     /**
      * set header params
      *
-     * @see https://docs.nylas.com/docs/using-access-tokens
+     * @see https://developer.nylas.com/docs/the-basics/authentication/authorizing-api-requests/
      *
      * @param array $headers
      *

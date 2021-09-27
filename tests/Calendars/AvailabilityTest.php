@@ -49,36 +49,62 @@ class AvailabilityTest extends AbsCase
                     'start'  => 1605803400,
                     'status' => 'free',
                 ],
-                [
-                    'end'    => 1605805800,
-                    'object' => 'time_slot',
-                    'start'  => 1605804000,
-                    'status' => 'free',
-                ],
-                [
-                    'end'    => 1605806400,
-                    'object' => 'time_slot',
-                    'start'  => 1605804600,
-                    'status' => 'free',
-                ],
-                [
-                    'end'    => 1605807000,
-                    'object' => 'time_slot',
-                    'start'  => 1605805200,
-                    'status' => 'free',
-                ],
-                [
-                    'end'    => 1605816000,
-                    'object' => 'time_slot',
-                    'start'  => 1605814200,
-                    'status' => 'free',
-                ],
             ],
         ]);
 
         $data = $this->client->Calendars->Availability->availabilityForASingleMeeting($params);
 
         $this->assertArrayHasKey('time_slots', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testAvailabilityForMultipleMeetings(): void
+    {
+        $params = $this->getMultipleParams();
+
+        $this->mockResponse(
+        [
+            [
+                [
+                    "emails"     => [
+                        "kat@spacetech.com",
+                        "dorothy@spacetech.com"
+                    ],
+                    "end_time"   => 1605794400,
+                    "start_time" => 1605792600
+                ],
+                [
+                    "emails"     => [
+                        "dorothy@spacetech.com"
+                    ],
+                    "end_time"   => 1605796200,
+                    "start_time" => 1605794400
+                ]
+            ],
+            [
+                [
+                    "emails"     => [
+                        "dorothy@spacetech.com"
+                    ],
+                    "end_time"   => 1605801600,
+                    "start_time" => 1605799800
+                ],
+                [
+                    "emails"     => [
+                        "kat@spacetech.com",
+                        "dorothy@spacetech.com"
+                    ],
+                    "end_time"   => 1605803400,
+                    "start_time" => 1605801600
+                ]
+            ],
+        ]);
+
+
+        $data = $this->client->Calendars->Availability->availabilityForMultipleMeetings($params);
+
+        $this->assertTrue(2 === \count($data));
     }
 
     // ------------------------------------------------------------------------------
@@ -91,7 +117,7 @@ class AvailabilityTest extends AbsCase
             'end_time'         => 1605826800,
             'interval_minutes' => 10,
             'emails'           => ['swag@nylas.com'],
-            'free_busy' => [
+            'free_busy'        => [
                 [
                     'email'      => 'lamarr@player.com',
                     'object'     => 'free/busy',
@@ -107,8 +133,45 @@ class AvailabilityTest extends AbsCase
             ],
             'open_hours' => [
                 [
+                    'days'        => ['0'],
+                    'emails'      => ['swag@nylas.com'],
+                    'timezone'    => 'America/Chicago',
+                    'start'       => '10:00',
+                    'end'         => '14:00',
+                    'object_type' => 'open_hours',
+                ],
+            ],
+        ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    private function getMultipleParams(): array
+    {
+        return [
+            'duration_minutes' => 30,
+            'start_time'       => 1605794400,
+            'end_time'         => 1605826800,
+            'interval_minutes' => 10,
+            'emails'           => [['swag@nylas.com']],
+            'free_busy' => [
+                [
+                    'email'      => 'swag@nylas.com',
+                    'object'     => 'free_busy',
+                    'time_slots' => [
+                        [
+                            'start_time' => 1605819600,
+                            'end_time'   => 1605821400,
+                            'object'     => 'time_slot',
+                            'status'     => 'busy',
+                        ],
+                    ],
+                ],
+            ],
+            'open_hours' => [
+                [
+                    'emails' => [['swag@nylas.com']],
                     'days' => ['0'],
-                    'emails' => ['swag@nylas.com'],
                     'timezone'    => 'America/Chicago',
                     'start'       => '10:00',
                     'end'         => '14:00',

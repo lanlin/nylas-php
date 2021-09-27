@@ -2,7 +2,6 @@
 
 namespace Tests\Contacts;
 
-use Exception;
 use Tests\AbsCase;
 
 /**
@@ -19,145 +18,253 @@ class ContactTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetContactsList(): void
+    public function testReturnAllContacts(): void
     {
-        $data = $this->client->Contacts->Contact->getContactsList();
+        $this->mockResponse([
+            [
+                'account_id'   => '5tgncdmczat02216u7d6uypyi',
+                'birthday'     => null,
+                'company_name' => null,
+                'emails'       => [
+                    [
+                        'email' => 'tom@brightideas.com',
+                        'type'  => 'other',
+                    ],
+                ],
+                'given_name'         => 'Thomas',
+                'groups'             => [],
+                'id'                 => '7e1b9vqhzyjn05y22sdoxl9ij',
+                'im_addresses'       => [],
+                'job_title'          => null,
+                'manager_name'       => null,
+                'middle_name'        => null,
+                'nickname'           => null,
+                'notes'              => null,
+                'object'             => 'contact',
+                'office_location'    => null,
+                'phone_numbers'      => [],
+                'physical_addresses' => [],
+                'picture_url'        => 'https://api.nylas.com/contacts/7vqhzyjn05y22sdoxl9ij/picture',
+                'source'             => 'address_book',
+                'suffix'             => null,
+                'surname'            => 'Edison',
+                'web_pages'          => [],
+            ],
+        ]);
 
-        $this->assertTrue(\count($data) > 0);
+        $data = $this->client->Contacts->Contact->returnAllContacts();
+
+        $this->assertArrayHasKey('id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetContact(): void
+    public function testCreateAContact(): void
     {
-        $id = 'p8yaokbz6oh8bd45jcs1vt74';
+        $params = $this->getContactBase();
 
-        $data = $this->client->Contacts->Contact->getContact($id);
+        $this->mockResponse($this->getContactData());
+
+        $data = $this->client->Contacts->Contact->createAContact($params);
+
+        $this->assertArrayHasKey('groups', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testReturnAContact(): void
+    {
+        $id = 'z3z3z3z3z3z3z3z3z3z3z3';
+
+        $this->mockResponse($this->getContactData());
+
+        $data = $this->client->Contacts->Contact->returnAContact($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testAddContact(): void
+    public function testUpdateAContact(): void
     {
-        $params = $this->getContactInfo();
+        $id = 'z3z3z3z3z3z3z3z3z3z3z3';
 
-        $data = $this->client->Contacts->Contact->addContact($params);
+        $params = $this->getContactBase();
+
+        $this->mockResponse($this->getContactData());
+
+        $data = $this->client->Contacts->Contact->updateAContact($id, $params);
 
         $this->assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateContact(): void
+    public function testDeleteAContact(): void
     {
-        $params =
-        [
-            'id'           => 'ojuzyfudlwkrwg476ip9sfw4',
-            'company_name' => 'testing',
-            'given_name'   => 'Gege',
-            'surname'      => 'Chou',
-        ];
+        $id = 'z3z3z3z3z3z3z3z3z3z3z3';
 
-        $data = $this->client->Contacts->Contact->updateContact($params);
+        $this->mockResponse([]);
 
-        $this->assertArrayHasKey('id', $data);
+        $data = $this->client->Contacts->Contact->deleteAContact($id);
+
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteContact(): void
+    public function testReturnsAContactsPicture(): void
     {
-        $params =
-        [
-            'company_name' => null,
-            'given_name'   => 'Bown',
-            'surname'      => 'Chou',
-        ];
-
-        $data = $this->client->Contacts->Contact->addContact($params);
-
-        try
-        {
-            $back = true;
-            $this->client->Contacts->Contact->deleteContact($data['id']);
-        }
-        catch (Exception $e)
-        {
-            $back = false;
-        }
-
-        $this->assertTrue($back);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testGetContactGroups(): void
-    {
-        $data = $this->client->Contacts->Contact->getContactGroups();
-
-        $this->assertTrue(\count($data) > 0);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testGetContactPicture(): void
-    {
-        $params =
-        [
+        $params = [
             'id'   => 'ojuzyfudlwkrwg476ip9sfw4',
             'path' => __DIR__.'/temp',
         ];
 
-        $data = $this->client->Contacts->Contact->getContactPicture($params);
+        $this->mockResponse([]);
 
-        $this->assertTrue(\count($data) > 0);
+        $data = $this->client->Contacts->Contact->returnsAContactsPicture($params);
+
+        $this->assertArrayHasKey($params['id'], $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    /**
-     * @return array
-     */
-    private function getContactInfo(): array
+    public function testReturnContactGroups(): void
+    {
+        $this->mockResponse([
+            [
+                'id'         => 'a0a0a0a0a0a0a0a0a0a0a0',
+                'object'     => 'contact_group',
+                'account_id' => 'x2x2x2x2x2x2x2x2x2x2x2',
+                'name'       => 'Work',
+                'path'       => 'Contacts/Work',
+            ],
+        ]);
+
+        $data = $this->client->Contacts->Contact->returnContactGroups();
+
+        $this->assertArrayHasKey('id', $data[0]);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    private function getContactBase(): array
     {
         return [
-            'given_name'     => 'My',
-            'middle_name'    => 'Nylas',
-            'surname'        => 'Friend',
-            'birthday'       => '2014-06-01',
-            'suffix'         => 'API',
-            'nickname'       => 'Nylas',
-            'company_name'   => 'Nylas',
-            'job_title'      => 'Communications Platform',
-            'manager_name'   => 'Communications',
-            'office_location'=> 'SF',
-            'notes'          => 'Check out the Nylas Email, Calendar, and Contacts APIs',
-            'emails'         => [[
-                'type' => 'personal',
-                'email'=> 'swagg@nylas.com',
-            ]],
-            'physical_addresses'=> [[
-                'type'          => 'work',
-                'street_address'=> '944 Market St, 8th Floor',
-                'city'          => 'San Francisco',
-                'postal_code'   => '94102',
-                'state'         => 'CA',
-                'country'       => 'USA',
-            ]],
-            'phone_numbers'=> [[
-                'type'  => 'home',
-                'number'=> '123-123-1234',
-            ]],
-            'web_pages'=> [[
-                'type'=> 'homepage',
-                'url' => 'https=>//nylas.com',
-            ]],
-            'im_addresses'=> [[
-                'type'      => 'gtalk',
-                'im_address'=> 'Nylas',
-            ]],
+            'birthday'     => '1960-12-31',
+            'company_name' => 'Nylas',
+            'emails'       => [
+                [
+                    'email' => 'john@doe.com',
+                    'type'  => 'work',
+                ],
+            ],
+            'given_name'   => 'John',
+            'im_addresses' => [
+                [
+                    'type'       => 'aim',
+                    'im_address' => 'myaimaddress',
+                ],
+            ],
+            'job_title'       => 'Software Engineer',
+            'manager_name'    => 'Bill the manager',
+            'middle_name'     => 'Jacob',
+            'nickname'        => 'JD',
+            'notes'           => 'Loves ramen',
+            'office_location' => '123 Main Street',
+            'phone_numbers'   => [
+                [
+                    'number' => '1 800 123 4567',
+                    'type'   => 'business',
+                ],
+            ],
+            'physical_addresses' => [
+                [
+                    'format'         => 'string',
+                    'type'           => 'work',
+                    'street_address' => 'string',
+                    'city'           => 'string',
+                    'postal_code'    => 'string',
+                    'state'          => 'string',
+                    'country'        => 'string',
+                ],
+            ],
+            'suffix'    => 'string',
+            'surname'   => 'string',
+            'web_pages' => [
+                [
+                    'type' => 'profile',
+                    'url'  => 'string',
+                ],
+            ],
+            'group' => 'string',
+        ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    private function getContactData(): array
+    {
+        return [
+            'account_id'   => 'x2x2x2x2x2x2x2x2x2x2x2',
+            'birthday'     => '1960-12-31',
+            'company_name' => 'Nylas',
+            'emails'       => [
+                [
+                    'email' => 'john@doe.com',
+                    'type'  => 'work',
+                ],
+            ],
+            'given_name'   => 'John',
+            'id'           => 'z3z3z3z3z3z3z3z3z3z3z3',
+            'im_addresses' => [
+                [
+                    'type'       => 'aim',
+                    'im_address' => 'myaimaddress',
+                ],
+            ],
+            'job_title'       => 'Software Engineer',
+            'manager_name'    => 'Bill the manager',
+            'middle_name'     => 'Jacob',
+            'nickname'        => 'JD',
+            'notes'           => 'Loves ramen',
+            'object'          => 'contact',
+            'office_location' => '123 Main Street',
+            'phone_numbers'   => [
+                [
+                    'number' => '1 800 123 4567',
+                    'type'   => 'business',
+                ],
+            ],
+            'physical_addresses' => [
+                [
+                    'format'         => 'string',
+                    'type'           => 'work',
+                    'street_address' => 'string',
+                    'city'           => 'string',
+                    'postal_code'    => 'string',
+                    'state'          => 'string',
+                    'country'        => 'string',
+                ],
+            ],
+            'picture_url' => 'https://api.nylas.com/contacts/427abc427abc427abc/picture',
+            'suffix'      => 'string',
+            'surname'     => 'string',
+            'web_pages'   => [
+                [
+                    'type' => 'profile',
+                    'url'  => 'string',
+                ],
+            ],
+            'groups' => [
+                [
+                    'id'         => 'string',
+                    'object'     => 'contact_group',
+                    'account_id' => 'string',
+                    'name'       => 'string',
+                    'path'       => 'string',
+                ],
+            ],
         ];
     }
 

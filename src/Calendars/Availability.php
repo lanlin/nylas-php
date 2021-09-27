@@ -50,7 +50,7 @@ class Availability
      */
     public function availabilityForASingleMeeting(array $params = []): array
     {
-        V::doValidate($this->getMeetingRules(), $params);
+        V::doValidate($this->getMeetingRules(true), $params);
 
         return $this->options
             ->getSync()
@@ -74,7 +74,7 @@ class Availability
      */
     public function availabilityForMultipleMeetings(array $params = []): array
     {
-        V::doValidate($this->getMeetingRules(), $params);
+        V::doValidate($this->getMeetingRules(false), $params);
 
         return $this->options
             ->getSync()
@@ -88,8 +88,14 @@ class Availability
     /**
      * @return \Nylas\Utilities\Validator
      */
-    private function getMeetingRules(): V
+    private function getMeetingRules(bool $single): V
     {
+        $emailsRules = match ($single)
+        {
+            true  => V::simpleArray(V::email()),
+            false => V::simpleArray(V::simpleArray(V::email())),
+        };
+
         $timeSlot = V::keySet(
             V::key('object', V::stringType()->notEmpty()),
             V::key('status', V::stringType()->notEmpty()),
@@ -98,28 +104,28 @@ class Availability
         );
 
         $freeBusy = V::keySet(
-            V::key('object', V::stringType()->notEmpty()),
             V::key('email', V::email()),
-            V::key('time_slot', V::simpleArray($timeSlot)),
+            V::key('object', V::stringType()->notEmpty()),
+            V::key('time_slots', V::simpleArray($timeSlot)),
         );
 
         $openHours = V::keySet(
-            V::key('end', V::anyOf(V::equals(0), V::time('H:i'))),
-            V::key('start', V::anyOf(V::equals(0), V::time('H:i'))),
+            V::key('end', V::time('H:i')),
+            V::key('start', V::time('H:i')),
             V::key('days', V::simpleArray(V::in(['0', '1', '2', '3', '4', '5', '6']))),
-            V::key('emails', V::simpleArray(V::email())),
+            V::key('emails', $emailsRules),
             V::key('timezone', V::in(DateTimeZone::listIdentifiers())),
             V::key('object_type', V::equals('open_hours')),
         );
 
         return V::keySet(
-            V::key('emails', V::simpleArray(V::email())),
+            V::key('emails', $emailsRules),
             V::key('end_time', V::timestampType()),
             V::key('start_time', V::timestampType()),
             V::key('free_busy', V::simpleArray($freeBusy)),
-            V::key('open_hours', V::simpleArray($openHours), false),
             V::key('interval_minutes', V::intType()),
             V::key('duration_minutes', V::intType()),
+            V::keyOptional('open_hours', V::simpleArray($openHours)),
         );
     }
 

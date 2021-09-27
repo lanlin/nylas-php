@@ -207,10 +207,14 @@ class Calendar
     public function calendarFreeOrBusy(array $params = []): array
     {
         V::doValidate(V::keySet(
-            V::keyOptional('end_time', V::timestampType()),
-            V::keyOptional('start_time', V::timestampType()),
-            V::keyOptional('emails', V::simpleArray(V::email()))
+            V::key('end_time', V::timestampType()),
+            V::key('start_time', V::timestampType()),
+            V::key('emails', V::simpleArray(V::email()))
         ), $params);
+
+        // @todo the nylas docs require to pass Unix timestamp as a string, ball shit!
+        $params['end_time']   = (string) $params['end_time'];
+        $params['start_time'] = (string) $params['start_time'];
 
         return $this->options
             ->getSync()

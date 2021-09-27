@@ -219,7 +219,7 @@ class Draft
         return V::simpleArray(
             V::keySet(
                 V::key('email', V::email()),
-                V::key('name', V::stringType(), false)
+                V::key('name', V::stringType()->notEmpty())
             )
         );
     }
