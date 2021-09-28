@@ -47,25 +47,42 @@ class EventTest extends AbsCase
 
     public function testReturnAnEvent(): void
     {
-        $data = $this->client->Events->Event->returnAnEvent();
+        $id = '{event_id}';
+
+        $this->mockResponse($this->getEventData());
+
+        $data = $this->client->Events->Event->returnAnEvent($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateAnEvent(): void
+    /**
+     * @dataProvider getProvidData
+     *
+     * @param array $params
+     */
+    public function testUpdateAnEvent(array $params): void
     {
-        $data = $this->client->Events->Event->updateAnEvent();
+        $id = '{event_id}';
 
-        $this->assertArrayHasKey($id, $data);
+        $this->mockResponse($this->getEventData());
+
+        $data = $this->client->Events->Event->updateAnEvent($id, $params);
+
+        $this->assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
     public function testDeleteAnEvent(): void
     {
-        $data = $this->client->Events->Event->deleteAnEvent();
+        $id = '{event_id}';
+
+        $this->mockResponse([]);
+
+        $data = $this->client->Events->Event->deleteAnEvent($id);
 
         $this->assertArrayHasKey($id, $data);
     }
@@ -74,9 +91,183 @@ class EventTest extends AbsCase
 
     public function testSendRSVP(): void
     {
-        $data = $this->client->Events->Event->sendRSVP();
+        $params = [
+            'event_id'   => 'string',
+            'status'     => 'yes',
+            'account_id' => 'string',
+        ];
 
-        $this->assertArrayHasKey($id, $data);
+        $this->mockResponse($this->getEventData());
+
+        $data = $this->client->Events->Event->sendRSVP($params);
+
+        $this->assertArrayHasKey('account_id', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function getProvidData(): array
+    {
+        $event = [
+            'title'        => 'Birthday Party',
+            'calendar_id'  => '947kpa7ih22bfkeujpkfqn5bu',
+            'busy'         => true,
+            'read_only'    => true,
+            'participants' => [
+                [
+                    'name'   => 'Aristotle',
+                    'email'  => 'aristotle@nylas.com',
+                    'status' => 'yes',
+                ],
+            ],
+            'description' => 'Come ready to skate',
+            'when'        => [
+                'time'     => 1408875644,
+                'timezone' => 'America/New_York',
+            ],
+            'location'   => 'Roller Rink',
+            'recurrence' => [
+                'rrule' => [
+                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
+                ],
+                'timezone' => 'America/New_York',
+            ],
+        ];
+
+        $conference = [
+            'title'        => 'Birthday Party',
+            'calendar_id'  => '947kpa7ih22bfkeujpkfqn5bu',
+            'busy'         => true,
+            'read_only'    => true,
+            'participants' => [
+                [
+                    'name'   => 'Dorothy Vaughan',
+                    'email'  => 'dorothy@spacetech.com',
+                    'status' => 'noreply',
+                ],
+            ],
+            'description' => 'Come ready to skate',
+            'when'        => [
+                'time'     => 1408875644,
+                'timezone' => 'America/New_York',
+            ],
+            'location'   => 'Roller Rink',
+            'recurrence' => [
+                'rrule' => [
+                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
+                ],
+                'timezone' => 'America/New_York',
+            ],
+            'conferencing' => [
+                'provider' => 'WebEx',
+                'details'  => [
+                    'password' => 'string',
+                    'pin'      => 'string',
+                    'url'      => 'string',
+                ],
+            ],
+            'reminder_minutes' => '[20]',
+            'reminder_method'  => 'popup',
+        ];
+
+        $metadata = [
+            'title'        => 'Birthday Party',
+            'location'     => 'Roller Rink',
+            'calendar_id'  => '{calendar_id}',
+            'busy'         => true,
+            'read_only'    => false,
+            'participants' => [
+                [
+                    'name'  => 'Thomas Edison',
+                    'email' => 'tom@brightideas.com',
+                ],
+            ],
+            'description' => 'Lets Party!!!',
+            'when'        => [
+                'start_time' => 1615330800,
+                'end_time'   => 1615334400,
+            ],
+            'metadata' => [
+                'number_of_guests'  => '55',
+                'event_type'        => 'birthday',
+                'internal_event_id' => 'b55469dk',
+            ],
+        ];
+
+        $zoom = [
+            'title'        => 'Birthday Party',
+            'location'     => 'Roller Rink',
+            'calendar_id'  => 'egtdopqam5jxky7ifrkwcra55',
+            'busy'         => true,
+            'read_only'    => false,
+            'conferencing' => [
+                'provider'   => 'Zoom Meeting',
+                'autocreate' => [
+                    'settings' => [
+                        'password' => '6789011',
+                        'settings' => [
+                            'mute_upon_entry' => true,
+                        ],
+                    ],
+                ],
+            ],
+            'participants' => [
+                [
+                    'name'  => 'Katherine Johnson',
+                    'email' => 'kat@spacetech.com',
+                ],
+            ],
+            'description' => 'Lets celebrate',
+            'when'        => [
+                'start_time' => 1627499520,
+                'end_time'   => 1630245600,
+            ],
+        ];
+
+        $notification = [
+            'title'        => 'Lets celebrate',
+            'location'     => 'Roller Rink',
+            'calendar_id'  => 'egtdopqam5jxky7ifrkwcra55',
+            'busy'         => true,
+            'read_only'    => false,
+            'conferencing' => [
+                'provider'   => 'Zoom Meeting',
+                'autocreate' => [
+                    'settings' => ['settings' => []],
+                ],
+            ],
+            'participants' => [
+                [
+                    'name'  => 'Katherine Johnson',
+                    'email' => 'kat@spacetech.com',
+                ],
+            ],
+            'when' => [
+                'start_time' => 1627499520,
+                'end_time'   => 1630245600,
+            ],
+            'notifications' => [
+                [
+                    'type'                  => 'email',
+                    'minutes_before_events' => '600',
+                    'subject'               => 'Test Event Notification',
+                    'body'                  => 'Reminding you about our meeting.',
+                ],
+                [
+                    'type'                  => 'sms',
+                    'minutes_before_events' => '60',
+                    'message'               => 'Test Event Notfication',
+                ],
+            ],
+        ];
+
+        return [
+            'zoom'         => [$zoom],
+            'event'        => [$event],
+            'metadata'     => [$metadata],
+            'conference'   => [$conference],
+            'notification' => [$notification],
+        ];
     }
 
     // ------------------------------------------------------------------------------
@@ -129,175 +320,6 @@ class EventTest extends AbsCase
             'metadata' => [
                 'your-key' => 'string',
             ],
-        ];
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function getProvidData(): array
-    {
-        $event = [
-            'title'        => 'Birthday Party',
-            'calendar_id'  => '947kpa7ih22bfkeujpkfqn5bu',
-            'status'       => 'confirmed',
-            'busy'         => true,
-            'read_only'    => true,
-            'participants' => [
-                [
-                    'name'   => 'Aristotle',
-                    'email'  => 'aristotle@nylas.com',
-                    'status' => 'yes',
-                ],
-            ],
-            'description' => 'Come ready to skate',
-            'when'        => [
-                'object' => 'time',
-                'time'   => 1408875644,
-            ],
-            'location'   => 'Roller Rink',
-            'recurrence' => [
-                'rrule' => [
-                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
-                ],
-                'timezone' => 'America/New_York',
-            ],
-        ];
-
-        $conference = [
-            'title'        => 'Birthday Party',
-            'calendar_id'  => '947kpa7ih22bfkeujpkfqn5bu',
-            'busy'         => true,
-            'read_only'    => true,
-            'participants' => [
-                [
-                    'name'   => 'Dorothy Vaughan',
-                    'email'  => 'dorothy@spacetech.com',
-                    'status' => 'noreply',
-                ],
-            ],
-            'description' => 'Come ready to skate',
-            'when'        => [
-                'time'     => 1408875644,
-                'timezone' => 'America/New_York',
-            ],
-            'location'   => 'Roller Rink',
-            'recurrence' => [
-                'rrule' => [
-                    'RRULE:FREQ=WEEKLY;BYDAY=MO',
-                ],
-                'timezone' => 'America/New_York',
-            ],
-            'conferencing' => [
-                'provider' => 'WebEx',
-                'details'  => [
-                    'password' => 'string',
-                    'pin'      => 'string',
-                    'url'      => 'string',
-                ],
-            ],
-            'reminder_minutes' => '[20]',
-            'reminder_method'  => 'popup',
-        ];
-
-        $metadata = [
-            'title'        => 'Birthday Party',
-            'location'     => 'Roller Rink',
-            'calendar_id'  => '{calendar_id}',
-            'status'       => 'confirmed',
-            'busy'         => true,
-            'read_only'    => false,
-            'participants' => [
-                [
-                    'name'  => 'Thomas Edison',
-                    'email' => 'tom@brightideas.com',
-                ],
-            ],
-            'description' => 'Lets Party!!!',
-            'when'        => [
-                'start_time' => '1615330800',
-                'end_time'   => '1615334400',
-            ],
-            'metadata' => [
-                'number_of_guests'  => '55',
-                'event_type'        => 'birthday',
-                'internal_event_id' => 'b55469dk',
-            ],
-        ];
-
-        $zoom = [
-            'title'        => 'Birthday Party',
-            'location'     => 'Roller Rink',
-            'calendar_id'  => 'egtdopqam5jxky7ifrkwcra55',
-            'busy'         => true,
-            'read_only'    => false,
-            'conferencing' => [
-                'provider'   => 'Zoom Meeting',
-                'autocreate' => [
-                    'settings' => [
-                        'password' => '6789011',
-                        'settings' => [
-                            'mute_upon_entry' => true,
-                        ],
-                    ],
-                ],
-            ],
-            'participants' => [
-                [
-                    'name'  => 'Katherine Johnson',
-                    'email' => 'kat@spacetech.com',
-                ],
-            ],
-            'description' => 'Lets celebrate',
-            'when'        => [
-                'start_time' => '1627499520',
-                'end_time'   => '1630245600',
-            ],
-        ];
-
-        $notification = [
-            'title'        => 'Lets celebrate',
-            'location'     => 'Roller Rink',
-            'calendar_id'  => 'egtdopqam5jxky7ifrkwcra55',
-            'busy'         => true,
-            'read_only'    => false,
-            'conferencing' => [
-                'provider'   => 'Zoom Meeting',
-                'autocreate' => [
-                    'settings' => ['settings' => []],
-                ],
-            ],
-            'participants' => [
-                [
-                    'name'         => 'Katherine Johnson',
-                    'email'        => 'kat@spacetech.com',
-                    'phone_number' => '+12223456789',
-                ],
-            ],
-            'when' => [
-                'start_time' => '1627499520',
-                'end_time'   => '1630245600',
-            ],
-            'notifications' => [
-                [
-                    'type'                  => 'email',
-                    'minutes_before_events' => '600',
-                    'subject'               => 'Test Event Notification',
-                    'body'                  => 'Reminding you about our meeting.',
-                ],
-                [
-                    'type'                  => 'sms',
-                    'minutes_before_events' => '60',
-                    'message'               => 'Test Event Notfication',
-                ],
-            ],
-        ];
-
-        return [
-            'zoom'         => [$zoom],
-            'event'        => [$event],
-            'metadata'     => [$metadata],
-            'conference'   => [$conference],
-            'notification' => [$notification],
         ];
     }
 

@@ -37,7 +37,7 @@ class ApplicationTest extends AbsCase
 
         $data = $this->client->Management->Application->returnApplicationIPAddresses();
 
-        $this->assertTrue(!empty($data['updated_at']));
+        $this->assertArrayHasKey('updated_at', $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ class ApplicationTest extends AbsCase
 
         $data = $this->client->Management->Application->returnApplicationDetails();
 
-        $this->assertTrue(!empty($data['application_name']));
+        $this->assertArrayHasKey('application', $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ class ApplicationTest extends AbsCase
 
         $data = $this->client->Management->Application->updateApplicationDetails($param);
 
-        $this->assertTrue(!empty($data['application_name']));
+        $this->assertArrayHasKey('application_name', $data);
     }
 
     // ------------------------------------------------------------------------------

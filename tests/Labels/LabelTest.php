@@ -2,7 +2,6 @@
 
 namespace Tests\Labels;
 
-use Exception;
 use Tests\AbsCase;
 
 /**
@@ -19,71 +18,80 @@ class LabelTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetLabelList(): void
+    public function testReturnAllLabels(): void
     {
-        $data = $this->client->Labels->Label->getLabelsList();
+        $this->mockResponse([$this->getLabelData()]);
 
-        $this->assertIsArray($data);
+        $data = $this->client->Labels->Label->returnAllLabels();
+
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetLabel(): void
+    public function testCreateALabel(): void
     {
-        $id = 'aenlhdgl3o55sc37a6fxjgjmo';
+        $name = 'My Renamed Label';
 
-        $data = $this->client->Labels->Label->getLabel($id);
+        $this->mockResponse($this->getLabelData());
+
+        $data = $this->client->Labels->Label->createALabel($name);
+
+        $this->assertArrayHasKey('account_id', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testReturnALabel(): void
+    {
+        $id = '12r72ur7rojisrmjp5xzau8xs';
+
+        $this->mockResponse([$this->getLabelData()]);
+
+        $data = $this->client->Labels->Label->returnALabel($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testAddLabel(): void
+    public function testUpdateALabel(): void
     {
-        $name = 'test_label'.\uniqid();
+        $id   = '12r72ur7rojisrmjp5xzau8xs';
+        $name = 'My Renamed Label';
 
-        $data = $this->client->Labels->Label->addLabel($name);
+        $this->mockResponse($this->getLabelData());
 
-        $this->assertArrayHasKey('id', $data);
+        $data = $this->client->Labels->Label->updateALabel($id, $name);
+
+        $this->assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateLabel(): void
+    public function testDeleteALabel(): void
     {
-        $params =
-        [
-            'id'           => 'aenlhdgl3o55sc37a6fxjgjmo',
-            'display_name' => 'woo'.\uniqid(),
+        $id = '12r72ur7rojisrmjp5xzau8xs';
+
+        $this->mockResponse([]);
+
+        $data = $this->client->Labels->Label->deleteALabel($id);
+
+        $this->assertArrayHasKey($id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    private function getLabelData(): array
+    {
+        return [
+
+            'account_id'   => 'aaz875kwuvxik6ku7pwkqp3ah',
+            'display_name' => 'All Mail',
+            'id'           => '12r72ur7rojisrmjp5xzau8xs',
+            'name'         => 'all',
+            'object'       => 'label',
         ];
-
-        $data = $this->client->Labels->Label->updateLabel($params);
-
-        $this->assertArrayHasKey('id', $data);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testDeleteLabel(): void
-    {
-        $name = 'test_label'.\uniqid();
-        $data = $this->client->Labels->Label->addLabel($name);
-
-        $params['id']           = $data['id'];
-        $params['display_name'] = 'wooTTT'.\uniqid();
-
-        try
-        {
-            $back = true;
-            $this->client->Labels->Label->deleteLabel($params);
-        }
-        catch (Exception $e)
-        {
-            $back = false;
-        }
-
-        $this->assertTrue($back);
     }
 
     // ------------------------------------------------------------------------------

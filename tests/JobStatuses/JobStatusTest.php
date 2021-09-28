@@ -18,24 +18,64 @@ class JobStatusTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetJobStatusList(): void
+    public function testReturnAllJobStatuses(): void
     {
-        $data = $this->client->JobStatuses->JobStatus->getJobStatusesList();
+        $this->mockResponse([
+            [
+                'account_id'    => 'eof2wrhqkl7kdwhy9hylpv9o9',
+                'action'        => 'create_calendar',
+                'created_at'    => 1592374298,
+                'id'            => '8e570s302fdazx9zqwiuk9jqn',
+                'job_status_id' => '48pp6ijzrxpw9jors9ylnsxnf',
+                'object'        => 'calendar',
+                'status'        => 'successful',
+            ],
+            [
+                'account_id'    => 'eof2wrhqkl7kdwhy9hylpv9o9',
+                'action'        => 'update_calendar',
+                'created_at'    => 1592375249,
+                'id'            => '8e570s302fdazx9zqwiuk9jqn',
+                'job_status_id' => 'aqghhhldmq8eyxnn14z0tlsun',
+                'object'        => 'calendar',
+                'status'        => 'successful',
+            ],
+            [
+                'account_id'    => 'eof2wrhqkl7kdwhy9hylpv9o9',
+                'action'        => 'delete_calendar',
+                'created_at'    => 1592375759,
+                'id'            => '8e570s302fdazx9zqwiuk9jqn',
+                'job_status_id' => 'd38mgop88je0agkqrf03sw0sw',
+                'object'        => 'calendar',
+                'status'        => 'successful',
+            ],
+        ]);
 
-        $this->assertTrue(\count($data) > 0);
+        $data = $this->client->JobStatuses->JobStatus->returnAllJobStatuses();
+
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
     public function testGetJobStatus(): void
     {
-        $params = ['job_status_id' => 'csihlkp7geos1org29z02xzm8'];
+        $id = '8e570s302fdazx9zqwiuk9jqn';
 
-        $data = $this->client->JobStatuses->JobStatus->getJobStatus($params);
+        $this->mockResponse([
+            [
+                'account_id'    => 'eof2wrhqkl7kdwhy9hylpv9o9',
+                'action'        => 'create_calendar',
+                'created_at'    => 1592374298,
+                'id'            => '8e570s302fdazx9zqwiuk9jqn',
+                'job_status_id' => '48pp6ijzrxpw9jors9ylnsxnf',
+                'object'        => 'calendar',
+                'status'        => 'successful',
+            ],
+        ]);
 
-        //@NOTE: Format is [ '<job_status_id>' => [data in k => v]]
-        $this->assertArrayHasKey($params['job_status_id'], $data);
-        $this->assertArrayHasKey('job_status_id', $data[$params['job_status_id']]);
+        $data = $this->client->JobStatuses->JobStatus->returnAJobStatus($id);
+
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

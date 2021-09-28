@@ -49,8 +49,6 @@ class Folder
      */
     public function returnAllFolders(array $params = []): array
     {
-        Helper::checkProviderUnit($this->options, false);
-
         V::doValidate(V::keySet(
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
@@ -77,8 +75,6 @@ class Folder
      */
     public function createAFolder(array $params = []): array
     {
-        Helper::checkProviderUnit($this->options, false);
-
         V::doValidate(V::keySet(
             V::keyOptional('name', V::stringType()->notEmpty()),
             V::keyOptional('display_name', V::stringType()->notEmpty()),
@@ -104,8 +100,6 @@ class Folder
      */
     public function returnAFolder(mixed $folderId): array
     {
-        Helper::checkProviderUnit($this->options, false);
-
         $folderId = Helper::fooToArray($folderId);
 
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
@@ -144,8 +138,6 @@ class Folder
      */
     public function updateAFolder(string $folderId, array $params = []): array
     {
-        Helper::checkProviderUnit($this->options, false);
-
         V::doValidate(V::stringType()->notEmpty(), $folderId);
 
         V::doValidate(V::keySet(
@@ -174,8 +166,6 @@ class Folder
      */
     public function deleteAFolder(mixed $folderId): array
     {
-        Helper::checkProviderUnit($this->options, false);
-
         $folderId = Helper::fooToArray($folderId);
 
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);

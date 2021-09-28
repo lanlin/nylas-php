@@ -34,7 +34,7 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->returnAccountDetails();
 
-        $this->assertTrue(!empty($data['id']));
+        $this->assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -59,14 +59,9 @@ class AccountTest extends AbsCase
             'trial'         => false,
         ]]);
 
-        $para = [
-            'offset' => 0,
-            'limit'  => 10,
-        ];
+        $data = $this->client->Management->Account->returnAllAccounts();
 
-        $data = $this->client->Management->Account->returnAllAccounts($para);
-
-        $this->assertTrue(!empty($data[0]['id']));
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
@@ -87,7 +82,7 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->returnAnAccount($id);
 
-        $this->assertTrue(!empty($data['id']));
+        $this->assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -113,7 +108,20 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->reactiveAnAccount($id);
 
-        $this->assertTrue(!empty($data['success']));
+        $this->assertArrayHasKey('success', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testRevokeAllTokens(): void
+    {
+        $this->mockResponse(['success' => 'true']);
+
+        $id = $this->faker->uuid;
+
+        $data = $this->client->Management->Account->revokeAllTokens($id);
+
+        $this->assertArrayHasKey('success', $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -131,7 +139,7 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->returnTokenInformation($id);
 
-        $this->assertTrue(!empty($data['state']));
+        $this->assertArrayHasKey('state', $data);
     }
 
     // ------------------------------------------------------------------------------

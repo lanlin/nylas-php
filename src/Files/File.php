@@ -119,7 +119,7 @@ class File
      *
      * @return array
      */
-    public function returnsAFile(mixed $fileId): array
+    public function returnAFile(mixed $fileId): array
     {
         $fileId = Helper::fooToArray($fileId);
 

@@ -100,15 +100,13 @@ class Event
      * @see https://developer.nylas.com/docs/api/#get/events/id
      *
      * @param mixed $eventId
-     * @param array $params
      *
      * @return array
      */
-    public function returnAnEvent(mixed $eventId, array $params): array
+    public function returnAnEvent(mixed $eventId): array
     {
         $eventId = Helper::fooToArray($eventId);
 
-        V::doValidate(V::keySet(...Validation::getFilterRules()), $params);
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $eventId);
 
         $queues = [];
@@ -118,7 +116,6 @@ class Event
             $request = $this->options
                 ->getAsync()
                 ->setPath($id)
-                ->setFormParams($params)
                 ->setHeaderParams($this->options->getAuthorizationHeader());
 
             $queues[] = static function () use ($request)
@@ -169,14 +166,15 @@ class Event
      * @see https://developer.nylas.com/docs/api/#delete/events/id
      *
      * @param string $eventId
-     * @param array  $params
      * @param bool   $notifyParticipants
      *
      * @return array
      */
     public function deleteAnEvent(mixed $eventId, ?bool $notifyParticipants = null): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $eventId);
+        $eventId = Helper::fooToArray($eventId);
+
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $eventId);
 
         $queues = [];
         $query  = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
@@ -209,15 +207,10 @@ class Event
      *
      * @param array $params
      *
-     * @return mixed
+     * @return array
      */
-    public function sendRSVP(array $params)
+    public function sendRSVP(array $params): array
     {
-        if (empty($params['account_id']))
-        {
-            $params['account_id'] = $this->options->getAccountId();
-        }
-
         V::doValidate(V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
             V::key('event_id', V::stringType()->notEmpty()),
@@ -228,7 +221,7 @@ class Event
             ->getSync()
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
-            ->post(API::LIST['oneEvent']);
+            ->post(API::LIST['rsvpEvent']);
     }
 
     // ------------------------------------------------------------------------------

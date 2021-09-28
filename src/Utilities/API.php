@@ -184,9 +184,9 @@ class API
         'calendarConsecutive'  => '/calendars/availability/consecutive',
 
         // Events
-        'events'   => '/events',
-        'oneEvent' => '/events/%s',
-        'RSVPing'  => '/send-rsvp',
+        'events'    => '/events',
+        'oneEvent'  => '/events/%s',
+        'rsvpEvent' => '/send-rsvp',
 
         // Rooms
         'resource' => '/resources',

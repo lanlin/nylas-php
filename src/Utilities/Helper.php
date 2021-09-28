@@ -2,8 +2,6 @@
 
 namespace Nylas\Utilities;
 
-use Nylas\Exceptions\NylasException;
-
 /**
  * ----------------------------------------------------------------------------------
  * Nylas Utils Helper
@@ -14,43 +12,6 @@ use Nylas\Exceptions\NylasException;
  */
 class Helper
 {
-    // ------------------------------------------------------------------------------
-
-    /**
-     * check email provider unit is label
-     *
-     * @param \Nylas\Utilities\Options $options
-     *
-     * @return bool
-     */
-    public static function isLabel(Options $options): bool
-    {
-        return 'label' === $options->getAccountUnit();
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * check email provider unit type
-     *
-     * @param \Nylas\Utilities\Options $options
-     * @param bool                     $label
-     *
-     * @throws \Nylas\Exceptions\NylasException
-     */
-    public static function checkProviderUnit(Options $options, bool $label = true): void
-    {
-        $unitType = $label ? 'label' : 'folder';
-        $thisFine = $options->getAccountUnit() === $unitType;
-
-        if ($thisFine)
-        {
-            return;
-        }
-
-        throw new NylasException(null, "your organization unit not match to {$unitType}");
-    }
-
     // ------------------------------------------------------------------------------
 
     /**

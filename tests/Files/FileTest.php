@@ -18,64 +18,94 @@ class FileTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetFileList(): void
+    public function testReturnAllFiles(): void
     {
-        $data = $this->client->Files->File->getFilesList();
+        $this->mockResponse([[
+            'account_id'   => '43jf3n4es3***',
+            'content_type' => 'image/jpeg',
+            'filename'     => 'image.jpg',
+            'id'           => '9etjh6talp***',
+            'object'       => 'file',
+            'size'         => 72379,
+        ]]);
 
-        $this->assertIsArray($data);
+        $data = $this->client->Files->File->returnAllFiles();
+
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFile(): void
+    public function testUploadAFile(): void
     {
-        $id = '6i1hjmlao8s2b5oi7fsntq9va';
+        $file = [
+            'contents' => __DIR__.'/correct.png',
+            'filename' => 'test_correct.png',
+        ];
 
-        $data = $this->client->Files->File->getFileInfo($id);
+        $this->mockResponse([[
+            'account_id'   => '43jf3n4es3***',
+            'content_type' => 'image/jpeg',
+            'filename'     => 'image.jpg',
+            'id'           => '9etjh6talp***',
+            'object'       => 'file',
+            'size'         => 72379,
+        ]]);
+
+        $data = $this->client->Files->File->uploadAFile($file);
+
+        $this->assertArrayHasKey('account_id', $data[0]);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testReturnAFile(): void
+    {
+        $id = '9etjh6talp***';
+
+        $this->mockResponse([[
+            'account_id'   => '43jf3n4es3***',
+            'content_type' => 'image/jpeg',
+            'filename'     => 'image.jpg',
+            'id'           => '9etjh6talp***',
+            'object'       => 'file',
+            'size'         => 72379,
+        ]]);
+
+        $data = $this->client->Files->File->returnAFile($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUploadFile(): void
+    public function testDeleteAFile(): void
     {
-        $file[] =
-        [
-            'contents' => __DIR__.'/correct.png',
-            'filename' => 'test_correct.png',
-        ];
+        $id = '9etjh6talp***';
 
-        $file[] =
-        [
-            'contents' => __DIR__.'/clound.png',
-            'filename' => 'test_clound.png',
-        ];
+        $this->mockResponse([]);
 
-        $data = $this->client->Files->File->uploadFile($file);
+        $data = $this->client->Files->File->deleteAFile($id);
 
-        $this->assertTrue(\count($data) > 0);
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testDownloadFile(): void
+    public function testDownloadAFile(): void
     {
-        $file[] =
-        [
+        $file = [
             'id'   => '3ni3ak1mapl4v03wtr5k2puw0',
             'path' => __DIR__.'/a.png',
         ];
 
-        $file[] =
-        [
-            'id'   => 'a4xl9ru0vfitmc1dbrij43yyk',
-            'path' => __DIR__.'/b.png',
-        ];
+        $this->mockResponse([]);
 
-        $data = $this->client->Files->File->downloadFile($file);
+        $data = $this->client->Files->File->downloadAFile($file);
 
-        $this->assertTrue(\count($data) > 0);
+        \unlink($file['path']);
+
+        $this->assertArrayHasKey($file['id'], $data);
     }
 
     // ------------------------------------------------------------------------------

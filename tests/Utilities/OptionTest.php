@@ -34,12 +34,10 @@ class OptionTest extends TestCase
 
     public function testMissingRequirementOption(): void
     {
-        $optionsData =
-        [
-            'client_id' => \uniqid(),
-        ];
+        $optionsData = ['client_id' => \uniqid()];
 
         $this->expectException(NylasException::class);
+
         new Options($optionsData);
     }
 
@@ -49,16 +47,16 @@ class OptionTest extends TestCase
     {
         $optionsData =
         [
-            'debug'            => true,
-            'log_file'         => 'foo',
-            'client_id'        => \uniqid(),
-            'client_secret'    => \uniqid(),
-            'account_id'       => \uniqid(),
+            'debug'         => true,
+            'log_file'      => 'foo',
+            'client_id'     => \uniqid(),
+            'client_secret' => \uniqid(),
         ];
 
         $options = new Options($optionsData);
-        $this->assertSame($optionsData['account_id'], $options->getAccountId());
+
         $data = $options->getAllOptions();
+
         unset($data['server'], $data['access_token']);
 
         $this->assertSame($optionsData, $data);

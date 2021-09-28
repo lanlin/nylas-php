@@ -4,7 +4,6 @@ namespace Nylas\Utilities;
 
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
-use Nylas\Management\Account;
 use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\UnauthorizedException;
 
@@ -54,11 +53,6 @@ class Options
      * @var string
      */
     private string $accessToken;
-
-    /**
-     * @var array
-     */
-    private array $accountInfo;
 
     // ------------------------------------------------------------------------------
 
@@ -321,44 +315,6 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
-     * get account id
-     *
-     * @return string
-     */
-    public function getAccountId(): string
-    {
-        $account = $this->getAccount();
-
-        if (empty($account))
-        {
-            throw new UnauthorizedException();
-        }
-
-        return $account['account_id'];
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get account id
-     *
-     * @return string
-     */
-    public function getAccountUnit(): string
-    {
-        $account = $this->getAccount();
-
-        if (empty($account))
-        {
-            throw new UnauthorizedException();
-        }
-
-        return $account['organization_unit'];
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * get log file rules
      *
      * @return \Nylas\Utilities\Validator
@@ -387,23 +343,6 @@ class Options
 
             default => $this->debug,
         };
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * get account infos
-     *
-     * @return array
-     */
-    private function getAccount(): array
-    {
-        if (empty($this->accountInfo))
-        {
-            $this->accountInfo = (new Account($this))->returnAccountDetails();
-        }
-
-        return $this->accountInfo;
     }
 
     // ------------------------------------------------------------------------------

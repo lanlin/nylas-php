@@ -40,7 +40,7 @@ class Validation
             V::keyOptional('participants', self::participantsRules()),
             V::keyOptional('notifications', self::notificationRules()),
             V::keyOptional('reminder_method', V::in(['email', 'popup', 'display', 'sound'])),
-            V::keyOptional('reminder_minutes', V::regex('\[(|-1|[0-9]{1,})\]')),
+            V::keyOptional('reminder_minutes', V::regex('#\[(|-1|[0-9]{1,})\]#')),
         );
     }
 
@@ -116,19 +116,22 @@ class Validation
      */
     private static function whenRules(): V
     {
+        // https://en.wikipedia.org/wiki/ISO_8601#Calendar_dates
+        $dates = V::anyOf(V::date('Y-m'), V::date('Ymd'), V::date('Y-m-d'));
+
         return V::anyOf(
-            // time
-            V::keySet(V::keyOptional('time', V::timestampType())),
-
             // date
-            V::keySet(V::keyOptional('date', V::date('Y-m-d'))),
-
+            V::keySet(V::keyOptional('date', $dates)),
             // date span
             V::keySet(
-                V::keyOptional('end_date', V::date('Y-m-d')),
-                V::keyOptional('start_date', V::date('Y-m-d'))
+                V::keyOptional('end_date', $dates),
+                V::keyOptional('start_date', $dates)
             ),
-
+            // time
+            V::keySet(
+                V::keyOptional('time', V::timestampType()),
+                V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers()))
+            ),
             // timespan
             V::keySet(
                 V::keyOptional('end_time', V::timestampType()),
@@ -152,19 +155,19 @@ class Validation
             V::keySet(
                 V::keyOptional('type', V::equals('sms')),
                 V::keyOptional('message', V::stringType()->notEmpty()),
-                V::keyOptional('minutes_before_events', V::intType()),
+                V::keyOptional('minutes_before_events', V::regex('#\d+#'))
             ),
             V::keySet(
                 V::keyOptional('type', V::equals('email')),
                 V::keyOptional('body', V::stringType()->notEmpty()),
                 V::keyOptional('subject', V::stringType()->notEmpty()),
-                V::keyOptional('minutes_before_events', V::intType()),
+                V::keyOptional('minutes_before_events', V::regex('#\d+#'))
             ),
             V::keySet(
                 V::keyOptional('url', V::url()),
                 V::keyOptional('type', V::equals('webhook')),
                 V::keyOptional('payload', V::stringType()->notEmpty()),
-                V::keyOptional('minutes_before_events', V::intType()),
+                V::keyOptional('minutes_before_events', V::regex('#\d+#'))
             ),
         ));
     }

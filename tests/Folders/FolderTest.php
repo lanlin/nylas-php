@@ -2,7 +2,6 @@
 
 namespace Tests\Folders;
 
-use Exception;
 use Tests\AbsCase;
 
 /**
@@ -21,67 +20,79 @@ class FolderTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetFolderList(): void
+    public function testReturnAllFolders(): void
     {
-        $data = $this->client->Folders->Folder->getFoldersList();
+        $this->mockResponse([$this->getFolderData()]);
 
-        $this->assertIsArray($data);
+        $data = $this->client->Folders->Folder->returnAllFolders();
+
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetFolder(): void
+    public function testCreateAFolder(): void
     {
-        $id = 'ejom4k3o5qor5ooyh8yx7hgbw';
+        $params = ['display_name' => 'My Renamed Folder'];
 
-        $data = $this->client->Folders->Folder->getFolder($id);
+        $this->mockResponse($this->getFolderData());
+
+        $data = $this->client->Folders->Folder->createAFolder($params);
+
+        $this->assertArrayHasKey('account_id', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testReturnAFolder(): void
+    {
+        $id = 'ajs4ef7xu74vns6o5ufsu69m7';
+
+        $this->mockResponse([$this->getFolderData()]);
+
+        $data = $this->client->Folders->Folder->returnAFolder($id);
 
         $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testAddFolder(): void
+    public function testUpdateAFolder(): void
     {
-        $name = 'test_folder'.\uniqid();
+        $id     = 'ajs4ef7xu74vns6o5ufsu69m7';
+        $params = ['display_name' => 'My Renamed Folder'];
 
-        $data = $this->client->Folders->Folder->addFolder($name);
+        $this->mockResponse($this->getFolderData());
 
-        $this->assertArrayHasKey('id', $data);
+        $data = $this->client->Folders->Folder->updateAFolder($id, $params);
+
+        $this->assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateFolder(): void
+    public function testDeleteAFolder(): void
     {
-        $params =
-        [
-            'id'           => '47137b6urkg0cf738o7is2aa3',
-            'display_name' => 'woo---',
+        $id = 'ajs4ef7xu74vns6o5ufsu69m7';
+
+        $this->mockResponse([]);
+
+        $data = $this->client->Folders->Folder->deleteAFolder($id);
+
+        $this->assertArrayHasKey($id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    private function getFolderData(): array
+    {
+        return [
+            'account_id'   => '79xcak1h10r1tmm5ogavx28lb',
+            'display_name' => 'Archive',
+            'id'           => 'ajs4ef7xu74vns6o5ufsu69m7',
+            'name'         => 'archive',
+            'object'       => 'folder',
         ];
-
-        $data = $this->client->Folders->Folder->updateFolder($params);
-
-        $this->assertArrayHasKey('id', $data);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testDeleteFolder(): void
-    {
-        $id = '47137b6urkg0cf738o7is2aa3';
-
-        try
-        {
-            $back = true;
-            $this->client->Folders->Folder->deleteFolder($id);
-        }
-        catch (Exception $e)
-        {
-            $back = false;
-        }
-
-        $this->assertTrue($back);
     }
 
     // ------------------------------------------------------------------------------

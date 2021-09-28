@@ -63,13 +63,13 @@ class JobStatus
      *
      * @see https://developer.nylas.com/docs/api/#get/job-statuses/id
      *
-     * @param array $params
+     * @param mixed $jobStatusId
      *
      * @return array
      */
     public function returnAJobStatus(mixed $jobStatusId): array
     {
-        $jobStatusId = Helper::arrayToMulti($jobStatusId);
+        $jobStatusId = Helper::fooToArray($jobStatusId);
 
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $jobStatusId);
 
