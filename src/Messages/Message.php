@@ -78,15 +78,26 @@ class Message
 
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
 
-        $messageId = \implode(',', $messageId);
-        $queryPara = $expanded ? ['view' => 'expanded'] : [];
+        $queues = [];
+        $query  = $expanded ? ['view' => 'expanded'] : [];
 
-        return $this->options
-            ->getSync()
-            ->setPath($messageId)
-            ->setQuery($queryPara)
-            ->setHeaderParams($this->options->getAuthorizationHeader())
-            ->get(API::LIST['oneMessage']);
+        foreach ($messageId as $id)
+        {
+            $request = $this->options
+                ->getAsync()
+                ->setPath($id)
+                ->setQuery($query)
+                ->setHeaderParams($this->options->getAuthorizationHeader());
+
+            $queues[] = static function () use ($request)
+            {
+                return $request->get(API::LIST['oneMessage']);
+            };
+        }
+
+        $pools = $this->options->getAsync()->pool($queues, false);
+
+        return Helper::concatPoolInfos($messageId, $pools);
     }
 
     // ------------------------------------------------------------------------------
@@ -116,7 +127,7 @@ class Message
 
         // parse mime data
         // @link https://github.com/zbateson/mail-mime-parser
-        return (new MailMimeParser())->parse($rawStream);
+        return (new MailMimeParser())->parse($rawStream, false);
     }
 
     // ------------------------------------------------------------------------------

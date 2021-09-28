@@ -3,6 +3,7 @@
 namespace Nylas\Neural;
 
 use Nylas\Utilities\API;
+use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
 
@@ -38,31 +39,47 @@ class Sentiment
     // ------------------------------------------------------------------------------
 
     /**
-     * Sentiment analysis will analyze provided text or emails and give you an emotional opinion on the text.
+     * Sentiment analysis will analyze provided text
      *
      * @see https://developer.nylas.com/docs/api/#put/neural/sentiment
      *
-     * @param string $string
-     * @param string $type  text|message_id
+     * @param string $text
      *
      * @return array
      */
-    public function sentimentAnalysis(string $string, string $type = 'message_id'): array
+    public function sentimentAnalysisText(string $text): array
     {
-        V::doValidate(V::in(['text', 'message_id']), $type);
-        V::doValidate(V::stringType()->length(1, 1000), $string);
-
-        $params = match ($type)
-        {
-            'text'       => $string,
-            'message_id' => ['message_id' => [$string]],
-        };
+        V::doValidate(V::stringType()->length(1, 1000), $text);
 
         return $this->options
             ->getSync()
-            ->setFormParams($params)
+            ->setFormParams(['text' => $text])
             ->setHeaderParams($this->options->getAuthorizationHeader())
-            ->put(API::LIST['neuralOcr']);
+            ->put(API::LIST['neuralSment']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Sentiment analysis will analyze provided emails
+     *
+     * @see https://developer.nylas.com/docs/api/#put/neural/sentiment
+     *
+     * @param mixed $messageId
+     *
+     * @return array
+     */
+    public function sentimentAnalysisMessage(mixed $messageId): array
+    {
+        $messageId = Helper::fooToArray($messageId);
+
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+
+        return $this->options
+            ->getSync()
+            ->setFormParams(['message_id' => $messageId])
+            ->setHeaderParams($this->options->getAuthorizationHeader())
+            ->put(API::LIST['neuralSment']);
     }
 
     // ------------------------------------------------------------------------------
@@ -95,7 +112,7 @@ class Sentiment
             ->getSync()
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
-            ->put(API::LIST['neuralOcrFeedback']);
+            ->put(API::LIST['neuralSmentFeedback']);
     }
 
     // ------------------------------------------------------------------------------

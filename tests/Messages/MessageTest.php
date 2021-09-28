@@ -40,11 +40,11 @@ class MessageTest extends AbsCase
             'has_attachment'  => true,
         ];
 
-        $this->mockResponse([$this->getMessageBaseData()]);
+        $this->mockResponse($this->getMessageBaseData());
 
         $data = $this->client->Messages->Message->returnAllMessages($para);
 
-        $this->assertTrue(\count($data) > 0);
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
@@ -53,11 +53,11 @@ class MessageTest extends AbsCase
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
 
-        $this->mockResponse($this->getMessageBaseData()[0]);
+        $this->mockResponse($this->getMessageBaseData());
 
         $data = $this->client->Messages->Message->returnAMessage($id);
 
-        $this->assertTrue(!empty($data[$id]));
+        $this->assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ class MessageTest extends AbsCase
     {
         return [[
             'account_id' => '[account_id]',
-            'id'         => 'string',
+            'id'         => 'eyhcafxtzkke6tfsdo9g92utb',
             'body'       => '<html>\\n<head>\\n <meta charset=\\"UTF-8\\">\\n <style type=\\"text/css\\">\\n html [\\n -webkit-text-size-adjust =>none;\\n ]\\n body [\\n width =>100%;\\n margin =>0 auto;\\n padding =>0;\\n]\\n  p [\\n width =>280px;\\n line-height => 16px;\\n letter-spacing => 0.5px;\\n ]\\n </style>\\n <title>Welcome  ...  </html>',
             'object'     => 'message',
             'reply_to'   => [['email' => 'skwolek@fibers.com', 'name' => 'Stephanie Kwolek']],

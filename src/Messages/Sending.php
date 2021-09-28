@@ -86,7 +86,7 @@ class Sending
      *
      * @return mixed
      */
-    public function sendRawMIME(mixed $content): mixed
+    public function sendRawMiMeMessage(mixed $content): mixed
     {
         V::doValidate(V::oneOf(
             V::resourceType(),

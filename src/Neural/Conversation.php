@@ -43,26 +43,23 @@ class Conversation
      *
      * @see https://developer.nylas.com/docs/api/#put/neural/conversation
      *
-     * @param mixed $messageId
-     * @param array $params
+     * @param string $messageId
+     * @param array  $params
      *
      * @return array
      */
-    public function cleanConversation(mixed $messageId, array $params = []): array
+    public function cleanConversation(string $messageId, array $params = []): array
     {
-        $messageId = Helper::fooToArray($messageId);
-
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        $params['message_id'] = [$messageId];
 
         V::doValidate(V::keySet(
+            V::key('message_id', V::simpleArray(V::stringType()->notEmpty())),
             V::keyOptional('ignore_links', V::boolType()),
             V::keyOptional('ignore_images', V::boolType()),
             V::keyOptional('ignore_tables', V::boolType()),
             V::keyOptional('images_as_markdown', V::boolType()),
             V::keyOptional('remove_conclusion_phrases', V::boolType()),
         ), $params);
-
-        $params['message_id'] = $messageId;
 
         return $this->options
             ->getSync()

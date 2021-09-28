@@ -50,7 +50,7 @@ class Optical
      */
     public function opticalCharacterRecognition(string $fileId, array $pages = []): array
     {
-        V::doValidate(V::arrayType()->length(1, 5), $fileId);
+        V::doValidate(V::arrayType()->length(0, 5), $pages);
         V::doValidate(V::simpleArray(V::intType()->min(1)), $pages);
 
         $pages = !empty($pages) ? \implode(',', $pages) : ['1,2,3,4,5'];

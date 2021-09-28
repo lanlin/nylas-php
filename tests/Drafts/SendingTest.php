@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Messages;
+namespace Tests\Drafts;
 
 use Tests\AbsCase;
 
 /**
  * ----------------------------------------------------------------------------------
- * Message Sending Test
+ * Draft Sending Test
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2021/09/28
  *
  * @internal
  */
@@ -18,44 +18,24 @@ class SendingTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testSendAnEmailDirectly(): void
+    public function testSendAnEmailDraft(): void
     {
         $params = [
-            'subject' => 'From Nylas',
-            'to'      => [[
-                'name'  => 'Nylas',
-                'email' => 'swag@nylas.com',
-            ]],
-            'cc'   => [],
-            'bcc'  => [],
-            'from' => [[
-                'name'  => 'Your Name',
-                'email' => 'you@example.com',
-            ]],
-            'reply_to'            => [],
-            'reply_to_message_id' => 'string',
-            'body'                => 'This email was sent using the Nylas email API. Visit https://nylas.com for details.',
-            'file_ids'            => ['string'],
+            'draft_id' => '{draft_id}',
+            'version'  => 0,
+            'tracking' => [
+                'links'          => true,
+                'opens'          => true,
+                'thread_replies' => true,
+                'payload'        => 'string',
+            ],
         ];
 
         $this->mockResponse($this->getEmailData());
 
-        $data = $this->client->Messages->Sending->sendAnEmailDirectly($params);
+        $data = $this->client->Drafts->Sending->sendAnEmailDraft($params);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    public function testSendRawMimeMessage(): void
-    {
-        $content = 'testing send raw';
-
-        $this->mockResponse($this->getEmailData());
-
-        $data = $this->client->Messages->Sending->sendRawMimeMessage($content);
-
-        $this->assertArrayHasKey('account_id', $data);
+        $this->assertArrayHasKey($params['draft_id'], $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -79,7 +59,7 @@ class SendingTest extends AbsCase
             ],
             'date'   => 1557950729,
             'events' => [],
-            'files' => [
+            'files'  => [
                 [
                     'content_disposition' => 'attachment',
                     'content_type'        => 'image/jpeg',
