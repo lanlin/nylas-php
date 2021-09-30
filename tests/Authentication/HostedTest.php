@@ -23,12 +23,12 @@ class HostedTest extends AbsCase
     public function testAuthenticateUser(): void
     {
         $params = [
-             'state'         => 'testing',
-             'scopes'        => 'email,contacts,calendar',
-             'login_hint'    => $this->faker->email,
-             'redirect_uri'  => $this->faker->url,
-             'response_type' => 'code',
-         ];
+            'state'         => 'testing',
+            'scopes'        => 'email,contacts,calendar',
+            'login_hint'    => $this->faker->email,
+            'redirect_uri'  => $this->faker->url,
+            'response_type' => 'code',
+        ];
 
         $data = $this->client->Authentication->Hosted->authenticateUser($params);
 
