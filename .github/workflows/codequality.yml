@@ -22,7 +22,7 @@ jobs:
         tools: php-cs-fixer:3.1.0
 
     - name: Code Reformatting...
-      run: php-cs-fixer fix -v --allow-risky=yes --config=./.php_cs
+      run: php-cs-fixer fix -v --allow-risky=yes --config=./.php-cs-fixer.php
 
     - name: Commit Reformated Code
       uses: stefanzweifel/git-auto-commit-action@v4
