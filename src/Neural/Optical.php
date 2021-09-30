@@ -44,7 +44,7 @@ class Optical
      * @see https://developer.nylas.com/docs/api/#put/neural/ocr
      *
      * @param mixed $fileId
-     * @param array $pages [1, 2, 3]
+     * @param array $pages  [1, 2, 3]
      *
      * @return array
      */

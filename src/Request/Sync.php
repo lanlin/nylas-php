@@ -33,7 +33,7 @@ class Sync
      *
      * @return mixed
      */
-    public function get(string $api)
+    public function get(string $api): mixed
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -61,7 +61,7 @@ class Sync
      *
      * @return mixed
      */
-    public function put(string $api)
+    public function put(string $api): mixed
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -89,7 +89,7 @@ class Sync
      *
      * @return mixed
      */
-    public function post(string $api)
+    public function post(string $api): mixed
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
@@ -117,7 +117,7 @@ class Sync
      *
      * @return mixed
      */
-    public function delete(string $api)
+    public function delete(string $api): mixed
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();

@@ -175,8 +175,7 @@ class Async
 
         foreach ($data as $key => $item)
         {
-            $data[$key] =
-            $item instanceof ResponseInterface ?
+            $data[$key] = $item instanceof ResponseInterface ?
             $this->whenSuccess($item, $headers) : $this->whenFailed($item);
         }
 

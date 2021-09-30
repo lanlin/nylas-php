@@ -9,7 +9,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * Nylas Abs
  * ----------------------------------------------------------------------------------
  *
- * @property Resource Resource
+ * @property resource Resource
  *
  * @author lanlin
  * @change 2021/09/24

@@ -6,8 +6,8 @@ use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
-use ZBateson\MailMimeParser\Message as MSG;
 use ZBateson\MailMimeParser\MailMimeParser;
+use ZBateson\MailMimeParser\Message as MSG;
 
 /**
  * ----------------------------------------------------------------------------------

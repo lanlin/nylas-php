@@ -9,7 +9,8 @@ use Tests\AbsCase;
  * Hosted Test
  * ----------------------------------------------------------------------------------
  *
- * @link   https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
+ * @see   https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
+ *
  * @author lanlin
  * @change 2021/09/22
  *

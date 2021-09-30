@@ -45,8 +45,7 @@ class OptionTest extends TestCase
 
     public function testOptions(): void
     {
-        $optionsData =
-        [
+        $optionsData = [
             'debug'         => true,
             'log_file'      => 'foo',
             'client_id'     => \uniqid(),

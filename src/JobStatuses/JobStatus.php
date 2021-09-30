@@ -2,7 +2,6 @@
 
 namespace Nylas\JobStatuses;
 
-use Exception;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;

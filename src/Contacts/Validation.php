@@ -24,7 +24,7 @@ class Validation
      */
     public static function pictureRules(): V
     {
-        return  V::simpleArray(V::keySet(
+        return V::simpleArray(V::keySet(
             V::key('id', V::stringType()->notEmpty()),
             V::key('path', V::oneOf(
                 V::resourceType(),
@@ -74,7 +74,6 @@ class Validation
             V::keyOptional('job_title', V::stringType()->notEmpty()),
             V::keyOptional('manager_name', V::stringType()->notEmpty()),
             V::keyOptional('office_location', V::stringType()->notEmpty()),
-
             V::keyOptional('suffix', V::stringType()->notEmpty()),
             V::keyOptional('surname', V::stringType()->notEmpty()),
             V::keyOptional('birthday', V::date('Y-m-d')),
@@ -82,7 +81,6 @@ class Validation
             V::keyOptional('given_name', V::stringType()->notEmpty()),
             V::keyOptional('middle_name', V::stringType()->notEmpty()),
             V::keyOptional('company_name', V::stringType()->notEmpty()),
-
             self::contactEmailsRules(),            // emails
             self::contactWebPageRules(),           // web_pages
             self::contactImAddressRules(),         // im_addresses
@@ -132,8 +130,7 @@ class Validation
      */
     private static function contactImAddressRules(): V
     {
-        $types =
-        [
+        $types = [
             'gtalk', 'aim', 'yahoo', 'lync',
             'skype', 'qq', 'msn', 'icq', 'jabber',
         ];
@@ -153,8 +150,7 @@ class Validation
      */
     private static function contactPhoneNumberRules(): V
     {
-        $types =
-        [
+        $types = [
             'business', 'home', 'mobile', 'page', 'business_fax',
             'home_fax', 'organization_main', 'assistant', 'radio', 'other',
         ];

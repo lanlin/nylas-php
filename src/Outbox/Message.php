@@ -115,6 +115,7 @@ class Message
      * @see https://developer.nylas.com/docs/api/#delete/drafts/id
      *
      * @param array $params
+     * @param mixed $jobStatusId
      *
      * @return array
      */

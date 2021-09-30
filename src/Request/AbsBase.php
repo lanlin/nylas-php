@@ -1,10 +1,13 @@
-<?php namespace Nylas\Request;
+<?php
 
+namespace Nylas\Request;
+
+use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
 use Nylas\Utilities\API;
-use Nylas\Utilities\Helper;
 use Nylas\Utilities\Errors;
+use Nylas\Utilities\Helper;
+use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -48,16 +51,15 @@ trait AbsBase
     /**
      * Request constructor.
      *
-     * @param string|null $server
+     * @param null|string   $server
      * @param null|callable $handler
      * @param bool|resource $debug
      */
     public function __construct(?string $server = null, mixed $handler = null, mixed $debug = false)
     {
-        $option =
-        [
+        $option = [
             'verify'   => true,
-            'base_uri' => trim($server ?? API::SERVER['us']),
+            'base_uri' => \trim($server ?? API::SERVER['us']),
         ];
 
         if (\is_callable($handler))
@@ -75,9 +77,10 @@ trait AbsBase
      * set path params
      *
      * @param string[] $path
+     *
      * @return $this
      */
-    public function setPath(string ...$path) : self
+    public function setPath(string ...$path): self
     {
         $this->pathParams = $path;
 
@@ -89,10 +92,11 @@ trait AbsBase
     /**
      * set body value
      *
-     * @param string|resource|\Psr\Http\Message\StreamInterface $body
+     * @param \Psr\Http\Message\StreamInterface|resource|string $body
+     *
      * @return $this
      */
-    public function setBody(mixed $body) : self
+    public function setBody(mixed $body): self
     {
         $this->bodyContents = ['body' => $body];
 
@@ -105,9 +109,10 @@ trait AbsBase
      * set query params
      *
      * @param array $query
+     *
      * @return $this
      */
-    public function setQuery(array $query) : self
+    public function setQuery(array $query): self
     {
         $query = Helper::boolToString($query);
 
@@ -125,9 +130,10 @@ trait AbsBase
      * set form params
      *
      * @param array $params
+     *
      * @return $this
      */
-    public function setFormParams(array $params) : self
+    public function setFormParams(array $params): self
     {
         $this->jsonParams = ['json' => $params];
 
@@ -140,9 +146,10 @@ trait AbsBase
      * set form files
      *
      * @param array $files
+     *
      * @return $this
      */
-    public function setFormFiles(array $files) : self
+    public function setFormFiles(array $files): self
     {
         $this->formFiles = ['multipart' => Helper::arrayToMulti($files)];
 
@@ -160,7 +167,7 @@ trait AbsBase
      *
      * @return $this
      */
-    public function setHeaderParams(array $headers) : self
+    public function setHeaderParams(array $headers): self
     {
         if (!empty($headers['Authorization']))
         {
@@ -179,7 +186,7 @@ trait AbsBase
     /**
      * @param callable $func
      */
-    public function setHeaderFunctions(callable $func) : void
+    public function setHeaderFunctions(callable $func): void
     {
         $this->onHeadersFunc[] = $func;
     }
@@ -190,11 +197,12 @@ trait AbsBase
      * concat api path for request
      *
      * @param string $api
+     *
      * @return string
      */
-    private function concatApiPath(string $api) : string
+    private function concatApiPath(string $api): string
     {
-        return sprintf($api, ...$this->pathParams);
+        return \sprintf($api, ...$this->pathParams);
     }
 
     // ------------------------------------------------------------------------------
@@ -214,7 +222,7 @@ trait AbsBase
         [
             'httpStatus'  => $code,
             'invalidJson' => true,
-            'contentType' => current($type),
+            'contentType' => \current($type),
             'contentBody' => $data,
         ];
     }
@@ -225,18 +233,18 @@ trait AbsBase
      * concat options for request
      *
      * @param bool $httpErrors
+     *
      * @return array
      */
-    private function concatOptions(bool $httpErrors = false) : array
+    private function concatOptions(bool $httpErrors = false): array
     {
-        $temp =
-        [
+        $temp = [
             'debug'       => $this->debug,
             'on_headers'  => $this->onHeadersFunctions(),
-            'http_errors' => $httpErrors
+            'http_errors' => $httpErrors,
         ];
 
-        return array_merge(
+        return \array_merge(
             $temp,
             empty($this->formFiles) ? [] : $this->formFiles,
             empty($this->jsonParams) ? [] : $this->jsonParams,
@@ -251,12 +259,12 @@ trait AbsBase
     /**
      * check http status code before response body
      */
-    private function onHeadersFunctions() : callable
+    private function onHeadersFunctions(): callable
     {
         $request = $this;
         $excpArr = Errors::StatusExceptions;
 
-        return static function (ResponseInterface $response) use ($request, $excpArr)
+        return static function (ResponseInterface $response) use ($request, $excpArr): void
         {
             $statusCode = $response->getStatusCode();
 
@@ -266,11 +274,11 @@ trait AbsBase
                 // normal exception
                 if (isset($excpArr[$statusCode]))
                 {
-                    throw new $excpArr[$statusCode];
+                    throw new $excpArr[$statusCode]();
                 }
 
                 // unexpected exception
-                throw new $excpArr['default'];
+                throw new $excpArr['default']();
             }
 
             // execute others on header functions
@@ -287,13 +295,18 @@ trait AbsBase
      * Parse the JSON response body and return an array
      *
      * @param ResponseInterface $response
-     * @param bool $headers  TIPS: true for get headers, false get body data
+     * @param bool              $headers  TIPS: true for get headers, false get body data
+     *
+     * @throws Exception if the response body is not in JSON format
+     *
      * @return mixed
-     * @throws \Exception if the response body is not in JSON format
      */
-    private function parseResponse(ResponseInterface $response, bool $headers = false)
+    private function parseResponse(ResponseInterface $response, bool $headers = false): mixed
     {
-        if ($headers) { return $response->getHeaders(); }
+        if ($headers)
+        {
+            return $response->getHeaders();
+        }
 
         $expc = 'application/json';
         $code = $response->getStatusCode();
@@ -301,7 +314,7 @@ trait AbsBase
         $data = $response->getBody()->getContents();
 
         // when not json type
-        if (\strpos(\strtolower(\current($type)), $expc) === false)
+        if (false === \strpos(\strtolower(\current($type)), $expc))
         {
             return $this->concatForInvalidJsonData($type, $code, $data);
         }

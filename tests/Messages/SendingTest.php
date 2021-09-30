@@ -79,7 +79,7 @@ class SendingTest extends AbsCase
             ],
             'date'   => 1557950729,
             'events' => [],
-            'files' => [
+            'files'  => [
                 [
                     'content_disposition' => 'attachment',
                     'content_type'        => 'image/jpeg',

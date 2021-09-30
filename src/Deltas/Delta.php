@@ -107,7 +107,7 @@ class Delta
      *
      * @return mixed
      */
-    public function streamingDeltas(array $params)
+    public function streamingDeltas(array $params): mixed
     {
         V::doValidate($this->getBaseRules(), $params);
 

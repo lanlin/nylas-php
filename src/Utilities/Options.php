@@ -250,6 +250,7 @@ class Options
      * get authorization header
      *
      * @param bool $isAccessToken
+     *
      * @return array
      */
     public function getAuthorizationHeader(bool $isAccessToken = true): array

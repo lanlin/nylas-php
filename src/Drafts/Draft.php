@@ -264,7 +264,6 @@ class Draft
             V::keyOptional('bcc', V::email()),
             V::keyOptional('limit', V::intType()->min(1)),
             V::keyOptional('offset', V::intType()->min(0)),
-
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
@@ -273,7 +272,6 @@ class Draft
             V::keyOptional('thread_id', V::stringType()->notEmpty()),
             V::keyOptional('any_email', V::simpleArray(V::email())),
             V::keyOptional('has_attachment', V::equals(true)),
-
             V::keyOptional('last_message_after', V::timestampType()),
             V::keyOptional('last_message_before', V::timestampType()),
             V::keyOptional('started_message_after', V::timestampType()),
