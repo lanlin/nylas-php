@@ -54,7 +54,7 @@ class ApplicationTest extends AbsCase
 
         $data = $this->client->Management->Application->returnApplicationDetails();
 
-        $this->assertArrayHasKey('application', $data);
+        $this->assertArrayHasKey('application_name', $data);
     }
 
     // ------------------------------------------------------------------------------
