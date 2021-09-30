@@ -57,7 +57,7 @@ trait Abs
     /**
      * call sub class
      *
-     * @param  string  $name
+     * @param string $name
      *
      * @return object
      */

@@ -162,7 +162,7 @@ class Label
     {
         $labelId = Helper::fooToArray($labelId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()) , $labelId);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelId);
 
         $queues = [];
 

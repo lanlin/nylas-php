@@ -58,8 +58,8 @@ class Account
      *
      * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts
      *
-     * @param int   $offset
-     * @param int   $limit
+     * @param int $offset
+     * @param int $limit
      *
      * @return array
      */
@@ -160,8 +160,9 @@ class Account
      *
      * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/revoke-all
      *
-     * @param string $accountId
-     * @param array  $params
+     * @param string  $accountId
+     * @param array   $params
+     * @param ?string $keepAccessToken
      *
      * @return array
      */

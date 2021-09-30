@@ -63,7 +63,6 @@ class DeltaTest extends AbsCase
 
         $this->mockResponse($this->getDeltasData());
 
-
         $data = $this->client->Deltas->Delta->streamingDeltas($params);
 
         $this->assertArrayHasKey('deltas', $data);
@@ -87,15 +86,15 @@ class DeltaTest extends AbsCase
                         'events'     => [],
                         'files'      => [],
                         'from'       => [[
-                                             'email' => 'email@nylas.com',
-                                             'name'  => 'Katherine Perry',
-                                         ]],
+                            'email' => 'email@nylas.com',
+                            'name'  => 'Katherine Perry',
+                        ]],
                         'id'     => '52m5un5v1m7rjigna5agc7y35',
                         'labels' => [[
-                                         'display_name' => 'Sent Mail',
-                                         'id'           => 'ertg5obp5nvn43xtqe2e55en0',
-                                         'name'         => 'sent',
-                                     ]],
+                            'display_name' => 'Sent Mail',
+                            'id'           => 'ertg5obp5nvn43xtqe2e55en0',
+                            'name'         => 'sent',
+                        ]],
                         'object'    => 'message',
                         'reply_to'  => [],
                         'snippet'   => 'Hi Katherine PerryLead Technical Writer, Nylasemail@nylas.com',
@@ -103,9 +102,9 @@ class DeltaTest extends AbsCase
                         'subject'   => 'New Message',
                         'thread_id' => 'chvd75bowkhg3gfpgeeygcxbb',
                         'to'        => [[
-                                            'email' => 'swag@nylas.com',
-                                            'name'  => 'Katherine Personal',
-                                        ]],
+                            'email' => 'swag@nylas.com',
+                            'name'  => 'Katherine Personal',
+                        ]],
                         'unread' => false,
                     ],
                     'cursor' => '8hhvivgus0fbo4qengko8c38x',

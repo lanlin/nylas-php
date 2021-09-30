@@ -26,8 +26,7 @@ class Errors
     /**
      * http status code to exceptions
      */
-    public const StatusExceptions =
-    [
+    public const StatusExceptions = [
         202 => Exceptions\NotReadyException::class,
         400 => Exceptions\BadRequestException::class,
         401 => Exceptions\UnauthorizedException::class,

@@ -47,12 +47,12 @@ class WebhookTest extends AbsCase
         ];
 
         $this->mockResponse([
-                'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
-                'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
-                'id'             => '7b5y8f25p344jy8yem6v5jir',
-                'state'          => 'active',
-                'triggers'       => ['message.created'],
-                'version'        => '2.0',
+            'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
+            'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
+            'id'             => '7b5y8f25p344jy8yem6v5jir',
+            'state'          => 'active',
+            'triggers'       => ['message.created'],
+            'version'        => '2.0',
         ]);
 
         $data = $this->client->Webhooks->Webhook->createAWebhook($para);
@@ -67,12 +67,12 @@ class WebhookTest extends AbsCase
         $id = '7b5y8f25p344jy8yem6v5jir';
 
         $this->mockResponse([
-                'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
-                'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
-                'id'             => '7b5y8f25p344jy8yem6v5jir',
-                'state'          => 'active',
-                'triggers'       => ['message.created'],
-                'version'        => '2.0',
+            'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
+            'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
+            'id'             => '7b5y8f25p344jy8yem6v5jir',
+            'state'          => 'active',
+            'triggers'       => ['message.created'],
+            'version'        => '2.0',
         ]);
 
         $data = $this->client->Webhooks->Webhook->updateAWebhook($id);

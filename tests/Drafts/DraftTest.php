@@ -97,14 +97,14 @@ class DraftTest extends AbsCase
             ],
             'cc' => [
                 [
-                    'name' => 'George Washington Carver',
+                    'name'  => 'George Washington Carver',
                     'email' => 'carver@agritech.com',
                 ],
             ],
             'bcc' => [
                 [
-                    'name' => 'Albert Einstein',
-                    'email'  => 'al@particletech.com',
+                    'name'  => 'Albert Einstein',
+                    'email' => 'al@particletech.com',
                 ],
             ],
             'from' => [

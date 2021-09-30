@@ -16,13 +16,12 @@ use Tests\AbsCase;
  */
 class ApplicationTest extends AbsCase
 {
-
     // ------------------------------------------------------------------------------
 
     public function testReturnApplicationIPAddresses(): void
     {
         $this->mockResponse([
-            'updated_at' => 1544658529,
+            'updated_at'   => 1544658529,
             'ip_addresses' => [
                 '52.25.153.17',
                 '52.26.120.161',

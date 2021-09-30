@@ -83,7 +83,7 @@ class Sending
      */
     private function getDraftRules(): V
     {
-        $tracking =  V::keySet(
+        $tracking = V::keySet(
             V::key('links', V::boolType()),
             V::key('opens', V::boolType()),
             V::key('thread_replies', V::boolType()),

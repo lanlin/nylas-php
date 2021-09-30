@@ -9,7 +9,8 @@ use Tests\AbsCase;
  * Thread Test
  * ----------------------------------------------------------------------------------
  *
- * @link https://developer.nylas.com/docs/api/#post/labels
+ * @see https://developer.nylas.com/docs/api/#post/labels
+ *
  * @author lanlin
  * @change 2021/09/22
  *

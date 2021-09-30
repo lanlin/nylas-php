@@ -45,7 +45,7 @@ class Search
      * @param string $keyword
      * @param int    $offset
      * @param int    $limit
-     * @param string $view  null|expanded
+     * @param string $view    null|expanded
      *
      * @return array
      */

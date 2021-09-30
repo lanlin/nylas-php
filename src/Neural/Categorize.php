@@ -69,8 +69,9 @@ class Categorize
      *
      * @see https://developer.nylas.com/docs/api/#post/neural/categorize/feedback
      *
-     * @param mixed $messageId
-     * @param bool  $onlyCategory
+     * @param mixed  $messageId
+     * @param bool   $onlyCategory
+     * @param string $category
      *
      * @return array
      */

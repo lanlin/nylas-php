@@ -164,6 +164,7 @@ class Calendar
      * @see https://developer.nylas.com/docs/api/#delete/calendars/id
      *
      * @param mixed $labelId
+     * @param mixed $calendarId
      *
      * @return array
      */
@@ -171,7 +172,7 @@ class Calendar
     {
         $calendarId = Helper::fooToArray($calendarId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()) , $calendarId);
+        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $calendarId);
 
         $queues = [];
 

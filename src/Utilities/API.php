@@ -37,8 +37,7 @@ class API
      *
      * @see https://developer.nylas.com/docs/the-basics/manage-accounts/account-sync-status/#account-management
      */
-    public const STATUS =
-    [
+    public const STATUS = [
         'running',             // Sync is successfully running. No action required. It means we are up to date and listening for new changes.
         'stopped',             // Sync is stopped. This can happen for a variety of reasons.
         'exception',           // This can occur if an upstream provider returns an error our sync engine does not yet understand.
@@ -177,11 +176,11 @@ class API
         'downloadFile' => '/files/%s/download',
 
         // Calendars
-        'calendars'            => '/calendars',
-        'oneCalendar'          => '/calendars/%s',
-        'calendarFreeBusy'     => '/calendars/free-busy',
-        'calendarAbility'      => '/calendars/availability',
-        'calendarConsecutive'  => '/calendars/availability/consecutive',
+        'calendars'           => '/calendars',
+        'oneCalendar'         => '/calendars/%s',
+        'calendarFreeBusy'    => '/calendars/free-busy',
+        'calendarAbility'     => '/calendars/availability',
+        'calendarConsecutive' => '/calendars/availability/consecutive',
 
         // Events
         'events'    => '/events',

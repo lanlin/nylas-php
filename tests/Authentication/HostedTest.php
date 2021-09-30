@@ -9,7 +9,8 @@ use Tests\AbsCase;
  * Hosted Test
  * ----------------------------------------------------------------------------------
  *
- * @link https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
+ * @see https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
+ *
  * @author lanlin
  * @change 2021/09/22
  *
@@ -21,14 +22,13 @@ class HostedTest extends AbsCase
 
     public function testAuthenticateUser(): void
     {
-        $params =
-         [
-             'state'         => 'testing',
-             'scopes'        => 'email,contacts,calendar',
-             'login_hint'    => $this->faker->email,
-             'redirect_uri'  => $this->faker->url,
-             'response_type' => 'code',
-         ];
+        $params = [
+            'state'         => 'testing',
+            'scopes'        => 'email,contacts,calendar',
+            'login_hint'    => $this->faker->email,
+            'redirect_uri'  => $this->faker->url,
+            'response_type' => 'code',
+        ];
 
         $data = $this->client->Authentication->Hosted->authenticateUser($params);
 
@@ -42,10 +42,10 @@ class HostedTest extends AbsCase
         $code = $this->faker->postcode;
 
         $this->mockResponse([
-            'client_id'      => $this->faker->uuid,
-            'client_secret'  => $this->faker->email,
-            'grant_type'     => 'authorization_code',
-            'code'           => $this->faker->postcode,
+            'client_id'     => $this->faker->uuid,
+            'client_secret' => $this->faker->email,
+            'grant_type'    => 'authorization_code',
+            'code'          => $this->faker->postcode,
         ]);
 
         $data = $this->client->Authentication->Hosted->sendAuthorizationCode($code);

@@ -64,43 +64,43 @@ class AvailabilityTest extends AbsCase
         $params = $this->getMultipleParams();
 
         $this->mockResponse(
-        [
             [
                 [
-                    "emails"     => [
-                        "kat@spacetech.com",
-                        "dorothy@spacetech.com"
+                    [
+                        'emails' => [
+                            'kat@spacetech.com',
+                            'dorothy@spacetech.com',
+                        ],
+                        'end_time'   => 1605794400,
+                        'start_time' => 1605792600,
                     ],
-                    "end_time"   => 1605794400,
-                    "start_time" => 1605792600
+                    [
+                        'emails' => [
+                            'dorothy@spacetech.com',
+                        ],
+                        'end_time'   => 1605796200,
+                        'start_time' => 1605794400,
+                    ],
                 ],
                 [
-                    "emails"     => [
-                        "dorothy@spacetech.com"
+                    [
+                        'emails' => [
+                            'dorothy@spacetech.com',
+                        ],
+                        'end_time'   => 1605801600,
+                        'start_time' => 1605799800,
                     ],
-                    "end_time"   => 1605796200,
-                    "start_time" => 1605794400
-                ]
-            ],
-            [
-                [
-                    "emails"     => [
-                        "dorothy@spacetech.com"
+                    [
+                        'emails' => [
+                            'kat@spacetech.com',
+                            'dorothy@spacetech.com',
+                        ],
+                        'end_time'   => 1605803400,
+                        'start_time' => 1605801600,
                     ],
-                    "end_time"   => 1605801600,
-                    "start_time" => 1605799800
                 ],
-                [
-                    "emails"     => [
-                        "kat@spacetech.com",
-                        "dorothy@spacetech.com"
-                    ],
-                    "end_time"   => 1605803400,
-                    "start_time" => 1605801600
-                ]
-            ],
-        ]);
-
+            ]
+        );
 
         $data = $this->client->Calendars->Availability->availabilityForMultipleMeetings($params);
 
@@ -154,7 +154,7 @@ class AvailabilityTest extends AbsCase
             'end_time'         => 1605826800,
             'interval_minutes' => 10,
             'emails'           => [['swag@nylas.com']],
-            'free_busy' => [
+            'free_busy'        => [
                 [
                     'email'      => 'swag@nylas.com',
                     'object'     => 'free_busy',
@@ -170,8 +170,8 @@ class AvailabilityTest extends AbsCase
             ],
             'open_hours' => [
                 [
-                    'emails' => [['swag@nylas.com']],
-                    'days' => ['0'],
+                    'emails'      => [['swag@nylas.com']],
+                    'days'        => ['0'],
                     'timezone'    => 'America/Chicago',
                     'start'       => '10:00',
                     'end'         => '14:00',

@@ -86,6 +86,8 @@ class Availability
     // ------------------------------------------------------------------------------
 
     /**
+     * @param bool $single
+     *
      * @return \Nylas\Utilities\Validator
      */
     private function getMeetingRules(bool $single): V

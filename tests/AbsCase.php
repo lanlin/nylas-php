@@ -18,7 +18,8 @@ use GuzzleHttp\Handler\MockHandler;
  * Account Test
  * ----------------------------------------------------------------------------------
  *
- * @link https://developer.nylas.com/docs/api/#overview
+ * @see https://developer.nylas.com/docs/api/#overview
+ *
  * @author lanlin
  * @change 2021/09/22
  *
@@ -49,8 +50,7 @@ class AbsCase extends TestCase
 
         $this->faker = Factory::create();
 
-        $options =
-        [
+        $options = [
             'debug'         => $this->faker->randomElement([true, false]),
             'region'        => $this->faker->randomElement(['us', 'canada', 'ireland']),
             'log_file'      => __DIR__.'/test.log',
@@ -95,7 +95,7 @@ class AbsCase extends TestCase
      *
      * @return LegacyMockInterface|MockInterface
      */
-    protected function spy(mixed ...$args): MockInterface | LegacyMockInterface
+    protected function spy(mixed ...$args): MockInterface|LegacyMockInterface
     {
         return Mockery::spy(...$args);
     }
@@ -109,7 +109,7 @@ class AbsCase extends TestCase
      *
      * @return LegacyMockInterface|MockInterface
      */
-    protected function mock(mixed ...$args): MockInterface | LegacyMockInterface
+    protected function mock(mixed ...$args): MockInterface|LegacyMockInterface
     {
         return Mockery::mock(...$args);
     }
@@ -123,7 +123,7 @@ class AbsCase extends TestCase
      *
      * @return LegacyMockInterface|MockInterface
      */
-    protected function overload(string $class): MockInterface | LegacyMockInterface
+    protected function overload(string $class): MockInterface|LegacyMockInterface
     {
         return Mockery::mock('overload:'.$class);
     }
@@ -152,8 +152,8 @@ class AbsCase extends TestCase
     /**
      * mock any class
      *
-     * @param  string  $name
-     * @param  array   $mock
+     * @param string $name
+     * @param array  $mock
      *
      * @return \Mockery\MockInterface
      */
@@ -174,9 +174,9 @@ class AbsCase extends TestCase
     /**
      * mock api response data
      *
-     * @param  array  $data
-     * @param  array  $header
-     * @param  int    $code
+     * @param array $data
+     * @param array $header
+     * @param int   $code
      */
     protected function mockResponse(array $data, array $header = [], int $code = 200): void
     {
