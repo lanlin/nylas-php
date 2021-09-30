@@ -46,7 +46,7 @@ class ThreadTest extends AbsCase
 
         $data = $this->client->Threads->Thread->returnsAllThreads($para);
 
-        $this->assertTrue(!empty($data[0]['id']));
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ class ThreadTest extends AbsCase
     {
         $id = $this->faker->uuid;
 
-        $this->mockResponse([$id => $this->getThreadBaseData()]);
+        $this->mockResponse([$this->getThreadBaseData()]);
 
         $data = $this->client->Threads->Thread->returnsAThread($id);
 
@@ -79,7 +79,7 @@ class ThreadTest extends AbsCase
 
         $data = $this->client->Threads->Thread->updateAThread($id, $params);
 
-        $this->assertArrayHasKey('id', $data);
+        $this->assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------

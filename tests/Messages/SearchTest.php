@@ -24,9 +24,9 @@ class SearchTest extends AbsCase
 
         $this->mockResponse($this->getSearchData());
 
-        $data = $this->client->Messages->Search->messages($q);
+        $data = $this->client->Messages->Search->searchMessages($q);
 
-        $this->assertTrue(\count($data) > 0);
+        $this->assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------

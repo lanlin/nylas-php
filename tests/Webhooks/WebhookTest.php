@@ -2,7 +2,6 @@
 
 namespace Tests\Webhooks;
 
-use Throwable;
 use Tests\AbsCase;
 
 /**
@@ -19,69 +18,101 @@ class WebhookTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhookList(): void
+    public function testReturnAllWebhooks(): void
     {
-        $data = $this->client->Webhooks->Webhook->getWebhookList();
+        $this->mockResponse([
+            [
+                'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
+                'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
+                'id'             => '7b5y8f25p344jy8yem6v5jir',
+                'state'          => 'active',
+                'triggers'       => ['message.created'],
+                'version'        => '2.0',
+            ],
+        ]);
 
-        $this->assertTrue(\count($data) > 0);
+        $data = $this->client->Webhooks->Webhook->returnAllWebhooks();
+
+        $this->assertArrayHasKey('version', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testCreateWebhook(): void
+    public function testCreateAWebhook(): void
     {
-        $para =
-        [
+        $para = [
             'state'        => 'inactive',
             'triggers'     => ['message.opened'],
             'callback_url' => 'http://www.test-nylas-api.com',
         ];
 
-        $data = $this->client->Webhooks->Webhook->createWebhook($para);
+        $this->mockResponse([
+                'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
+                'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
+                'id'             => '7b5y8f25p344jy8yem6v5jir',
+                'state'          => 'active',
+                'triggers'       => ['message.created'],
+                'version'        => '2.0',
+        ]);
 
-        $this->assertArrayHasKey('id', $data);
+        $data = $this->client->Webhooks->Webhook->createAWebhook($para);
 
-        $this->testGetWebhook($data['id']);
-        $this->testUpdateWebhook($data['id']);
+        $this->assertArrayHasKey('version', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testUpdateWebhook($id = ''): void
+    public function testUpdateAWebhook(): void
     {
-        $id = $id ?: \uniqid();
+        $id = '7b5y8f25p344jy8yem6v5jir';
 
-        $data = $this->client->Webhooks->Webhook->updateWebhook($id);
+        $this->mockResponse([
+                'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
+                'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
+                'id'             => '7b5y8f25p344jy8yem6v5jir',
+                'state'          => 'active',
+                'triggers'       => ['message.created'],
+                'version'        => '2.0',
+        ]);
 
-        $this->assertArrayHasKey('id', $data);
+        $data = $this->client->Webhooks->Webhook->updateAWebhook($id);
+
+        $this->assertArrayHasKey('version', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testGetWebhook($id = ''): void
+    public function testReturnAWebhook(): void
     {
-        $id = $id ?: \uniqid();
+        $id = '7b5y8f25p344jy8yem6v5jir';
 
-        $data = $this->client->Webhooks->Webhook->getWebhook($id);
+        $this->mockResponse([
+            [
+                'application_id' => '8eejdhpc5dv04w6ea8lzlxtkt',
+                'callback_url'   => 'https://97a5db5e7c59.ngrok.io/webhook',
+                'id'             => '7b5y8f25p344jy8yem6v5jir',
+                'state'          => 'active',
+                'triggers'       => ['message.created'],
+                'version'        => '2.0',
+            ],
+        ]);
 
-        $this->assertArrayHasKey('id', $data);
+        $data = $this->client->Webhooks->Webhook->returnAWebhook($id);
+
+        $this->assertArrayHasKey('version', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function testDeleteWebhook($id = ''): void
+    public function testDeleteAWebhook(): void
     {
-        try
-        {
-            $id = $id ?: \uniqid();
+        $id = '7b5y8f25p344jy8yem6v5jir';
 
-            $this->client->Webhooks->Webhook->deleteWebhook($id);
-            $this->assertTrue(true);
-        }
-        catch (Throwable $e)
-        {
-            $this->assertTrue(false);
-        }
+        $this->mockResponse([]);
+
+        $this->client->Webhooks->Webhook->deleteAWebhook($id);
+
+        $this->assertPassed();
     }
 
     // ------------------------------------------------------------------------------

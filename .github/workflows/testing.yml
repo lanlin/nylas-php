@@ -17,7 +17,7 @@ jobs:
     - name: Setup PHP Action
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: '8.0'
         coverage: pcov
 
     - name: Validate composer.json and composer.lock
@@ -37,6 +37,4 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Run test suite
-      env:
-         TESTING_ENVS: ${{ secrets.TESTING_ENVS }}
       run: composer run-script test

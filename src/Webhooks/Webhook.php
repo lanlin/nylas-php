@@ -114,7 +114,7 @@ class Webhook
      *
      * @return array
      */
-    public function updateWebhook(string $webhookId, bool $enable = true): array
+    public function updateAWebhook(string $webhookId, bool $enable = true): array
     {
         $params = ['state' => $enable ? 'active' : 'inactive'];
 

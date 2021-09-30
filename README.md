@@ -13,29 +13,35 @@
 [![License](https://img.shields.io/github/license/lanlin/nylas-php)](https://github.com/lanlin/nylas-php#license)
 
 PHP bindings for the Nylas REST API (V2.2). https://docs.nylas.com/reference</br>
-I'll try to keep up with [NyLas Changelog](https://changelog.nylas.com) in future updates.
+I'll try to keep up with [NyLas API Changelog](https://changelog.nylas.com/labels/api) in future updates.
 
-Last check at the point: [Dashboard Release for Canada and Ireland](https://changelog.nylas.com/#entry-176451)
+Last check at the point: [Node SDK v5.8.0 is released (2021-09-17)](https://changelog.nylas.com/publications/node-sdk-v5-8-0-is-released)
 
 **What's new?**</br>
 
-1. API 2.2 support</br>
+1. API 2.2 & 2.3 beta support</br>
 2. All Nylas APIs have been implemented within this SDK.</br>
 3. Support send & get message in raw type</br>
 4. Support async batch upload & download</br>
    -- Contact picture download</br>
    -- File upload & download<br>
 5. The parameters that required by methods almost the same as nylas official api required.</br>
-6. Support async batch get & delete & send (since version 3.1).
+6. Support async batch get & delete & send
 7. Chained calls and good code hints, easy to use</br>
 
-## Installation (PHP 7.4 required since version 4.0)
+## Installation (PHP 8.0 required since version 5.0)
 
 **version 3.x for php >= 7.3 (branch 3.0)**
 
 **version 4.x for php >= 7.4 (branch 4.0)**
 
 **version 5.x for php >= 8.0 (branch master)**
+
+Tips: There are many breaking changes since version 5.0
+
+1. all methods name changed (named same as the nylas API doc describe title)
+2. the smart methods removed
+3. many other changes
 
 This library is available on https://packagist.org/packages/lanlin/nylas-php</br>
 You can install it by running
@@ -63,14 +69,13 @@ use Nylas\Client;
 
 $options =
 [
+    'client_id'        => 'your client id',        // required
+    'client_secret'    => 'your client secret'     // required
+    
     'debug'            => true,
     'region'           => 'us',   // server region, can be us, ireland or canada, default is us
     'log_file'         => dirname(__FILE__) . '/test.log',  // a file path or a resource handler
-    'account_id'       => 'your account id',
     'access_token'     => 'your access token',
-
-    'client_id'        => 'your client id',        // required
-    'client_secret'    => 'your client secret'     // required
 ];
 
 $nylas = new Client($options);
@@ -93,12 +98,12 @@ $id  = 'id_xxx';
 $ids = ['id_xxx', 'id_yyy', ...];
 
 // one per time
-$dataA = $nylas->Contacts->Contact->getContact($id);
-$dataB = $nylas->Contacts->Contact->deleteContact($id);
+$dataA = $nylas->Contacts->Contact->returnAContact($id);
+$dataB = $nylas->Contacts->Contact->deleteAContact($id);
 
 // batch request
-$dataC = $nylas->Contacts->Contact->getContact($ids);
-$dataD = $nylas->Contacts->Contact->deleteContact($ids);
+$dataC = $nylas->Contacts->Contact->returnAContact($ids);
+$dataD = $nylas->Contacts->Contact->deleteAContact($ids);
 ```
 
 For more detail about the batch request, you should have to read the source code.</br>

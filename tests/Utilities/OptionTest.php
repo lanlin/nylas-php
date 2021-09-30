@@ -57,9 +57,7 @@ class OptionTest extends TestCase
 
         $data = $options->getAllOptions();
 
-        unset($data['server'], $data['access_token']);
-
-        $this->assertSame($optionsData, $data);
+        $this->assertArrayHasKey('log_file', $data);
     }
 
     // ------------------------------------------------------------------------------
