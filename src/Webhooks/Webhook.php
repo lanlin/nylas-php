@@ -39,7 +39,7 @@ class Webhook
     // ------------------------------------------------------------------------------
 
     /**
-     * echo challenge to validate webhook
+     * echo challenge to validate webhook (for fpm mode)
      *
      * TIPS: you'd better use the output method from your framework.
      */
@@ -60,7 +60,7 @@ class Webhook
     // ------------------------------------------------------------------------------
 
     /**
-     * get notification & parse it
+     * get notification & parse it (for fpm mode)
      *
      * @return array
      *               [
@@ -90,7 +90,7 @@ class Webhook
     // ------------------------------------------------------------------------------
 
     /**
-     * webhook X-Nylas-Signature header verification
+     * webhook X-Nylas-Signature header verification (for other mode)
      *
      * @see https://docs.nylas.com/reference#receiving-notifications
      *

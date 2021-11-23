@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2020/06/24
+ * @change 2021/11/23
  */
 class Hosted
 {
@@ -81,14 +81,12 @@ class Hosted
 
         $params = $this->options->getClientApps();
 
-        $params['code'] = $code;
-
-        $query = ['grant_type' => 'authorization_code'];
-        $query = \array_merge($query, $params);
+        $params['code']       = $code;
+        $params['grant_type'] = 'authorization_code';
 
         return $this->options
             ->getSync()
-            ->setQuery($query)
+            ->setFormParams($params)
             ->post(API::LIST['oAuthToken']);
     }
 
