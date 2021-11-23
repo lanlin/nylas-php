@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2021/11/23
  */
 class Hosted
 {
@@ -80,19 +80,16 @@ class Hosted
     {
         V::doValidate(V::stringType()->notEmpty(), $code);
 
-        $query = [
-            'code'       => $code,
-            'grant_type' => 'authorization_code',
-        ];
-
-        $client = [
+        $params = [
+            'code'          => $code,
+            'grant_type'    => 'authorization_code',
             'client_id'     => $this->options->getClientId(),
             'client_secret' => $this->options->getClientSecret(),
         ];
 
         return $this->options
             ->getSync()
-            ->setQuery(\array_merge($query, $client))
+            ->setFormParams($params)
             ->post(API::LIST['oAuthToken']);
     }
 
