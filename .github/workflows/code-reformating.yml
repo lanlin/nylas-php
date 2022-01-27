@@ -1,4 +1,4 @@
-name: CodeFormating
+name: CodeReformating
 
 on:
   push:

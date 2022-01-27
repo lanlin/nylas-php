@@ -5,7 +5,7 @@
 # Nylas PHP SDK
 
 [![Build](https://github.com/lanlin/nylas-php/workflows/Testing/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
-[![Code Quality](https://github.com/lanlin/nylas-php/workflows/CodeQuality/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
+[![Code Quality](https://github.com/lanlin/nylas-php/workflows/CodeReformating/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
 [![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/lanlin/nylas-php?include_prereleases)](https://packagist.org/packages/lanlin/nylas-php)
 [![Packagist Stars](https://img.shields.io/packagist/stars/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
