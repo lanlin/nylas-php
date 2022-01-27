@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -51,6 +51,29 @@ class SentimentTest extends AbsCase
         $data = $this->client->Neural->Sentiment->sentimentAnalysisMessage($id);
 
         $this->assertArrayHasKey('account_id', $data[0]);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testSentimentAnalysisFeedback(): void
+    {
+        $param = [
+            'sentiment'  => 'positive',
+            'overwrite'  => true,
+            'message_id' => 'string',
+        ];
+
+        $this->mockResponse([
+            'id'            => 'string',
+            'status'        => 'string',
+            'feedback_at'   => 0,
+            'code_version'  => 'string',
+            'model_version' => 'string',
+        ]);
+
+        $data = $this->client->Neural->Sentiment->sentimentAnalysisFeedback($param);
+
+        $this->assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------

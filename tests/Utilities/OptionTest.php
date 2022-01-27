@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
 use Nylas\Exceptions\NylasException;
 
 /**
+ * @change 2022/01/27
+ *
  * @internal
  */
 class OptionTest extends TestCase
@@ -16,8 +18,8 @@ class OptionTest extends TestCase
     public function testMinimalRequirementOption(): void
     {
         $optionsData = [
-            'client_id'     => \uniqid(),
-            'client_secret' => \uniqid(),
+            'client_id'     => \uniqid('', true),
+            'client_secret' => \uniqid('', true),
         ];
 
         $options = new Options($optionsData);
@@ -34,7 +36,7 @@ class OptionTest extends TestCase
 
     public function testMissingRequirementOption(): void
     {
-        $optionsData = ['client_id' => \uniqid()];
+        $optionsData = ['client_id' => \uniqid('', true)];
 
         $this->expectException(NylasException::class);
 
@@ -48,8 +50,8 @@ class OptionTest extends TestCase
         $optionsData = [
             'debug'         => true,
             'log_file'      => 'foo',
-            'client_id'     => \uniqid(),
-            'client_secret' => \uniqid(),
+            'client_id'     => \uniqid('', true),
+            'client_secret' => \uniqid('', true),
         ];
 
         $options = new Options($optionsData);

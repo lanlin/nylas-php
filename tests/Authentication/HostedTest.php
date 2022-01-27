@@ -12,7 +12,7 @@ use Tests\AbsCase;
  * @see https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
  *
  * @author lanlin
- * @change 2021/11/23
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -32,7 +32,7 @@ class HostedTest extends AbsCase
 
         $data = $this->client->Authentication->Hosted->authenticateUser($params);
 
-        $this->assertTrue(\is_string($data));
+        $this->assertIsString($data);
     }
 
     // ------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class HostedTest extends AbsCase
 
         $data = $this->client->Authentication->Hosted->sendAuthorizationCode($code);
 
-        $this->assertTrue(!empty($data['access_token']));
+        $this->assertNotEmpty($data['access_token']);
     }
 
     // ------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ class HostedTest extends AbsCase
 
         $data = $this->client->Authentication->Hosted->revokeAccessTokens();
 
-        $this->assertTrue(!empty($data['success']));
+        $this->assertNotEmpty($data['success']);
     }
 
     // ------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -41,6 +41,11 @@ class AccountTest extends AbsCase
 
     public function testReturnAllAccounts(): void
     {
+        $params = [
+            'limit'  => 100,
+            'offset' => 0,
+        ];
+
         $this->mockResponse([[
             'account_id'    => '622x1k5v1ujh55t6ucel7av4',
             'billing_state' => 'free',
@@ -59,7 +64,7 @@ class AccountTest extends AbsCase
             'trial'         => false,
         ]]);
 
-        $data = $this->client->Management->Account->returnAllAccounts();
+        $data = $this->client->Management->Account->returnAllAccounts($params);
 
         $this->assertArrayHasKey('account_id', $data[0]);
     }

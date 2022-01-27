@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -70,7 +70,7 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Messages->Message->returnARawMessage($id);
 
-        $this->assertTrue(\is_object($data));
+        $this->assertIsObject($data);
     }
 
     // ------------------------------------------------------------------------------

@@ -11,7 +11,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/30
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -39,7 +39,7 @@ class SignatureTest extends AbsCase
 
     public function testParseNotification(): void
     {
-        $params = \json_encode(['deltas' => ['aaa' => 'bbb']]);
+        $params = \json_encode(['deltas' => ['aaa' => 'bbb']], JSON_THROW_ON_ERROR);
 
         $data = $this->client->Webhooks->Signature->parseNotification($params);
 

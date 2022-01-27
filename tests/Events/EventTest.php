@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -102,6 +102,28 @@ class EventTest extends AbsCase
         $data = $this->client->Events->Event->sendRSVP($params);
 
         $this->assertArrayHasKey('account_id', $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    public function testGenerateICSFile(): void
+    {
+        $params = [
+            'event_id'    => '<EVENT_ID>',
+            'ics_options' => [
+                'ical_uid' => 'string',
+                'method'   => 'request',
+                'prodid'   => 'string',
+            ],
+        ];
+
+        $this->mockResponse([
+            'ics' => "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Acme//Generated-ICS\r\nCALSCALE:GREGORIAN\r\nMETHOD:REQUEST\r\nBEGIN:VEVENT\r\nSUMMARY:Example Event\r\nDTSTART;VALUE=DATE-TIME:20211117T200000Z\r\nDTEND;VALUE=DATE-TIME:20211117T203000Z\r\nDTSTAMP;VALUE=DATE-TIME:20211117T194505Z\r\nUID:globally_unique_no_spaces_0\r\nATTENDEE;CN=\"Tippy Hedren\";CUTYPE=INDIVIDUAL;PARTSTAT=NEEDS-ACTION;ROLE\r\n =REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGENT=SERVER:mailto:thedrenv@outlook.c\r\n om\r\nLAST-MODIFIED;VALUE=DATE-TIME:20211117T194457Z\r\nLOCATION:Coffee Shop\r\nORGANIZER:c_a05n8d55tc8k8h0ndn0kdehcrs@group.calendar.google.com\r\nSTATUS:CONFIRMED\r\nTRANSP:OPAQUE\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+        ]);
+
+        $data = $this->client->Events->Event->generateICSFile($params);
+
+        $this->assertArrayHasKey('ics', $data);
     }
 
     // ------------------------------------------------------------------------------

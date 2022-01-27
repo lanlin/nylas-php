@@ -21,7 +21,7 @@ use GuzzleHttp\Handler\MockHandler;
  * @see https://developer.nylas.com/docs/api/#overview
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -180,7 +180,7 @@ class AbsCase extends TestCase
      */
     protected function mockResponse(array $data, array $header = [], int $code = 200): void
     {
-        $body = \json_encode($data);
+        $body = \json_encode($data, JSON_THROW_ON_ERROR);
 
         $header = \array_merge($header, ['Content-Type' => 'application/json']);
 

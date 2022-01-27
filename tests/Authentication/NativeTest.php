@@ -12,7 +12,7 @@ use Tests\AbsCase;
  * @see   https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -31,7 +31,7 @@ class NativeTest extends AbsCase
 
         $data = $this->client->Authentication->Native->sendAuthorization($para);
 
-        $this->assertTrue(!empty($data['code']));
+        $this->assertNotEmpty($data['code']);
     }
 
     // ------------------------------------------------------------------------------
@@ -59,7 +59,29 @@ class NativeTest extends AbsCase
 
         $data = $this->client->Authentication->Native->exchangeTheToken($code);
 
-        $this->assertTrue(!empty($data['email_address']));
+        $this->assertNotEmpty($data['email_address']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * test detect provider
+     */
+    public function testDetectProvider(): void
+    {
+        $this->mockResponse([
+            'auth_name'     => 'gmail',
+            'detected'      => true,
+            'email_address' => 'hello@nylas.com',
+            'is_imap'       => false,
+            'provider_name' => 'gmail',
+        ]);
+
+        $email = $this->faker->email;
+
+        $data = $this->client->Authentication->Native->detectProvider($email);
+
+        $this->assertNotEmpty($data['email_address']);
     }
 
     // ------------------------------------------------------------------------------

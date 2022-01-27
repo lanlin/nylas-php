@@ -10,7 +10,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/26
+ * @change 2022/01/27
  *
  * @internal
  */
@@ -104,7 +104,7 @@ class AvailabilityTest extends AbsCase
 
         $data = $this->client->Calendars->Availability->availabilityForMultipleMeetings($params);
 
-        $this->assertTrue(2 === \count($data));
+        $this->assertCount(2, $data);
     }
 
     // ------------------------------------------------------------------------------
