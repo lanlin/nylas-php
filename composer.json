@@ -19,7 +19,8 @@
         "phpunit/phpunit": "^9.5",
         "mockery/mockery": "^1.4",
         "fzaninotto/faker": "dev-master",
-        "nunomaduro/collision": "^5.10"
+        "nunomaduro/collision": "^6.1",
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {

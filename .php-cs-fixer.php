@@ -3,7 +3,7 @@
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
-/**
+/*
  * exit code list
  *
  * 0 - OK.
@@ -14,26 +14,27 @@ use PhpCsFixer\Finder;
  * 32 - Configuration error of a Fixer.
  * 64 - Exception raised within the application.
  */
-return (new Config())->setRules(
-[
+return (new Config())->setRules([
     '@PhpCsFixer' => true,
 
-    'dir_constant'    => true,
-    'ereg_to_preg'    => true,
-    'no_unset_cast'   => false,
-    'echo_tag_syntax' => ['format' => 'long'],
+    'no_unused_imports' => true,
 
-    'void_return'                         => true,
-    'strict_param'                        => true,
-    'static_lambda'                       => false,
-    'phpdoc_summary'                      => false,
-    'strict_comparison'                   => true,
-    'single_line_throw'                   => true,
-    'heredoc_indentation'                 => true,
-    'protected_to_private'                => false,
-    'combine_nested_dirname'              => true,
-    'ternary_to_null_coalescing'          => true,
-    'no_superfluous_phpdoc_tags'          => false,
+    'dir_constant'               => true,
+    'ereg_to_preg'               => true,
+    'no_unset_cast'              => false,
+    'echo_tag_syntax'            => ['format' => 'long'],
+    'void_return'                => true,
+    'strict_param'               => true,
+    'static_lambda'              => false,
+    'phpdoc_summary'             => false,
+    'strict_comparison'          => true,
+    'single_line_throw'          => true,
+    'heredoc_indentation'        => true,
+    'protected_to_private'       => false,
+    'combine_nested_dirname'     => true,
+    'ternary_to_null_coalescing' => true,
+    'no_superfluous_phpdoc_tags' => false,
+
     'phpdoc_line_span'                    => true,
     'phpdoc_to_param_type'                => true,
     'phpdoc_to_return_type'               => true,
@@ -43,18 +44,31 @@ return (new Config())->setRules(
     'php_unit_test_class_requires_covers'              => false,
     'nullable_type_declaration_for_default_null_value' => true,
 
-    'list_syntax'               => ['syntax' => 'short'],
-    'array_syntax'              => ['syntax' => 'short'],
-    'error_suppression'         => ['noise_remaining_usages' => true],
-    'method_argument_space'     => ['on_multiline' => 'ensure_fully_multiline'],
-    'declare_equal_normalize'   => ['space' => 'single'],
+    'list_syntax'             => ['syntax' => 'short'],
+    'array_syntax'            => ['syntax' => 'short'],
+    'error_suppression'       => ['noise_remaining_usages' => true],
+    'method_argument_space'   => ['on_multiline' => 'ensure_fully_multiline'],
+    'declare_equal_normalize' => ['space' => 'single'],
 
-    'multiline_whitespace_before_semicolons' => ['strategy' => 'no_multi_line'],
+    'multiline_whitespace_before_semicolons' => [
+        'strategy' => 'no_multi_line',
+    ],
 
-    'no_extra_blank_lines' => ['tokens' => ['extra', 'break', 'continue']],
+    'no_extra_blank_lines' => [
+        'tokens' => [
+            'extra',
+            'break',
+            'continue',
+        ],
+    ],
 
-    'native_function_invocation' =>
-    [
+    'yoda_style' => [
+        'equal'            => false,
+        'identical'        => false,
+        'less_and_greater' => false,
+    ],
+
+    'native_function_invocation' => [
         'scope'   => 'all',
         'strict'  => true,
         'include' => ['@all'],
@@ -66,39 +80,34 @@ return (new Config())->setRules(
             'GoFunc',
             'GoEvent',
             'GoInterface',
-            'Attribute'
+            'Attribute',
         ],
     ],
 
-    'binary_operator_spaces' =>
-    [
+    'binary_operator_spaces' => [
         'default' => 'align_single_space_minimal',
     ],
 
-    'braces' =>
-    [
+    'braces' => [
         'allow_single_line_closure'                   => true,
         'position_after_control_structures'           => 'next',
         'position_after_anonymous_constructs'         => 'next',
         'position_after_functions_and_oop_constructs' => 'next',
     ],
 
-    'global_namespace_import' =>
-    [
+    'global_namespace_import' => [
         'import_classes'   => true,
         'import_constants' => false,
         'import_functions' => false,
     ],
 
-    'ordered_imports' =>
-    [
+    'ordered_imports' => [
         'sort_algorithm' => 'length',
         'imports_order'  => ['const', 'function', 'class'],
     ],
 
     'blank_line_before_statement' => [
-        'statements' =>
-        [
+        'statements' => [
             'case',
             'declare',
             'default',
@@ -112,16 +121,15 @@ return (new Config())->setRules(
             'throw',
             'try',
             'while',
-            'exit'
-        ]
+            'exit',
+        ],
     ],
-]
-)
-->setFinder(Finder::create()
-    ->in(__DIR__)
-    ->files()
-    ->name('/\.php$/')
-    ->ignoreDotFiles(true)
-    ->exclude('vendor')
-);
-
+])
+    ->setFinder(
+        Finder::create()
+            ->in(__DIR__)
+            ->files()
+            ->name('/\.php$/')
+            ->ignoreDotFiles(true)
+            ->exclude('vendor')
+    );

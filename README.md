@@ -12,14 +12,14 @@
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
 [![License](https://img.shields.io/github/license/lanlin/nylas-php)](https://github.com/lanlin/nylas-php#license)
 
-PHP bindings for the Nylas REST API (V2.2). https://docs.nylas.com/reference</br>
+PHP bindings for the Nylas REST API (V2.3). https://docs.nylas.com/reference</br>
 I'll try to keep up with [NyLas API Changelog](https://changelog.nylas.com/labels/api) in future updates.
 
-Last check at the point: [Node SDK v5.8.0 is released (2021-09-17)](https://changelog.nylas.com/publications/node-sdk-v5-8-0-is-released)
+Last check at the point: [Nylas Updates January 7th, 2022 (2022-01-27)](https://changelog.nylas.com/publications/nylas-updates-january-7th-2021)
 
 **What's new?**</br>
 
-1. API 2.2 & 2.3 beta support</br>
+1. API 2.3 support</br>
 2. All Nylas APIs have been implemented within this SDK.</br>
 3. Support send & get message in raw type</br>
 4. Support async batch upload & download</br>
