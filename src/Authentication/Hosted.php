@@ -59,7 +59,7 @@ class Hosted
             V::keyOptional('login_hint', V::email())
         ), $params);
 
-        $query  = \http_build_query($params, null, '&', PHP_QUERY_RFC3986);
+        $query  = \http_build_query($params, '', '&', PHP_QUERY_RFC3986);
         $apiUrl = \trim($this->options->getServer(), '/').API::LIST['oAuthAuthorize'];
 
         return \trim($apiUrl, '/').'?'.$query;
