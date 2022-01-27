@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Event
 {
@@ -82,7 +82,7 @@ class Event
     {
         V::doValidate(Validation::getEventRules(), $params);
 
-        $query = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
+        $query = $notifyParticipants === null ? [] : [$this->notify => $notifyParticipants];
 
         return $this->options
             ->getSync()
@@ -147,7 +147,7 @@ class Event
         V::doValidate(Validation::getEventRules(), $params);
         V::doValidate(V::stringType()->notEmpty(), $eventId);
 
-        $query = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
+        $query = $notifyParticipants === null ? [] : [$this->notify => $notifyParticipants];
 
         return $this->options
             ->getSync()
@@ -177,7 +177,7 @@ class Event
         V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $eventId);
 
         $queues = [];
-        $query  = \is_null($notifyParticipants) ? [] : [$this->notify => $notifyParticipants];
+        $query  = $notifyParticipants === null ? [] : [$this->notify => $notifyParticipants];
 
         foreach ($eventId as $id)
         {
@@ -222,6 +222,29 @@ class Event
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['rsvpEvent']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Use this endpoint to generate an ICS file for events, including virtual calendars.
+     * This endpoint does not create an event.
+     *
+     * @see https://developer.nylas.com/docs/api/#post/events/to-ics
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    public function generateICSFile(array $params): array
+    {
+        V::doValidate(Validation::getICSRules(), $params);
+
+        return $this->options
+            ->getSync()
+            ->setFormParams($params)
+            ->setHeaderParams($this->options->getAuthorizationHeader())
+            ->post(API::LIST['icsEvent']);
     }
 
     // ------------------------------------------------------------------------------

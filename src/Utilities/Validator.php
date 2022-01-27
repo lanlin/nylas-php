@@ -2,7 +2,6 @@
 
 namespace Nylas\Utilities;
 
-use finfo;
 use Respect\Validation\Factory;
 use Respect\Validation\Rules\AllOf;
 use Respect\Validation\Validatable;
@@ -72,7 +71,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator hexRgbColor()
  * @method static Validator iban()
  * @method static Validator identical($value)
- * @method static Validator image(finfo $fileInfo = null)
+ * @method static Validator image($fileInfo = null)
  * @method static Validator imei()
  * @method static Validator in($haystack, bool $compareIdentical = false)
  * @method static Validator infinite()
@@ -166,7 +165,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator zend($validator, array $params = null)
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Validator extends AllOf
 {
@@ -175,8 +174,8 @@ class Validator extends AllOf
     /**
      * Create a new rule by the name of the method and adds the rule to the chain.
      *
-     * @param string  $ruleName
-     * @param mixed[] $arguments
+     * @param string $ruleName
+     * @param array  $arguments
      *
      * @return self
      */
@@ -192,8 +191,8 @@ class Validator extends AllOf
     /**
      * Creates a new Validator instance with a rule that was called on the static method.
      *
-     * @param string  $ruleName
-     * @param mixed[] $arguments
+     * @param string $ruleName
+     * @param array  $arguments
      *
      * @return self
      */

@@ -13,7 +13,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2022/01/27
  */
 class Optical
 {
@@ -53,7 +53,7 @@ class Optical
         V::doValidate(V::arrayType()->length(0, 5), $pages);
         V::doValidate(V::simpleArray(V::intType()->min(1)), $pages);
 
-        $pages = !empty($pages) ? \implode(',', $pages) : ['1,2,3,4,5'];
+        $pages = !empty($pages) ? [\implode(',', $pages)] : ['1,2,3,4,5'];
 
         return $this->options
             ->getSync()

@@ -17,7 +17,7 @@ use ZBateson\MailMimeParser\Message as MSG;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Message
 {
@@ -148,6 +148,7 @@ class Message
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
             V::keyOptional('folder_id', V::stringType()->notEmpty()),
+            V::keyOptional('metadata', self::metadataRules()),
             V::keyOptional('label_ids', V::simpleArray(V::stringType()))
         ), $params);
 
@@ -157,6 +158,37 @@ class Message
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->put(API::LIST['oneMessage']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get metadata array rules
+     *
+     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private static function metadataRules(): V
+    {
+        return V::callback(static function (mixed $input): bool
+        {
+            if (!\is_array($input) || \count($input) > 50)
+            {
+                return false;
+            }
+
+            $keys = \array_keys($input);
+            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+
+            if (!$isOk)
+            {
+                return false;
+            }
+
+            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
+            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+        });
     }
 
     // ------------------------------------------------------------------------------
@@ -185,7 +217,13 @@ class Message
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('filename', V::stringType()->notEmpty())
+            V::keyOptional('filename', V::stringType()->notEmpty()),
+
+            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()->notEmpty()),
         );
     }
 

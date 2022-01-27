@@ -13,10 +13,32 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2021/09/23
+ * @change 2022/01/27
  */
 class Validation
 {
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get ics file rules
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    public static function getICSRules(): V
+    {
+        return V::anyOf(
+            V::keySet(
+                V::key('event_id', V::stringType()->notEmpty()),
+                V::key('ics_options', V::keySet(
+                    V::key('method', V::in(['request', 'publish', 'reply', 'add', 'cancel', 'refresh'])),
+                    V::key('prodid', V::stringType()->notEmpty()),
+                    V::key('ical_uid', V::stringType()->notEmpty()),
+                )),
+            ),
+            self::getEventRules(),
+        );
+    }
+
     // ------------------------------------------------------------------------------
 
     /**
@@ -33,7 +55,7 @@ class Validation
             V::keyOptional('title', V::stringType()->notEmpty()),
             V::keyOptional('read_only', V::boolType()),
             V::keyOptional('location', V::stringType()->notEmpty()),
-            V::keyOptional('metadata', V::arrayType()),
+            V::keyOptional('metadata', self::metadataRules()),
             V::keyOptional('recurrence', self::recurrenceRules()),
             V::keyOptional('description', V::stringType()->notEmpty()),
             V::keyOptional('conferencing', self::conferenceRules()),
@@ -41,6 +63,7 @@ class Validation
             V::keyOptional('notifications', self::notificationRules()),
             V::keyOptional('reminder_method', V::in(['email', 'popup', 'display', 'sound'])),
             V::keyOptional('reminder_minutes', V::regex('#\[(|-1|[0-9]{1,})\]#')),
+            V::keyOptional('round_robin_order', V::simpleArray(V::email()))
         );
     }
 
@@ -68,9 +91,11 @@ class Validation
             V::keyOptional('show_cancelled', V::boolType()),
             V::keyOptional('expand_recurring', V::boolType()),
 
-            V::keyOptional('metadata_key', V::url()),
-            V::keyOptional('metadata_value', V::url()),
-            V::keyOptional('metadata_paire', V::url()),
+            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()->notEmpty()),
 
             V::keyOptional('ends_after', V::timestampType()),
             V::keyOptional('ends_before', V::timestampType()),
@@ -103,8 +128,40 @@ class Validation
             V::key('email', V::email()),
             V::keyOptional('name', V::anyOf(V::nullType(), V::stringType())),
             V::keyOptional('status', V::in(['yes', 'no', 'maybe', 'noreply'])),
-            V::keyOptional('comment', V::anyOf(V::nullType(), V::stringType()))
+            V::keyOptional('comment', V::anyOf(V::nullType(), V::stringType())),
+            V::keyOptional('phone_number', V::anyOf(V::nullType(), V::phone()))
         ));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get metadata array rules
+     *
+     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private static function metadataRules(): V
+    {
+        return V::callback(static function (mixed $input): bool
+        {
+            if (!\is_array($input) || \count($input) > 50)
+            {
+                return false;
+            }
+
+            $keys = \array_keys($input);
+            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+
+            if (!$isOk)
+            {
+                return false;
+            }
+
+            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
+            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+        });
     }
 
     // ------------------------------------------------------------------------------
@@ -182,7 +239,7 @@ class Validation
     private static function conferenceRules(): V
     {
         $autocreate = V::keySet(
-            V::key('provider', V::in(['Google Meet', 'Zoom Meeting'])),
+            V::key('provider', V::in(['Google Meet', 'Zoom Meeting', 'Microsoft Teams'])),
             V::key('autocreate', V::arrayType()),
         );
 

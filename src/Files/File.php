@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class File
 {
@@ -277,12 +277,12 @@ class File
         {
             if (isset($pools[$index]['error']))
             {
-                $item = \array_merge($item, $pools[$index]);
+                $item = Helper::loopMerge($item, $pools[$index]);
             }
 
             if (isset($pools[$index][0]))
             {
-                $item = \array_merge($item, $pools[$index][0]);
+                $item = Helper::loopMerge($item, $pools[$index][0]);
             }
         }
 
@@ -309,7 +309,7 @@ class File
         {
             if (isset($pools[$index]['error']))
             {
-                $item = \array_merge($item, $pools[$index]);
+                $item = Helper::loopMerge($item, $pools[$index]);
             }
 
             if (isset($pools[$index]['Content-Disposition'][0]))

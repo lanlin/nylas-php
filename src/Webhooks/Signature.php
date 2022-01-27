@@ -2,6 +2,7 @@
 
 namespace Nylas\Webhooks;
 
+use Throwable;
 use Nylas\Utilities\Options;
 use Nylas\Exceptions\NylasException;
 
@@ -11,7 +12,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/26
+ * @change 2022/01/27
  */
 class Signature
 {
@@ -75,7 +76,7 @@ class Signature
         $vrif = $this->xSignatureVerification($code, $data);
 
         // check if valid
-        if (false === $vrif)
+        if ($vrif === false)
         {
             throw new NylasException(null, 'not a valid nylas request');
         }
@@ -118,15 +119,19 @@ class Signature
      */
     public function parseNotification(string $data): array
     {
-        $data = \json_decode($data, true, 512);
-        $errs = JSON_ERROR_NONE !== \json_last_error();
-
-        // when not close the decode error
-        if ($errs && $this->options->getAllOptions()['debug'])
+        try
         {
-            $msg = 'Unable to parse response body into JSON: ';
+            $data = \json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        }
+        catch (Throwable)
+        {
+            // when not close the decode error
+            if ($this->options->getAllOptions()['debug'])
+            {
+                $msg = 'Unable to parse response body into JSON: ';
 
-            throw new NylasException(null, $msg.\json_last_error());
+                throw new NylasException(null, $msg.\json_last_error());
+            }
         }
 
         // check deltas

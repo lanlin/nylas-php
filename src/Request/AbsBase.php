@@ -2,7 +2,7 @@
 
 namespace Nylas\Request;
 
-use Exception;
+use Throwable;
 use GuzzleHttp\Client;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Errors;
@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 trait AbsBase
 {
@@ -297,8 +297,6 @@ trait AbsBase
      * @param ResponseInterface $response
      * @param bool              $headers  TIPS: true for get headers, false get body data
      *
-     * @throws Exception if the response body is not in JSON format
-     *
      * @return mixed
      */
     private function parseResponse(ResponseInterface $response, bool $headers = false): mixed
@@ -314,17 +312,17 @@ trait AbsBase
         $data = $response->getBody()->getContents();
 
         // when not json type
-        if (false === \strpos(\strtolower(\current($type)), $expc))
+        if (!\str_contains(\strtolower(\current($type)), $expc))
         {
             return $this->concatForInvalidJsonData($type, $code, $data);
         }
 
-        // decode json data
-        $temp = \json_decode(\trim(\utf8_encode($data)), true, 512);
-        $errs = JSON_ERROR_NONE !== \json_last_error();
-
-        // not throw when decode error
-        if ($errs)
+        try
+        {
+            // decode json data
+            $temp = \json_decode(\trim(\utf8_encode($data)), true, 512, JSON_THROW_ON_ERROR);
+        }
+        catch (Throwable)
         {
             return $this->concatForInvalidJsonData($type, $code, $data);
         }

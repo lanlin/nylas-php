@@ -12,7 +12,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property resource Resource
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2022/01/27
  */
 class Abs
 {

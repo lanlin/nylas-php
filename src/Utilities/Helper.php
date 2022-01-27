@@ -8,7 +8,7 @@ namespace Nylas\Utilities;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Helper
 {
@@ -23,29 +23,12 @@ class Helper
      */
     public static function arrayToMulti(array $arr): array
     {
-        return self::isAssoc($arr) ? [$arr] : $arr;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * check if assoc array
-     *
-     * @param array $arr
-     *
-     * @return bool
-     */
-    public static function isAssoc(array $arr): bool
-    {
-        foreach ($arr as $key => $value)
+        if (\count($arr) === 0)
         {
-            if (!\is_int($key))
-            {
-                return true;
-            }
+            return $arr;
         }
 
-        return false;
+        return self::isAssoc($arr) ? [$arr] : $arr;
     }
 
     // ------------------------------------------------------------------------------
@@ -144,13 +127,91 @@ class Helper
             // merge with pool data
             if (isset($pools[$index]))
             {
-                $item = \array_merge($item, $pools[$index]);
+                $item = self::loopMerge($item, $pools[$index]);
             }
 
             $data[$id] = $item;
         }
 
         return $data;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * for replace the \array_merge($arrA, $arrB) when loop & merge array
+     *
+     * @param array $arrA
+     * @param array $arrB
+     *
+     * @return array
+     */
+    public static function loopMerge(array $arrA, array $arrB): array
+    {
+        if (\count($arrA) === 0)
+        {
+            return $arrB;
+        }
+
+        if (\count($arrB) === 0)
+        {
+            return $arrA;
+        }
+
+        // for associative array
+        if (self::isAssoc($arrA))
+        {
+            return $arrB + $arrA;
+        }
+
+        // for sequential array
+        foreach ($arrB as $val)
+        {
+            $arrA[] = $val;
+        }
+
+        return $arrA;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * check if an assoc array
+     *
+     * @param array $arr
+     *
+     * @return bool
+     */
+    public static function isAssoc(array $arr): bool
+    {
+        if (\count($arr) === 0)
+        {
+            return false;
+        }
+
+        if (!\is_int(\key($arr)))
+        {
+            return true;
+        }
+
+        \end($arr);
+
+        if (!\is_int(\key($arr)))
+        {
+            return true;
+        }
+
+        \reset($arr);
+
+        foreach ($arr as $key => $val)
+        {
+            if (!\is_int($key))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // ------------------------------------------------------------------------------

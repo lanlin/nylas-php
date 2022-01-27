@@ -15,7 +15,7 @@ use Nylas\Utilities\Validator as V;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Draft
 {
@@ -245,7 +245,39 @@ class Draft
             V::keyOptional('body', V::stringType()),
             V::keyOptional('subject', V::stringType()),
             V::keyOptional('file_ids', $this->arrayOfString()),
+            V::keyOptional('metadata', $this->metadataRules()),
         ];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get metadata array rules
+     *
+     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function metadataRules(): V
+    {
+        return V::callback(static function (mixed $input): bool
+        {
+            if (!\is_array($input) || \count($input) > 50)
+            {
+                return false;
+            }
+
+            $keys = \array_keys($input);
+            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+
+            if (!$isOk)
+            {
+                return false;
+            }
+
+            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
+            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+        });
     }
 
     // ------------------------------------------------------------------------------
@@ -276,6 +308,12 @@ class Draft
             V::keyOptional('last_message_before', V::timestampType()),
             V::keyOptional('started_message_after', V::timestampType()),
             V::keyOptional('started_message_before', V::timestampType()),
+
+            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()->notEmpty()),
         );
     }
 

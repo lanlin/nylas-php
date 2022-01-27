@@ -11,7 +11,7 @@ use Nylas\Utilities\Options;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2022/01/27
  */
 class Resource
 {
@@ -41,12 +41,15 @@ class Resource
      *
      * @see https://developer.nylas.com/docs/api/#get/resources
      *
+     * @param int $limit
+     *
      * @return array
      */
-    public function returnRoomResourceInformation(): array
+    public function returnRoomResourceInformation(int $limit = 100): array
     {
         return $this->options
             ->getSync()
+            ->setQuery(['limit' => $limit])
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->get(API::LIST['resource']);
     }

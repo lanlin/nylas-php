@@ -10,10 +10,10 @@ namespace Nylas\Utilities;
  * @see https://changelog.nylas.com/
  * @see https://docs.nylas.com/reference#api-changelog
  *
- * @version 2.2 (2021/04/30)
+ * @version 2.3 (2022/01/27)
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class API
 {
@@ -53,6 +53,7 @@ class API
      * nylas providers
      *
      * @see https://developer.nylas.com/docs/developer-tools/api/supported-providers/
+     * @see https://developer.nylas.com/docs/api/#post/connect/authorize
      */
     public const PROVIDERS = [
         'gmail',
@@ -75,6 +76,7 @@ class API
      * @see https://developer.nylas.com/docs/the-basics/authentication/authentication-scopes/#nylas-scopes
      */
     public const SCOPES = [
+        'email',                    // Send and modify all messages, threads, file attachments, and read email metadata like headers
         'email.modify',	            // Read and modify all messages, threads, file attachments, and read email metadata like headers. Does not include send.
         'email.read_only',	        // Read all messages, threads, file attachments, drafts, and email metadata like headers—no write operations.
         'email.send',	            // Send messages only. No read or modify privileges on users' emails. Using email.send as the only scope with Gmail accounts may lead to unexpected threading behavior.
@@ -82,6 +84,7 @@ class API
         'email.metadata',	        // Read email metadata including headers and labels/folders, but not the message body or file attachments.
         'email.drafts',	            // Read and modify drafts. Does not include send.
         'calendar',	                // Read and modify calendars and events.
+        'calendar.free_busy',       // EWS accounts should add this scope to access the free/busy endpoint.
         'calendar.read_only',	    // Read calendars and events.
         'room_resources.read_only',	// Read available room resources for an account. Room resources for Office 365 is an Admin Consent Required permission.
         'contacts',	                // Read and modify contacts.
@@ -130,6 +133,7 @@ class API
         'oAuthRevoke'      => '/oauth/revoke',
         'oAuthAuthorize'   => '/oauth/authorize',
         'connectToken'     => '/connect/token',
+        'connectProvider'  => '/connect/detect-provider',
         'connectAuthorize' => '/connect/authorize',
 
         // management
@@ -185,6 +189,7 @@ class API
         // Events
         'events'    => '/events',
         'oneEvent'  => '/events/%s',
+        'icsEvent'  => '/events/to-ics',
         'rsvpEvent' => '/send-rsvp',
 
         // Rooms

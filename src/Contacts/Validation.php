@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2022/01/27
  */
 class Validation
 {
@@ -85,7 +85,7 @@ class Validation
             self::contactWebPageRules(),           // web_pages
             self::contactImAddressRules(),         // im_addresses
             self::contactPhoneNumberRules(),       // phone_numbers
-            self::contactPhysicalAddressRules(),   // physical_addresses
+            self::contactPhysicalAddressRules()    // physical_addresses
         );
     }
 

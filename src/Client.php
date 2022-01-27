@@ -29,7 +29,7 @@ use Nylas\Exceptions\NylasException;
  * @property Webhooks\Abs       Webhooks
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Client
 {

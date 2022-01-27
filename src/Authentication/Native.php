@@ -12,7 +12,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Native
 {
@@ -93,6 +93,33 @@ class Native
             ->getSync()
             ->setFormParams($params)
             ->post(API::LIST['connectToken']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Detect Provider
+     *
+     * @see https://developer.nylas.com/docs/api/#post/connect/detect-provider
+     *
+     * @param string $email
+     *
+     * @return array
+     */
+    public function detectProvider(string $email): array
+    {
+        V::doValidate(V::email(), $email);
+
+        $params = [
+            'client_id'     => $this->options->getClientId(),
+            'client_secret' => $this->options->getClientSecret(),
+            'email_address' => $email,
+        ];
+
+        return $this->options
+            ->getSync()
+            ->setFormParams($params)
+            ->post(API::LIST['connectProvider']);
     }
 
     // ------------------------------------------------------------------------------

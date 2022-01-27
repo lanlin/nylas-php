@@ -4,6 +4,7 @@ namespace Nylas\Management;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
+use Nylas\Utilities\Validator as V;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,7 +12,7 @@ use Nylas\Utilities\Options;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Account
 {
@@ -32,6 +33,29 @@ class Account
     public function __construct(Options $options)
     {
         $this->options = $options;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Add Account Metadata
+     *
+     * @see https://developer.nylas.com/docs/api#put/a/client_id/accounts/id
+     *
+     * @param string $accountId
+     * @param array  $metadata
+     *
+     * @return array
+     */
+    public function addAccountMetadata(string $accountId, array $metadata): array
+    {
+        V::doValidate(self::metadataRules(), $metadata);
+
+        return $this->options
+            ->getSync()
+            ->setPath($this->options->getClientId(), $accountId)
+            ->setHeaderParams($this->options->getAuthorizationHeader(false))
+            ->put(API::LIST['listAnAccount']);
     }
 
     // ------------------------------------------------------------------------------
@@ -58,17 +82,27 @@ class Account
      *
      * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts
      *
-     * @param int $offset
-     * @param int $limit
+     * @param array $params
      *
      * @return array
      */
-    public function returnAllAccounts(int $offset = 0, int $limit = 100): array
+    public function returnAllAccounts(array $params): array
     {
+        V::doValidate(V::keySet(
+            V::keyOptional('limit', V::intType()->min(1)),
+            V::keyOptional('offset', V::intType()->min(0)),
+
+            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()->notEmpty())
+        ), $params);
+
         return $this->options
             ->getSync()
             ->setPath($this->options->getClientId())
-            ->setQuery(['limit' => $limit, 'offset' => $offset])
+            ->setQuery($params)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['listAllAccounts']);
     }
@@ -196,6 +230,37 @@ class Account
             ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
             ->get(API::LIST['tokenInfo']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get metadata array rules
+     *
+     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private static function metadataRules(): V
+    {
+        return V::callback(static function (mixed $input): bool
+        {
+            if (!\is_array($input) || \count($input) > 50)
+            {
+                return false;
+            }
+
+            $keys = \array_keys($input);
+            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+
+            if (!$isOk)
+            {
+                return false;
+            }
+
+            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
+            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+        });
     }
 
     // ------------------------------------------------------------------------------

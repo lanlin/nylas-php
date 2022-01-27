@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Sending
 {
@@ -108,6 +108,37 @@ class Sending
     // ------------------------------------------------------------------------------
 
     /**
+     * get metadata array rules
+     *
+     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private function metadataRules(): V
+    {
+        return V::callback(static function (mixed $input): bool
+        {
+            if (!\is_array($input) || \count($input) > 50)
+            {
+                return false;
+            }
+
+            $keys = \array_keys($input);
+            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+
+            if (!$isOk)
+            {
+                return false;
+            }
+
+            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
+            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+        });
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get message sending rules
      *
      * @return \Nylas\Utilities\Validator
@@ -138,7 +169,8 @@ class Sending
             V::keyOptional('body', V::stringType()->notEmpty()),
             V::keyOptional('subject', V::stringType()->notEmpty()),
             V::keyOptional('file_ids', $ids),
-            V::keyOptional('tracking', $tracking)
+            V::keyOptional('tracking', $tracking),
+            V::keyOptional('metadata', $this->metadataRules())
         ));
     }
 

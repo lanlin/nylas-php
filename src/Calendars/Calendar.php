@@ -14,7 +14,7 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Calendar
 {
@@ -53,7 +53,13 @@ class Calendar
         V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0))
+            V::keyOptional('offset', V::intType()->min(0)),
+
+            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()->notEmpty())
         ), $params);
 
         return $this->options
@@ -80,6 +86,7 @@ class Calendar
             V::key('name', V::stringType()->notEmpty()),
             V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
             V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('metadata', self::metadataRules()),
             V::keyOptional('description', V::stringType()->notEmpty()),
         ), $params);
 
@@ -145,6 +152,7 @@ class Calendar
             V::key('name', V::stringType()->notEmpty()),
             V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
             V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('metadata', self::metadataRules()),
             V::keyOptional('description', V::stringType()->notEmpty()),
         ), $params);
 
@@ -222,6 +230,37 @@ class Calendar
             ->setFormParams($params)
             ->setHeaderParams($this->options->getAuthorizationHeader())
             ->post(API::LIST['calendarFreeBusy']);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get metadata array rules
+     *
+     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     *
+     * @return \Nylas\Utilities\Validator
+     */
+    private static function metadataRules(): V
+    {
+        return V::callback(static function (mixed $input): bool
+        {
+            if (!\is_array($input) || \count($input) > 50)
+            {
+                return false;
+            }
+
+            $keys = \array_keys($input);
+            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+
+            if (!$isOk)
+            {
+                return false;
+            }
+
+            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
+            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+        });
     }
 
     // ------------------------------------------------------------------------------

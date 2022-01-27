@@ -13,7 +13,7 @@ use Nylas\Exceptions\UnauthorizedException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class Options
 {
@@ -152,7 +152,7 @@ class Options
      */
     public function setLogFile(mixed $logFile): void
     {
-        if (null !== $logFile)
+        if ($logFile !== null)
         {
             V::doValidate($this->getLogFileRule(), $logFile);
         }
@@ -218,13 +218,6 @@ class Options
     public function setAccessToken(string $token): void
     {
         $this->accessToken = $token;
-
-        if (!$token)
-        {
-            return;
-        }
-
-        $this->accountInfo = [];
     }
 
     // ------------------------------------------------------------------------------

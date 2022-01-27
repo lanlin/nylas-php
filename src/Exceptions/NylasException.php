@@ -11,7 +11,7 @@ use RuntimeException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2022/01/27
  */
 class NylasException extends RuntimeException
 {
@@ -52,7 +52,7 @@ class NylasException extends RuntimeException
      */
     private function checkIfHasNylasException(?Throwable $exception = null): void
     {
-        if ($exception instanceof NylasException)
+        if ($exception instanceof self)
         {
             throw $exception;
         }
