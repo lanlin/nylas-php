@@ -2,9 +2,11 @@ name: Testing
 
 on:
   push:
-    branches: [ '**' ]
+    branches:
+      - '**'
   pull_request:
-    branches: [ '**' ]
+    branches:
+      - '**'
 
 jobs:
   testing:

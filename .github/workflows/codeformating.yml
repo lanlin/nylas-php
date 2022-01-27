@@ -2,7 +2,8 @@ name: CodeFormating
 
 on:
   push:
-    branches: [ '**' ]
+    branches:
+      - '**'
 
 jobs:
   php-cs-fixer:
