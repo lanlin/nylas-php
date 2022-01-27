@@ -1,4 +1,4 @@
-name: CodeReformating
+name: CodeQuality
 
 on:
   push:
