@@ -115,7 +115,8 @@ Sorry, I have no time to write documents.
 There are two ways you can authenticate users to your application.</br>
 Hosted & Native are both supported.</br>
 
-Here's the server-side(three-legged) OAuth example:</br>
+For Native Authentication example, please visit [Native Auth Document](https://developer.nylas.com/docs/the-basics/authentication/native-authentication/) </br>
+For Hosted OAuth(server-side three-legged) example:</br>
 
 1. You redirect the user to nylas login page, along with your App Id and Secret</br>
 2. Your user logs in</br>
@@ -236,6 +237,8 @@ $nylas->Options->setAccessToken("pass the token you got");
 
 
 ## Methods & Parameters
+
+Each method's comment has a link to their specific API document, see [here](https://github.com/lanlin/nylas-php/issues/44)
 
 The parameters that required by methods almost the same as nylas official api required.
 
