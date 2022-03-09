@@ -10,6 +10,7 @@ use Nylas\Exceptions\NylasException;
  * Nylas Client
  * ----------------------------------------------------------------------------------
  *
+ * @property Utilities\Options  Options
  * @property Authentication\Abs Authentication
  * @property Calendars\Abs      Calendars
  * @property Contacts\Abs       Contacts
@@ -29,16 +30,11 @@ use Nylas\Exceptions\NylasException;
  * @property Webhooks\Abs       Webhooks
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2022/03/09
  */
 class Client
 {
     // ------------------------------------------------------------------------------
-
-    /**
-     * @var Options
-     */
-    public Options $options;
 
     /**
      * @var array
@@ -62,7 +58,7 @@ class Client
      */
     public function __construct(array $options)
     {
-        $this->options = new Options($options);
+        $this->objects['Options'] = new Options($options);
     }
 
     // ------------------------------------------------------------------------------
@@ -90,12 +86,14 @@ class Client
      */
     private function callSubClass(string $name): object
     {
+        $name = \ucfirst($name);
+
         if (!empty($this->objects[$name]))
         {
             return $this->objects[$name];
         }
 
-        $apiClass = __NAMESPACE__.'\\'.\ucfirst($name).'\\Abs';
+        $apiClass = __NAMESPACE__.'\\'.$name.'\\Abs';
 
         // check class exists
         if (!\class_exists($apiClass))
@@ -103,7 +101,7 @@ class Client
             throw new NylasException(null, "class {$apiClass} not found!");
         }
 
-        return $this->objects[$name] = new $apiClass($this->options);
+        return $this->objects[$name] = new $apiClass($this->objects['Options']);
     }
 
     // ------------------------------------------------------------------------------

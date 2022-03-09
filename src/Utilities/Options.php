@@ -100,7 +100,7 @@ class Options
     /**
      * get access token
      *
-     * @return string
+     * @return null|callable
      */
     public function getHandler(): ?callable
     {

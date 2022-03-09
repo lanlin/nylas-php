@@ -186,7 +186,7 @@ class AbsCase extends TestCase
 
         $mock = new MockHandler([new Response($code, $header, $body)]);
 
-        $this->client->options->setHandler($mock);
+        $this->client->Options->setHandler($mock);
     }
 
     // ------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 {
     "name": "lanlin/nylas-php",
-    "description": "Nylas PHP SDK (api version 2.2)",
+    "description": "Nylas PHP SDK (api version 2.3)",
     "license": "MIT",
     "authors" : [
         {
@@ -16,9 +16,9 @@
         "zbateson/mail-mime-parser": "^2.0"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.19",
         "phpunit/phpunit": "^9.5",
         "mockery/mockery": "^1.4",
-        "fzaninotto/faker": "dev-master",
         "nunomaduro/collision": "^6.1",
         "roave/security-advisories": "dev-latest"
     },
