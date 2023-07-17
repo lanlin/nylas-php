@@ -116,7 +116,7 @@ class API
         'event.created',
         'event.updated',
         'event.deleted',
-        'job.succesful',
+        'job.successful',
         'job.failed',
     ];
 
