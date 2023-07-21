@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Utilities;
+
+use function uniqid;
 
 use Nylas\Utilities\Options;
 use PHPUnit\Framework\TestCase;
 use Nylas\Exceptions\NylasException;
 
 /**
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,8 +22,8 @@ class OptionTest extends TestCase
     public function testMinimalRequirementOption(): void
     {
         $optionsData = [
-            'client_id'     => \uniqid('', true),
-            'client_secret' => \uniqid('', true),
+            'client_id'     => uniqid('', true),
+            'client_secret' => uniqid('', true),
         ];
 
         $options = new Options($optionsData);
@@ -29,14 +33,14 @@ class OptionTest extends TestCase
             'client_secret' => $options->getClientSecret(),
         ];
 
-        $this->assertSame($optionsData, $optionsResult);
+        static::assertSame($optionsData, $optionsResult);
     }
 
     // ------------------------------------------------------------------------------
 
     public function testMissingRequirementOption(): void
     {
-        $optionsData = ['client_id' => \uniqid('', true)];
+        $optionsData = ['client_id' => uniqid('', true)];
 
         $this->expectException(NylasException::class);
 
@@ -50,15 +54,15 @@ class OptionTest extends TestCase
         $optionsData = [
             'debug'         => true,
             'log_file'      => 'foo',
-            'client_id'     => \uniqid('', true),
-            'client_secret' => \uniqid('', true),
+            'client_id'     => uniqid('', true),
+            'client_secret' => uniqid('', true),
         ];
 
         $options = new Options($optionsData);
 
         $data = $options->getAllOptions();
 
-        $this->assertArrayHasKey('log_file', $data);
+        static::assertArrayHasKey('log_file', $data);
     }
 
     // ------------------------------------------------------------------------------

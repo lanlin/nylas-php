@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Webhooks;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class WebhookTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllWebhooks(): void
     {
         $this->mockResponse([
@@ -33,11 +41,15 @@ class WebhookTest extends AbsCase
 
         $data = $this->client->Webhooks->Webhook->returnAllWebhooks();
 
-        $this->assertArrayHasKey('version', $data[0]);
+        static::assertArrayHasKey('version', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCreateAWebhook(): void
     {
         $para = [
@@ -57,11 +69,15 @@ class WebhookTest extends AbsCase
 
         $data = $this->client->Webhooks->Webhook->createAWebhook($para);
 
-        $this->assertArrayHasKey('version', $data);
+        static::assertArrayHasKey('version', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateAWebhook(): void
     {
         $id = '7b5y8f25p344jy8yem6v5jir';
@@ -77,11 +93,15 @@ class WebhookTest extends AbsCase
 
         $data = $this->client->Webhooks->Webhook->updateAWebhook($id);
 
-        $this->assertArrayHasKey('version', $data);
+        static::assertArrayHasKey('version', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAWebhook(): void
     {
         $id = '7b5y8f25p344jy8yem6v5jir';
@@ -99,11 +119,15 @@ class WebhookTest extends AbsCase
 
         $data = $this->client->Webhooks->Webhook->returnAWebhook($id);
 
-        $this->assertArrayHasKey('version', $data[0]);
+        static::assertArrayHasKey('version', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testDeleteAWebhook(): void
     {
         $id = '7b5y8f25p344jy8yem6v5jir';

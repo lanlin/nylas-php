@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Messages;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,9 @@ class SendingTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testSendAnEmailDirectly(): void
     {
         $params = [
@@ -42,11 +49,15 @@ class SendingTest extends AbsCase
 
         $data = $this->client->Messages->Sending->sendAnEmailDirectly($params);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSendRawMimeMessage(): void
     {
         $content = 'testing send raw';
@@ -55,11 +66,14 @@ class SendingTest extends AbsCase
 
         $data = $this->client->Messages->Sending->sendRawMimeMessage($content);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getEmailData(): array
     {
         return [

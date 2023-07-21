@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Calendars;
+
+use function count;
+use function is_array;
+use function array_keys;
+use function array_values;
 
 use DateTimeZone;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -14,14 +22,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Calendar
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -30,7 +38,7 @@ class Calendar
     /**
      * Calendar constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,19 +55,20 @@ class Calendar
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllCalendars(array $params = []): array
     {
         V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
 
-            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
-            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
-            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
-            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
-            V::keyOptional('metadata_search', V::stringType()->notEmpty())
+            // @see https://developer.nylas.com/docs/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()::length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()::length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()::length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()::notEmpty())
         ), $params);
 
         return $this->options
@@ -79,15 +88,16 @@ class Calendar
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function createACalendar(array $params): array
     {
         V::doValidate(V::keySet(
-            V::key('name', V::stringType()->notEmpty()),
+            V::key('name', V::stringType()::notEmpty()),
             V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
-            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()::notEmpty()),
             V::keyOptional('metadata', self::metadataRules()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('description', V::stringType()::notEmpty()),
         ), $params);
 
         return $this->options
@@ -112,7 +122,7 @@ class Calendar
     {
         $calendarId = Helper::fooToArray($calendarId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $calendarId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $calendarId);
 
         $queues = [];
 
@@ -145,15 +155,16 @@ class Calendar
      * @param array  $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateACalendar(string $calendarId, array $params): array
     {
         V::doValidate(V::keySet(
-            V::key('name', V::stringType()->notEmpty()),
+            V::key('name', V::stringType()::notEmpty()),
             V::keyOptional('timezone', V::in(DateTimeZone::listIdentifiers())),
-            V::keyOptional('location', V::stringType()->notEmpty()),
+            V::keyOptional('location', V::stringType()::notEmpty()),
             V::keyOptional('metadata', self::metadataRules()),
-            V::keyOptional('description', V::stringType()->notEmpty()),
+            V::keyOptional('description', V::stringType()::notEmpty()),
         ), $params);
 
         return $this->options
@@ -171,7 +182,6 @@ class Calendar
      *
      * @see https://developer.nylas.com/docs/api/#delete/calendars/id
      *
-     * @param mixed $labelId
      * @param mixed $calendarId
      *
      * @return array
@@ -180,7 +190,7 @@ class Calendar
     {
         $calendarId = Helper::fooToArray($calendarId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $calendarId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $calendarId);
 
         $queues = [];
 
@@ -212,6 +222,7 @@ class Calendar
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function calendarFreeOrBusy(array $params = []): array
     {
@@ -237,29 +248,29 @@ class Calendar
     /**
      * get metadata array rules
      *
-     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     * @see https://developer.nylas.com/docs/api/metadata/#keep-in-mind
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private static function metadataRules(): V
     {
         return V::callback(static function (mixed $input): bool
         {
-            if (!\is_array($input) || \count($input) > 50)
+            if (!is_array($input) || count($input) > 50)
             {
                 return false;
             }
 
-            $keys = \array_keys($input);
-            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+            $keys = array_keys($input);
+            $isOk = V::each(V::stringType()::length(1, 40))->validate($keys);
 
             if (!$isOk)
             {
                 return false;
             }
 
-            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
-            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+            // https://developer.nylas.com/docs/api/metadata/#delete-metadata
+            return V::each(V::stringType()::length(0, 500))->validate(array_values($input));
         });
     }
 

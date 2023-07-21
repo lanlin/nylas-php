@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Exceptions;
 
 use Throwable;
@@ -11,7 +13,7 @@ use RuntimeException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class NylasException extends RuntimeException
 {
@@ -29,6 +31,8 @@ class NylasException extends RuntimeException
      * @param null|Throwable $exception
      * @param string         $message
      * @param int            $code
+     *
+     * @throws Throwable
      */
     public function __construct(?Throwable $exception = null, string $message = '', int $code = 0)
     {

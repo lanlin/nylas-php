@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Contacts;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -15,14 +18,14 @@ use Nylas\Utilities\Validator as V;
  * @see https://developer.nylas.com/docs/api/#contact-limitations
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Contact
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -31,7 +34,7 @@ class Contact
     /**
      * Contact constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -48,6 +51,7 @@ class Contact
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllContacts(array $params = []): array
     {
@@ -70,6 +74,7 @@ class Contact
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function createAContact(array $params): array
     {
@@ -97,7 +102,7 @@ class Contact
     {
         $contactId = Helper::fooToArray($contactId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $contactId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $contactId);
 
         $queues = [];
 
@@ -130,11 +135,12 @@ class Contact
      * @param array  $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateAContact(string $contactId, array $params): array
     {
         V::doValidate(Validation::addContactRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $contactId);
+        V::doValidate(V::stringType()::notEmpty(), $contactId);
 
         return $this->options
             ->getSync()
@@ -159,7 +165,7 @@ class Contact
     {
         $contactId = Helper::fooToArray($contactId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $contactId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $contactId);
 
         $queues = [];
 
@@ -227,6 +233,7 @@ class Contact
      * @see https://developer.nylas.com/docs/api/#get/contacts/groups
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnContactGroups(): array
     {

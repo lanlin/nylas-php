@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\JobStatuses;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -15,14 +18,14 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#job-statuses
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class JobStatus
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -31,7 +34,7 @@ class JobStatus
     /**
      * JobStatus constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -46,6 +49,7 @@ class JobStatus
      * @see https://developer.nylas.com/docs/api/#get/job-statuses
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllJobStatuses(): array
     {
@@ -70,7 +74,7 @@ class JobStatus
     {
         $jobStatusId = Helper::fooToArray($jobStatusId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $jobStatusId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $jobStatusId);
 
         $queues = [];
 

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Drafts;
 
+use JsonException;
 use Tests\AbsCase;
 
 /**
@@ -10,7 +13,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +21,9 @@ class SendingTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testSendAnEmailDraft(): void
     {
         $params = [
@@ -35,11 +41,14 @@ class SendingTest extends AbsCase
 
         $data = $this->client->Drafts->Sending->sendAnEmailDraft($params);
 
-        $this->assertArrayHasKey($params['draft_id'], $data);
+        static::assertArrayHasKey($params['draft_id'], $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getEmailData(): array
     {
         return [

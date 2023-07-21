@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Utilities;
 
 use Nylas\Exceptions;
@@ -10,7 +12,7 @@ use Nylas\Exceptions;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Errors
 {

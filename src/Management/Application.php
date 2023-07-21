@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Management;
 
-use Exception;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +15,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Application
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +31,7 @@ class Application
     /**
      * Manage constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -44,6 +46,7 @@ class Application
      * @see https://developer.nylas.com/docs/api/#get/a/client_id/ip_addresses
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnApplicationIPAddresses(): array
     {
@@ -61,9 +64,8 @@ class Application
      *
      * @see https://developer.nylas.com/docs/api/#get/a/client_id
      *
-     * @throws Exception
-     *
      * @return array
+     * @throws GuzzleException
      */
     public function returnApplicationDetails(): array
     {
@@ -83,15 +85,14 @@ class Application
      *
      * @param array $params
      *
-     * @throws Exception
-     *
      * @return array
+     * @throws GuzzleException
      */
     public function updateApplicationDetails(array $params): array
     {
         V::doValidate(V::keySet(
             V::key('redirect_uris', V::simpleArray(V::url())),
-            V::keyOptional('application_name', V::stringType()->notEmpty()),
+            V::keyOptional('application_name', V::stringType()::notEmpty()),
         ), $params);
 
         return $this->options

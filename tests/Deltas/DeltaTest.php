@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Deltas;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class DeltaTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testGetADeltaCursor(): void
     {
         $this->mockResponse([
@@ -26,11 +34,15 @@ class DeltaTest extends AbsCase
 
         $data = $this->client->Deltas->Delta->getADeltaCursor();
 
-        $this->assertArrayHasKey('cursor', $data);
+        static::assertArrayHasKey('cursor', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testRequestDeltaCursors(): void
     {
         $params = ['cursor' => '4whx9f0r544dwd07ipymrj7a1'];
@@ -39,11 +51,15 @@ class DeltaTest extends AbsCase
 
         $data = $this->client->Deltas->Delta->requestDeltaCursors($params);
 
-        $this->assertArrayHasKey('deltas', $data);
+        static::assertArrayHasKey('deltas', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnLongPollingDeltas(): void
     {
         $params = ['cursor' => '4whx9f0r544dwd07ipymrj7a1'];
@@ -52,11 +68,15 @@ class DeltaTest extends AbsCase
 
         $data = $this->client->Deltas->Delta->returnLongPollingDeltas($params);
 
-        $this->assertArrayHasKey('deltas', $data);
+        static::assertArrayHasKey('deltas', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testStreamingDeltas(): void
     {
         $params = ['cursor' => '4whx9f0r544dwd07ipymrj7a1'];
@@ -65,11 +85,14 @@ class DeltaTest extends AbsCase
 
         $data = $this->client->Deltas->Delta->streamingDeltas($params);
 
-        $this->assertArrayHasKey('deltas', $data);
+        static::assertArrayHasKey('deltas', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getDeltasData(): array
     {
         return [

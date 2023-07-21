@@ -1,6 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Webhooks;
+
+use function header;
+use function hash_hmac;
+use function json_decode;
+
+use function json_last_error;
+use function file_get_contents;
 
 use Throwable;
 use Nylas\Utilities\Options;
@@ -12,14 +21,14 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Signature
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +37,7 @@ class Signature
     /**
      * Webhook constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -51,7 +60,7 @@ class Signature
             return;
         }
 
-        \header('Content-Type: text/html; charset=utf-8', true, 200);
+        header('Content-Type: text/html; charset=utf-8', true, 200);
 
         exit($challenge);
     }
@@ -71,7 +80,7 @@ class Signature
      */
     public function getNotification(): array
     {
-        $data = \file_get_contents('php://input');
+        $data = file_get_contents('php://input');
         $code = $_SERVER['HTTP_X_NYLAS_SIGNATURE'] ?? '';
         $vrif = $this->xSignatureVerification($code, $data);
 
@@ -101,7 +110,7 @@ class Signature
     {
         $conf = $this->options->getClientSecret();
 
-        $hash = \hash_hmac('sha256', $data, $conf);
+        $hash = hash_hmac('sha256', $data, $conf);
 
         return $code === $hash;
     }
@@ -113,15 +122,14 @@ class Signature
      *
      * @param string $data
      *
-     * @throws \Nylas\Exceptions\NylasException
-     *
      * @return array
+     * @throws NylasException
      */
     public function parseNotification(string $data): array
     {
         try
         {
-            $data = \json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
         }
         catch (Throwable)
         {
@@ -130,7 +138,7 @@ class Signature
             {
                 $msg = 'Unable to parse response body into JSON: ';
 
-                throw new NylasException(null, $msg.\json_last_error());
+                throw new NylasException(null, $msg.json_last_error());
             }
         }
 

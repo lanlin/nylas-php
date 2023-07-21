@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Neural;
+
+use function implode;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +18,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Optical
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +34,7 @@ class Optical
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,13 +52,14 @@ class Optical
      * @param array $pages  [1, 2, 3]
      *
      * @return array
+     * @throws GuzzleException
      */
     public function opticalCharacterRecognition(string $fileId, array $pages = []): array
     {
-        V::doValidate(V::arrayType()->length(0, 5), $pages);
-        V::doValidate(V::simpleArray(V::intType()->min(1)), $pages);
+        V::doValidate(V::arrayType()::length(0, 5), $pages);
+        V::doValidate(V::simpleArray(V::intType()::min(1)), $pages);
 
-        $pages = !empty($pages) ? [\implode(',', $pages)] : ['1,2,3,4,5'];
+        $pages = !empty($pages) ? [implode(',', $pages)] : ['1,2,3,4,5'];
 
         return $this->options
             ->getSync()
@@ -77,7 +83,7 @@ class Optical
     {
         $fileId = Helper::fooToArray($fileId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $fileId);
 
         $queues = [];
 

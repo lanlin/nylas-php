@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Neural;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2023/07/21
  */
 class Conversation
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Conversation
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,13 +50,14 @@ class Conversation
      * @param array  $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function cleanConversation(string $messageId, array $params = []): array
     {
         $params['message_id'] = [$messageId];
 
         V::doValidate(V::keySet(
-            V::key('message_id', V::simpleArray(V::stringType()->notEmpty())),
+            V::key('message_id', V::simpleArray(V::stringType()::notEmpty())),
             V::keyOptional('ignore_links', V::boolType()),
             V::keyOptional('ignore_images', V::boolType()),
             V::keyOptional('ignore_tables', V::boolType()),
@@ -83,7 +87,7 @@ class Conversation
     {
         $messageId = Helper::fooToArray($messageId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $messageId);
 
         $queues = [];
 

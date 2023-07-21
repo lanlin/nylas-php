@@ -12,14 +12,14 @@
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/lanlin/nylas-php)](https://packagist.org/packages/lanlin/nylas-php)
 [![License](https://img.shields.io/github/license/lanlin/nylas-php)](https://github.com/lanlin/nylas-php#license)
 
-PHP bindings for the Nylas REST API (V2.3). https://docs.nylas.com/reference</br>
-I'll try to keep up with [NyLas API Changelog](https://changelog.nylas.com/labels/api) in future updates.
+PHP bindings for the Nylas REST API (V2.7). https://developer.nylas.com/docs/api/v2/</br>
+I'll try to keep up with [NyLas API Changelog](https://developer.nylas.com/docs/new/release-notes/) in future updates.
 
-Last check at the point: [Nylas Updates January 7th, 2022 (2022-01-27)](https://changelog.nylas.com/publications/nylas-updates-january-7th-2021)
+Last check at the point: [[2023-05-16] Improvements to Scheduler and changes to message link tracking](https://developer.nylas.com/docs/new/release-notes/2023-05-16-link-tracking-changes/)
 
 **What's new?**</br>
 
-1. API 2.3 support</br>
+1. API 2.7 support</br>
 2. All Nylas APIs have been implemented within this SDK.</br>
 3. Support send & get message in raw type</br>
 4. Support async batch upload & download</br>
@@ -69,11 +69,11 @@ use Nylas\Client;
 
 $options =
 [
-    'client_id'        => 'your client id',        // required
-    'client_secret'    => 'your client secret'     // required
+    'client_id'        => 'your client id',    // required
+    'client_secret'    => 'your client secret' // required
     
     'debug'            => true,
-    'region'           => 'us',   // server region, can be us, ireland or canada, default is us
+    'region'           => 'oregon', // server region, can be oregon of United States, ireland of Europe, default is oregon
     'log_file'         => dirname(__FILE__) . '/test.log',  // a file path or a resource handler
     'access_token'     => 'your access token',
 ];

@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\JobStatuses;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class JobStatusTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllJobStatuses(): void
     {
         $this->mockResponse([
@@ -52,11 +60,14 @@ class JobStatusTest extends AbsCase
 
         $data = $this->client->JobStatuses->JobStatus->returnAllJobStatuses();
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testGetJobStatus(): void
     {
         $id = '8e570s302fdazx9zqwiuk9jqn';
@@ -75,7 +86,7 @@ class JobStatusTest extends AbsCase
 
         $data = $this->client->JobStatuses->JobStatus->returnAJobStatus($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Rooms;
 
 use Nylas\Utilities\Abs as AbsTrait;
@@ -12,7 +14,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property resource Resource
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Abs
 {

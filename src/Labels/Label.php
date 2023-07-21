@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Labels;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Label
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Label
     /**
      * Label constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -46,12 +49,13 @@ class Label
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllLabels(array $params = []): array
     {
         V::doValidate(V::keySet(
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
             V::keyOptional('view', V::in(['ids', 'count'])),
         ), $params);
 
@@ -69,9 +73,10 @@ class Label
      *
      * @see https://developer.nylas.com/docs/api/#post/labels
      *
-     * @param string $displayName
+     * @param null|string $displayName
      *
      * @return array
+     * @throws GuzzleException
      */
     public function createALabel(?string $displayName = null): array
     {
@@ -99,7 +104,7 @@ class Label
     {
         $labelId = Helper::fooToArray($labelId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $labelId);
 
         $queues = [];
 
@@ -128,14 +133,15 @@ class Label
      *
      * @see https://developer.nylas.com/docs/api/#put/labels/id
      *
-     * @param string $labelId
-     * @param string $displayName
+     * @param string      $labelId
+     * @param null|string $displayName
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateALabel(string $labelId, ?string $displayName = null): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $labelId);
+        V::doValidate(V::stringType()::notEmpty(), $labelId);
 
         $params = empty($displayName) ? [] : ['display_name' => $displayName];
 
@@ -162,7 +168,7 @@ class Label
     {
         $labelId = Helper::fooToArray($labelId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $labelId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $labelId);
 
         $queues = [];
 

@@ -1,6 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Request;
+
+use function trim;
+use function current;
+use function sprintf;
+use function strtolower;
+use function array_merge;
+use function is_callable;
+use function json_decode;
+use function utf8_encode;
+use function str_contains;
+use function base64_encode;
 
 use Throwable;
 use GuzzleHttp\Client;
@@ -8,6 +21,7 @@ use Nylas\Utilities\API;
 use Nylas\Utilities\Errors;
 use Nylas\Utilities\Helper;
 use GuzzleHttp\HandlerStack;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -16,7 +30,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 trait AbsBase
 {
@@ -32,7 +46,7 @@ trait AbsBase
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var Client
      */
     private Client $guzzle;
 
@@ -59,10 +73,10 @@ trait AbsBase
     {
         $option = [
             'verify'   => true,
-            'base_uri' => \trim($server ?? API::SERVER['us']),
+            'base_uri' => trim($server ?? API::SERVER['oregon']),
         ];
 
-        if (\is_callable($handler))
+        if (is_callable($handler))
         {
             $option['handler'] = HandlerStack::create($handler);
         }
@@ -78,7 +92,7 @@ trait AbsBase
      *
      * @param string[] $path
      *
-     * @return $this
+     * @return AbsBase|Async|Sync
      */
     public function setPath(string ...$path): self
     {
@@ -92,9 +106,9 @@ trait AbsBase
     /**
      * set body value
      *
-     * @param \Psr\Http\Message\StreamInterface|resource|string $body
+     * @param resource|StreamInterface|string $body
      *
-     * @return $this
+     * @return AbsBase|Async|Sync
      */
     public function setBody(mixed $body): self
     {
@@ -110,7 +124,7 @@ trait AbsBase
      *
      * @param array $query
      *
-     * @return $this
+     * @return AbsBase|Async|Sync
      */
     public function setQuery(array $query): self
     {
@@ -131,7 +145,7 @@ trait AbsBase
      *
      * @param array $params
      *
-     * @return $this
+     * @return AbsBase|Async|Sync
      */
     public function setFormParams(array $params): self
     {
@@ -147,7 +161,7 @@ trait AbsBase
      *
      * @param array $files
      *
-     * @return $this
+     * @return AbsBase|Async|Sync
      */
     public function setFormFiles(array $files): self
     {
@@ -165,13 +179,13 @@ trait AbsBase
      *
      * @param array $headers
      *
-     * @return $this
+     * @return AbsBase|Async|Sync
      */
     public function setHeaderParams(array $headers): self
     {
         if (!empty($headers['Authorization']))
         {
-            $encoded = \base64_encode("{$headers['Authorization']}:");
+            $encoded = base64_encode("{$headers['Authorization']}:");
 
             $headers['Authorization'] = "Basic {$encoded}";
         }
@@ -202,7 +216,7 @@ trait AbsBase
      */
     private function concatApiPath(string $api): string
     {
-        return \sprintf($api, ...$this->pathParams);
+        return sprintf($api, ...$this->pathParams);
     }
 
     // ------------------------------------------------------------------------------
@@ -222,7 +236,7 @@ trait AbsBase
         [
             'httpStatus'  => $code,
             'invalidJson' => true,
-            'contentType' => \current($type),
+            'contentType' => current($type),
             'contentBody' => $data,
         ];
     }
@@ -244,7 +258,7 @@ trait AbsBase
             'http_errors' => $httpErrors,
         ];
 
-        return \array_merge(
+        return array_merge(
             $temp,
             empty($this->formFiles) ? [] : $this->formFiles,
             empty($this->jsonParams) ? [] : $this->jsonParams,
@@ -312,7 +326,7 @@ trait AbsBase
         $data = $response->getBody()->getContents();
 
         // when not json type
-        if (!\str_contains(\strtolower(\current($type)), $expc))
+        if (!str_contains(strtolower(current($type)), $expc))
         {
             return $this->concatForInvalidJsonData($type, $code, $data);
         }
@@ -320,7 +334,7 @@ trait AbsBase
         try
         {
             // decode json data
-            $temp = \json_decode(\trim(\utf8_encode($data)), true, 512, JSON_THROW_ON_ERROR);
+            $temp = json_decode(trim(utf8_encode($data)), true, 512, JSON_THROW_ON_ERROR);
         }
         catch (Throwable)
         {

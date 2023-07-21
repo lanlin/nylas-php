@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Deltas;
 
 use Nylas\Utilities\Abs as AbsTrait;
@@ -12,7 +14,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property Delta Delta
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Abs
 {

@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Management;
 
+use function time;
+
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +16,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +24,10 @@ class ApplicationTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnApplicationIPAddresses(): void
     {
         $this->mockResponse([
@@ -36,11 +46,15 @@ class ApplicationTest extends AbsCase
 
         $data = $this->client->Management->Application->returnApplicationIPAddresses();
 
-        $this->assertArrayHasKey('updated_at', $data);
+        static::assertArrayHasKey('updated_at', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnApplicationDetails(): void
     {
         $this->mockResponse([
@@ -54,11 +68,15 @@ class ApplicationTest extends AbsCase
 
         $data = $this->client->Management->Application->returnApplicationDetails();
 
-        $this->assertArrayHasKey('application_name', $data);
+        static::assertArrayHasKey('application_name', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateApplicationDetails(): void
     {
         $this->mockResponse([
@@ -68,13 +86,13 @@ class ApplicationTest extends AbsCase
         ]);
 
         $param = [
-            'application_name' => 'test_'.\time(),
+            'application_name' => 'test_'.time(),
             'redirect_uris'    => ['http://www.test-nylas-test.com'],
         ];
 
         $data = $this->client->Management->Application->updateApplicationDetails($param);
 
-        $this->assertArrayHasKey('application_name', $data);
+        static::assertArrayHasKey('application_name', $data);
     }
 
     // ------------------------------------------------------------------------------

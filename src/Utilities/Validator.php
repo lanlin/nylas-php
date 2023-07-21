@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Utilities;
+
+use function strtotime;
 
 use Respect\Validation\Factory;
 use Respect\Validation\Rules\AllOf;
 use Respect\Validation\Validatable;
 use Nylas\Exceptions\NylasException;
+use Respect\Validation\Exceptions\ComponentException;
 use Respect\Validation\Exceptions\NestedValidationException;
 
 /**
@@ -165,7 +170,7 @@ use Respect\Validation\Exceptions\NestedValidationException;
  * @method static Validator zend($validator, array $params = null)
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Validator extends AllOf
 {
@@ -178,6 +183,7 @@ class Validator extends AllOf
      * @param array  $arguments
      *
      * @return self
+     * @throws ComponentException
      */
     public function __call(string $ruleName, array $arguments): self
     {
@@ -195,6 +201,7 @@ class Validator extends AllOf
      * @param array  $arguments
      *
      * @return self
+     * @throws ComponentException
      */
     public static function __callStatic(string $ruleName, array $arguments): self
     {
@@ -210,7 +217,7 @@ class Validator extends AllOf
      */
     public static function timestampType(): self
     {
-        return self::intType()->min(\strtotime('1971-1-1'));
+        return self::intType()::min(strtotime('1971-1-1'));
     }
 
     // ------------------------------------------------------------------------------
@@ -218,8 +225,8 @@ class Validator extends AllOf
     /**
      * optional key
      *
-     * @param string                          $reference
-     * @param \Respect\Validation\Validatable $referenceValidator
+     * @param string      $reference
+     * @param Validatable $referenceValidator
      *
      * @return self
      */
@@ -235,13 +242,13 @@ class Validator extends AllOf
     /**
      * check if a simple array
      *
-     * @param \Respect\Validation\Validatable $referenceValidator
+     * @param null|Validatable $referenceValidator
      *
      * @return self
      */
     public static function simpleArray(?Validatable $referenceValidator = null): self
     {
-        $referenceValidator = $referenceValidator ?? self::stringType()->notEmpty();
+        $referenceValidator = $referenceValidator ?? self::stringType()::notEmpty();
 
         return self::allOf(
             self::each($referenceValidator),
@@ -257,7 +264,7 @@ class Validator extends AllOf
      * @param Validatable $validatable
      * @param mixed       $input
      *
-     * @throws \Nylas\Exceptions\NylasException
+     * @throws NylasException
      */
     public static function doValidate(Validatable $validatable, mixed $input): void
     {

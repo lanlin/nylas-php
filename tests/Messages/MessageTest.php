@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Messages;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class MessageTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllMessages(): void
     {
         $para = [
@@ -44,11 +52,14 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Messages->Message->returnAllMessages($para);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAMessage(): void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
@@ -57,11 +68,15 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Messages->Message->returnAMessage($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnARawMessage(): void
     {
         $id = 'eyhcafxtzkke6tfsdo9g92utb';
@@ -70,11 +85,15 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Messages->Message->returnARawMessage($id);
 
-        $this->assertIsObject($data);
+        static::assertIsObject($data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateAMessage(): void
     {
         $id = $this->faker->uuid;
@@ -90,11 +109,14 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Messages->Message->updateAMessage($id, $params);
 
-        $this->assertArrayHasKey('id', $data);
+        static::assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array[]
+     */
     private function getMessageBaseData(): array
     {
         return [[

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Neural;
 
 use Nylas\Utilities\Abs as AbsTrait;
@@ -16,7 +18,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property Conversation Conversation
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2023/07/21
  */
 class Abs
 {

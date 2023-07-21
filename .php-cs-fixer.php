@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
@@ -15,14 +16,13 @@ use PhpCsFixer\Finder;
  * 64 - Exception raised within the application.
  */
 return (new Config())->setRules([
-    '@PhpCsFixer' => true,
-
+    '@PhpCsFixer'       => true,
     'no_unused_imports' => true,
+    'dir_constant'      => true,
+    'ereg_to_preg'      => true,
+    'no_unset_cast'     => false,
+    'echo_tag_syntax'   => ['format' => 'long'],
 
-    'dir_constant'               => true,
-    'ereg_to_preg'               => true,
-    'no_unset_cast'              => false,
-    'echo_tag_syntax'            => ['format' => 'long'],
     'void_return'                => true,
     'strict_param'               => true,
     'static_lambda'              => false,
@@ -35,24 +35,37 @@ return (new Config())->setRules([
     'ternary_to_null_coalescing' => true,
     'no_superfluous_phpdoc_tags' => false,
 
-    'phpdoc_line_span'                    => true,
-    'phpdoc_to_param_type'                => true,
-    'phpdoc_to_return_type'               => true,
-    'phpdoc_add_missing_param_annotation' => ['only_untyped' => false],
+    'declare_parentheses'                     => true,
+    'statement_indentation'                   => true,
+    'control_structure_braces'                => true,
+    'single_space_around_construct'           => true,
+    'no_multiple_statements_per_line'         => true,
+    'control_structure_continuation_position' => ['position' => 'next_line'],
 
     'not_operator_with_space'                          => false,
     'php_unit_test_class_requires_covers'              => false,
     'nullable_type_declaration_for_default_null_value' => true,
 
-    'list_syntax'             => ['syntax' => 'short'],
-    'array_syntax'            => ['syntax' => 'short'],
-    'error_suppression'       => ['noise_remaining_usages' => true],
-    'method_argument_space'   => ['on_multiline' => 'ensure_fully_multiline'],
-    'declare_equal_normalize' => ['space' => 'single'],
+    'phpdoc_line_span'                    => true,
+    'phpdoc_to_param_type'                => true,
+    'phpdoc_to_return_type'               => true,
+    'phpdoc_add_missing_param_annotation' => ['only_untyped' => false],
 
-    'multiline_whitespace_before_semicolons' => [
-        'strategy' => 'no_multi_line',
-    ],
+    'phpdoc_separation'                   => ['groups' => [
+        ['deprecated', 'link', 'see', 'since'],
+        ['author', 'change', 'copyright', 'license'],
+        ['category', 'package', 'subpackage'],
+        ['property', 'property-read', 'property-write'],
+        ['param'],
+        ['return', 'throws'],
+    ]],
+
+    'list_syntax'                            => ['syntax' => 'short'],
+    'array_syntax'                           => ['syntax' => 'short'],
+    'error_suppression'                      => ['noise_remaining_usages' => true],
+    'method_argument_space'                  => ['on_multiline' => 'ensure_fully_multiline'],
+    'declare_equal_normalize'                => ['space' => 'single'],
+    'multiline_whitespace_before_semicolons' => ['strategy' => 'no_multi_line'],
 
     'no_extra_blank_lines' => [
         'tokens' => [
@@ -66,6 +79,29 @@ return (new Config())->setRules([
         'equal'            => false,
         'identical'        => false,
         'less_and_greater' => false,
+    ],
+
+    'binary_operator_spaces' => [
+        'default' => 'align_single_space_minimal',
+    ],
+
+    'global_namespace_import' => [
+        'import_classes'   => true,
+        'import_constants' => true,
+        'import_functions' => true,
+    ],
+
+    'ordered_imports' => [
+        'sort_algorithm' => 'length',
+        'imports_order'  => ['const', 'function', 'class'],
+    ],
+
+    'curly_braces_position' => [
+        'anonymous_classes_opening_brace'           => 'next_line_unless_newline_at_signature_end',
+        'control_structures_opening_brace'          => 'next_line_unless_newline_at_signature_end',
+        'anonymous_functions_opening_brace'         => 'next_line_unless_newline_at_signature_end',
+        'allow_single_line_anonymous_functions'     => true,
+        'allow_single_line_empty_anonymous_classes' => true,
     ],
 
     'native_function_invocation' => [
@@ -82,28 +118,6 @@ return (new Config())->setRules([
             'GoInterface',
             'Attribute',
         ],
-    ],
-
-    'binary_operator_spaces' => [
-        'default' => 'align_single_space_minimal',
-    ],
-
-    'braces' => [
-        'allow_single_line_closure'                   => true,
-        'position_after_control_structures'           => 'next',
-        'position_after_anonymous_constructs'         => 'next',
-        'position_after_functions_and_oop_constructs' => 'next',
-    ],
-
-    'global_namespace_import' => [
-        'import_classes'   => true,
-        'import_constants' => false,
-        'import_functions' => false,
-    ],
-
-    'ordered_imports' => [
-        'sort_algorithm' => 'length',
-        'imports_order'  => ['const', 'function', 'class'],
     ],
 
     'blank_line_before_statement' => [

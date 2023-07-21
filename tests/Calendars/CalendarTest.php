@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Calendars;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class CalendarTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllCalendars(): void
     {
         $params = [
@@ -53,11 +61,15 @@ class CalendarTest extends AbsCase
 
         $data = $this->client->Calendars->Calendar->returnAllCalendars($params);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCreateACalendar(): void
     {
         $params = [
@@ -78,15 +90,19 @@ class CalendarTest extends AbsCase
             'object'        => 'calendar',
             'read_only'     => true,
             'timezone'      => 'America/Los_Angeles',
+            'hex_color'     => '#9cbf8b',
         ]);
 
         $data = $this->client->Calendars->Calendar->createACalendar($params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnACalendar(): void
     {
         $id = '6d4d54fd53c54a70a2b98e36038d';
@@ -101,15 +117,20 @@ class CalendarTest extends AbsCase
             'object'      => 'calendar',
             'read_only'   => true,
             'timezone'    => null,
+            'hex_color'   => '#9cbf8b',
         ]);
 
         $data = $this->client->Calendars->Calendar->returnACalendar($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateACalendar(): void
     {
         $id = '8e570s302fdazx9zqwiuk9jqn';
@@ -132,15 +153,19 @@ class CalendarTest extends AbsCase
             'object'        => 'calendar',
             'read_only'     => true,
             'timezone'      => 'America/Los_Angeles',
+            'hex_color'     => '#9cbf8b',
         ]);
 
         $data = $this->client->Calendars->Calendar->updateACalendar($id, $params);
 
-        $this->assertArrayHasKey('id', $data);
+        static::assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteACalendar(): void
     {
         $id = '8e570s302fdazx9zqwiuk9jqn';
@@ -149,11 +174,15 @@ class CalendarTest extends AbsCase
 
         $data = $this->client->Calendars->Calendar->deleteACalendar($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCalendarFreeOrBusy(): void
     {
         $params = [
@@ -183,7 +212,7 @@ class CalendarTest extends AbsCase
 
         $data = $this->client->Calendars->Calendar->calendarFreeOrBusy($params);
 
-        $this->assertArrayHasKey('email', $data[0]);
+        static::assertArrayHasKey('email', $data[0]);
     }
 
     // ------------------------------------------------------------------------------

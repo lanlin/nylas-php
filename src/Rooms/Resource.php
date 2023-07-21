@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Rooms;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,14 +14,14 @@ use Nylas\Utilities\Options;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Resource
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -27,7 +30,7 @@ class Resource
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -44,6 +47,7 @@ class Resource
      * @param int $limit
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnRoomResourceInformation(int $limit = 100): array
     {

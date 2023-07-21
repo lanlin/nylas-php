@@ -1,10 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Management;
+
+use function count;
+use function is_array;
+use function array_keys;
+use function array_values;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,14 +20,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Account
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +36,7 @@ class Account
     /**
      * Manage constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -46,6 +54,7 @@ class Account
      * @param array  $metadata
      *
      * @return array
+     * @throws GuzzleException
      */
     public function addAccountMetadata(string $accountId, array $metadata): array
     {
@@ -66,6 +75,7 @@ class Account
      * @see https://developer.nylas.com/docs/api/#get/account
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAccountDetails(): array
     {
@@ -85,18 +95,13 @@ class Account
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllAccounts(array $params): array
     {
         V::doValidate(V::keySet(
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
-
-            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
-            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
-            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
-            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
-            V::keyOptional('metadata_search', V::stringType()->notEmpty())
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
         ), $params);
 
         return $this->options
@@ -117,6 +122,7 @@ class Account
      * @param string $accountId
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAnAccount(string $accountId): array
     {
@@ -137,6 +143,7 @@ class Account
      * @param string $accountId
      *
      * @return array
+     * @throws GuzzleException
      */
     public function deleteAnAccount(string $accountId): array
     {
@@ -157,6 +164,7 @@ class Account
      * @param string $accountId
      *
      * @return array
+     * @throws GuzzleException
      */
     public function cancelAnAccount(string $accountId): array
     {
@@ -177,6 +185,7 @@ class Account
      * @param string $accountId
      *
      * @return array
+     * @throws GuzzleException
      */
     public function reactiveAnAccount(string $accountId): array
     {
@@ -195,10 +204,10 @@ class Account
      * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/revoke-all
      *
      * @param string  $accountId
-     * @param array   $params
      * @param ?string $keepAccessToken
      *
      * @return array
+     * @throws GuzzleException
      */
     public function revokeAllTokens(string $accountId, ?string $keepAccessToken = null): array
     {
@@ -222,6 +231,7 @@ class Account
      * @param string $accountId
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnTokenInformation(string $accountId): array
     {
@@ -237,29 +247,29 @@ class Account
     /**
      * get metadata array rules
      *
-     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     * @see https://developer.nylas.com/docs/api/metadata/#keep-in-mind
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private static function metadataRules(): V
     {
         return V::callback(static function (mixed $input): bool
         {
-            if (!\is_array($input) || \count($input) > 50)
+            if (!is_array($input) || count($input) > 50)
             {
                 return false;
             }
 
-            $keys = \array_keys($input);
-            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+            $keys = array_keys($input);
+            $isOk = V::each(V::stringType()::length(1, 40))->validate($keys);
 
             if (!$isOk)
             {
                 return false;
             }
 
-            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
-            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+            // https://developer.nylas.com/docs/api/metadata/#delete-metadata
+            return V::each(V::stringType()::length(0, 500))->validate(array_values($input));
         });
     }
 

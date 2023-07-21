@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Calendars;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class AvailabilityTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testAvailabilityForASingleMeeting(): void
     {
         $params = $this->getSingleParams();
@@ -54,11 +62,15 @@ class AvailabilityTest extends AbsCase
 
         $data = $this->client->Calendars->Availability->availabilityForASingleMeeting($params);
 
-        $this->assertArrayHasKey('time_slots', $data);
+        static::assertArrayHasKey('time_slots', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testAvailabilityForMultipleMeetings(): void
     {
         $params = $this->getMultipleParams();
@@ -104,11 +116,14 @@ class AvailabilityTest extends AbsCase
 
         $data = $this->client->Calendars->Availability->availabilityForMultipleMeetings($params);
 
-        $this->assertCount(2, $data);
+        static::assertCount(2, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return int[]
+     */
     private function getSingleParams(): array
     {
         return [
@@ -146,6 +161,9 @@ class AvailabilityTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return int[]
+     */
     private function getMultipleParams(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Drafts;
 
 use Nylas\Utilities\API;
@@ -13,14 +15,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Sending
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +31,7 @@ class Sending
     /**
      * Sending constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -79,7 +81,7 @@ class Sending
     /**
      * get rules for draft
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function getDraftRules(): V
     {
@@ -87,12 +89,12 @@ class Sending
             V::key('links', V::boolType()),
             V::key('opens', V::boolType()),
             V::key('thread_replies', V::boolType()),
-            V::key('payload', V::stringType()->notEmpty(), false)
+            V::key('payload', V::stringType()::notEmpty(), false)
         );
 
         return V::simpleArray(V::keySet(
-            V::key('version', V::intType()->min(0)),
-            V::key('draft_id', V::stringType()->notEmpty()),
+            V::key('version', V::intType()::min(0)),
+            V::key('draft_id', V::stringType()::notEmpty()),
             V::key('tracking', $tracking, false)
         ));
     }

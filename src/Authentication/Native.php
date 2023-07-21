@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Authentication;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,14 +15,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Native
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +31,7 @@ class Native
     /**
      * Native constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -45,21 +48,22 @@ class Native
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function sendAuthorization(array $params): array
     {
         $params['client_id'] = $this->options->getClientId();
 
         V::doValidate(V::keySet(
-            V::key('name', V::stringType()->notEmpty()),
+            V::key('name', V::stringType()::notEmpty()),
             V::key('provider', V::in(API::PROVIDERS)),
             V::key('settings', $this->settingsRules($params)),
-            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
             V::key('email_address', V::email()),
-            V::keyOptional('scopes', V::stringType()->notEmpty()),
+            V::keyOptional('scopes', V::stringType()::notEmpty()),
 
             // re-authenticate existing account id
-            V::keyOptional('reauth_account_id', V::stringType()->notEmpty())
+            V::keyOptional('reauth_account_id', V::stringType()::notEmpty())
         ), $params);
 
         return $this->options
@@ -78,10 +82,11 @@ class Native
      * @param string $code
      *
      * @return array
+     * @throws GuzzleException
      */
     public function exchangeTheToken(string $code): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $code);
+        V::doValidate(V::stringType()::notEmpty(), $code);
 
         $params = [
             'code'          => $code,
@@ -105,6 +110,7 @@ class Native
      * @param string $email
      *
      * @return array
+     * @throws GuzzleException
      */
     public function detectProvider(string $email): array
     {
@@ -129,7 +135,7 @@ class Native
      *
      * @param array $params
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function settingsRules(array $params): V
     {
@@ -152,7 +158,7 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function nylasProviderRule(): V
     {
@@ -162,11 +168,11 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function knownProviderRule(): V
     {
-        return V::keySet(V::key('password', V::stringType()->notEmpty()));
+        return V::keySet(V::key('password', V::stringType()::notEmpty()));
     }
 
     // ------------------------------------------------------------------------------
@@ -174,13 +180,13 @@ class Native
     /**
      * outlook provider rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function outlookProviderRule(): V
     {
         return V::keySet(
-            V::key('username', V::stringType()->notEmpty()),
-            V::key('password', V::stringType()->notEmpty()),
+            V::key('username', V::stringType()::notEmpty()),
+            V::key('password', V::stringType()::notEmpty()),
             V::key('exchange_server_host', V::domain())
         );
     }
@@ -190,14 +196,14 @@ class Native
     /**
      * office 365 provider rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function office365ProviderRule(): V
     {
         return V::keySet(
-            V::key('microsoft_client_id', V::stringType()->notEmpty()),
-            V::key('microsoft_client_secret', V::stringType()->notEmpty()),
-            V::key('microsoft_refresh_token', V::stringType()->notEmpty()),
+            V::key('microsoft_client_id', V::stringType()::notEmpty()),
+            V::key('microsoft_client_secret', V::stringType()::notEmpty()),
+            V::key('microsoft_refresh_token', V::stringType()::notEmpty()),
             V::key('redirect_uri', V::url())
         );
     }
@@ -207,19 +213,19 @@ class Native
     /**
      * unknown imap provider
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function imapProviderRule(): V
     {
         return V::keySet(
             V::key('imap_host', V::domain()),
             V::key('imap_port', V::intType()),
-            V::key('imap_username', V::stringType()->notEmpty()),
-            V::key('imap_password', V::stringType()->notEmpty()),
+            V::key('imap_username', V::stringType()::notEmpty()),
+            V::key('imap_password', V::stringType()::notEmpty()),
             V::key('smtp_host', V::domain()),
             V::key('smtp_port', V::intType()),
-            V::key('smtp_username', V::stringType()->notEmpty()),
-            V::key('smtp_password', V::stringType()->notEmpty()),
+            V::key('smtp_username', V::stringType()::notEmpty()),
+            V::key('smtp_password', V::stringType()::notEmpty()),
             V::key('ssl_required', V::boolType())
         );
     }
@@ -229,23 +235,23 @@ class Native
     /**
      * gmail provider rule
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function gmailProviderRule(): V
     {
         return V::oneOf(
             V::keySet(
-                V::key('google_client_id', V::stringType()->notEmpty()),
-                V::key('google_client_secret', V::stringType()->notEmpty()),
-                V::key('google_refresh_token', V::stringType()->notEmpty())
+                V::key('google_client_id', V::stringType()::notEmpty()),
+                V::key('google_client_secret', V::stringType()::notEmpty()),
+                V::key('google_refresh_token', V::stringType()::notEmpty())
             ),
             V::keySet(V::key('service_account_json', V::keySet(
-                V::key('type', V::stringType()->notEmpty()),
-                V::key('project_id', V::stringType()->notEmpty()),
-                V::key('private_key_id', V::stringType()->notEmpty()),
-                V::key('private_key', V::stringType()->notEmpty()),
+                V::key('type', V::stringType()::notEmpty()),
+                V::key('project_id', V::stringType()::notEmpty()),
+                V::key('private_key_id', V::stringType()::notEmpty()),
+                V::key('private_key', V::stringType()::notEmpty()),
                 V::key('client_email', V::email()),
-                V::key('client_id', V::stringType()->notEmpty()),
+                V::key('client_id', V::stringType()::notEmpty()),
                 V::key('auth_uri', V::url()),
                 V::key('token_uri', V::url()),
                 V::key('auth_provider_x509_cert_url', V::url()),
@@ -259,25 +265,25 @@ class Native
     /**
      * exchange provider rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function exchangeProviderRule(): V
     {
         return V::oneOf(
             V::keySet(
-                V::key('username', V::stringType()->notEmpty()),
-                V::key('password', V::stringType()->notEmpty()),
+                V::key('username', V::stringType()::notEmpty()),
+                V::key('password', V::stringType()::notEmpty()),
                 V::key('exchange_server_host', V::domain())
             ),
             V::keySet(
-                V::key('username', V::stringType()->notEmpty()),
-                V::key('password', V::stringType()->notEmpty()),
+                V::key('username', V::stringType()::notEmpty()),
+                V::key('password', V::stringType()::notEmpty()),
                 V::key('service_account', V::boolType())
             ),
             V::keySet(
-                V::key('microsoft_client_id', V::stringType()->notEmpty()),
-                V::key('microsoft_client_secret', V::stringType()->notEmpty()),
-                V::key('microsoft_refresh_token', V::stringType()->notEmpty()),
+                V::key('microsoft_client_id', V::stringType()::notEmpty()),
+                V::key('microsoft_client_secret', V::stringType()::notEmpty()),
+                V::key('microsoft_refresh_token', V::stringType()::notEmpty()),
                 V::key('redirect_uri', V::url()),
                 V::key('service_account', V::boolType())
             ),

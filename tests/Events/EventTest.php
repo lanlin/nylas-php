@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Events;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,13 +22,17 @@ class EventTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllEvents(): void
     {
         $this->mockResponse([$this->getEventData()]);
 
         $data = $this->client->Events->Event->returnAllEvents();
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
@@ -33,6 +41,9 @@ class EventTest extends AbsCase
      * @dataProvider getProvidData
      *
      * @param array $params
+     *
+     * @throws GuzzleException
+     * @throws JsonException
      */
     public function testCreateAnEvents(array $params): void
     {
@@ -40,11 +51,14 @@ class EventTest extends AbsCase
 
         $data = $this->client->Events->Event->createAnEvent($params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAnEvent(): void
     {
         $id = '{event_id}';
@@ -53,7 +67,7 @@ class EventTest extends AbsCase
 
         $data = $this->client->Events->Event->returnAnEvent($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -62,6 +76,9 @@ class EventTest extends AbsCase
      * @dataProvider getProvidData
      *
      * @param array $params
+     *
+     * @throws GuzzleException
+     * @throws JsonException
      */
     public function testUpdateAnEvent(array $params): void
     {
@@ -71,11 +88,14 @@ class EventTest extends AbsCase
 
         $data = $this->client->Events->Event->updateAnEvent($id, $params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteAnEvent(): void
     {
         $id = '{event_id}';
@@ -84,11 +104,15 @@ class EventTest extends AbsCase
 
         $data = $this->client->Events->Event->deleteAnEvent($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSendRSVP(): void
     {
         $params = [
@@ -101,11 +125,15 @@ class EventTest extends AbsCase
 
         $data = $this->client->Events->Event->sendRSVP($params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testGenerateICSFile(): void
     {
         $params = [
@@ -123,12 +151,15 @@ class EventTest extends AbsCase
 
         $data = $this->client->Events->Event->generateICSFile($params);
 
-        $this->assertArrayHasKey('ics', $data);
+        static::assertArrayHasKey('ics', $data);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function getProvidData(): array
+    /**
+     * @return array[]
+     */
+    public static function getProvidData(): array
     {
         $event = [
             'title'        => 'Birthday Party',
@@ -294,20 +325,24 @@ class EventTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getEventData(): array
     {
         return [
-            'account_id'   => '{account_id}',
-            'busy'         => true,
-            'calendar_id'  => '{calendar_id}',
-            'description'  => 'Coffee meeting',
-            'ical_uid'     => '{ical_uid}',
-            'id'           => '{event_id}',
-            'location'     => 'string',
-            'message_id'   => 'string',
-            'object'       => 'event',
-            'owner'        => '<some_email@email.com>',
-            'participants' => [
+            'account_id'          => '{account_id}',
+            'busy'                => true,
+            'calendar_id'         => '{calendar_id}',
+            'description'         => 'Coffee meeting',
+            'ical_uid'            => '{ical_uid}',
+            'id'                  => '{event_id}',
+            'location'            => 'string',
+            'message_id'          => 'string',
+            'object'              => 'event',
+            'owner'               => '<some_email@email.com>',
+            'original_start_time' => '',
+            'participants'        => [
                 [
                     'name'    => 'Dorothy Vaughan',
                     'email'   => 'dorothy@spacetech.com',

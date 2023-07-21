@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Folders;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Folder
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Folder
     /**
      * Folder constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -46,12 +49,13 @@ class Folder
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllFolders(array $params = []): array
     {
         V::doValidate(V::keySet(
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
             V::keyOptional('view', V::in(['ids', 'count'])),
         ), $params);
 
@@ -72,12 +76,13 @@ class Folder
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function createAFolder(array $params = []): array
     {
         V::doValidate(V::keySet(
-            V::keyOptional('name', V::stringType()->notEmpty()),
-            V::keyOptional('display_name', V::stringType()->notEmpty()),
+            V::keyOptional('name', V::stringType()::notEmpty()),
+            V::keyOptional('display_name', V::stringType()::notEmpty()),
         ), $params);
 
         return $this->options
@@ -102,7 +107,7 @@ class Folder
     {
         $folderId = Helper::fooToArray($folderId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $folderId);
 
         $queues = [];
 
@@ -135,14 +140,15 @@ class Folder
      * @param array  $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateAFolder(string $folderId, array $params = []): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $folderId);
+        V::doValidate(V::stringType()::notEmpty(), $folderId);
 
         V::doValidate(V::keySet(
-            V::keyOptional('name', V::stringType()->notEmpty()),
-            V::keyOptional('display_name', V::stringType()->notEmpty())
+            V::keyOptional('name', V::stringType()::notEmpty()),
+            V::keyOptional('display_name', V::stringType()::notEmpty())
         ), $params);
 
         return $this->options
@@ -168,7 +174,7 @@ class Folder
     {
         $folderId = Helper::fooToArray($folderId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $folderId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $folderId);
 
         $queues = [];
 

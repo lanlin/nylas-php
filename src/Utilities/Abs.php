@@ -1,6 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Utilities;
+
+use function trim;
+use function ucfirst;
+use function get_class;
+use function class_exists;
 
 use Nylas\Exceptions\NylasException;
 
@@ -10,7 +17,7 @@ use Nylas\Exceptions\NylasException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 trait Abs
 {
@@ -31,7 +38,7 @@ trait Abs
     /**
      * Abs constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -68,11 +75,11 @@ trait Abs
             return $this->objects[$name];
         }
 
-        $nmSpace  = \trim(\get_class($this), 'Abs');
-        $subClass = \trim($nmSpace, '\\').'\\'.\ucfirst($name);
+        $nmSpace  = trim(get_class($this), 'Abs');
+        $subClass = trim($nmSpace, '\\').'\\'.ucfirst($name);
 
         // check class exists
-        if (!\class_exists($subClass))
+        if (!class_exists($subClass))
         {
             throw new NylasException(null, "class {$subClass} not found!");
         }

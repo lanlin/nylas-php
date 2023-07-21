@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Outbox;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Message
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Message
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -44,6 +47,7 @@ class Message
      * @see https://developer.nylas.com/docs/api/#get/outbox
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllMessagesToBeSent(): array
     {
@@ -63,14 +67,15 @@ class Message
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function sendAMessage(array $params): array
     {
         V::doValidate(V::keySet(
             V::key('to', $this->arrayOfObject()),
             V::keyOptional('from', $this->arrayOfObject()),
-            V::keyOptional('body', V::stringType()->notEmpty()),
-            V::keyOptional('subject', V::stringType()->notEmpty()),
+            V::keyOptional('body', V::stringType()::notEmpty()),
+            V::keyOptional('subject', V::stringType()::notEmpty()),
             V::keyOptional('send_at', V::timestampType()),
         ), $params);
 
@@ -87,14 +92,15 @@ class Message
      *
      * @see https://developer.nylas.com/docs/api/#put/messages/id
      *
-     * @param string $jobStatusId
-     * @param int    $sendAt
+     * @param string   $jobStatusId
+     * @param null|int $sendAt
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateSendTime(string $jobStatusId, ?int $sendAt = null): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $jobStatusId);
+        V::doValidate(V::stringType()::notEmpty(), $jobStatusId);
         V::doValidate(V::anyOf(V::nullType(), V::timestampType()), $sendAt);
 
         $params = $sendAt ? ['send_at' => $sendAt] : [];
@@ -114,7 +120,6 @@ class Message
      *
      * @see https://developer.nylas.com/docs/api/#delete/drafts/id
      *
-     * @param array $params
      * @param mixed $jobStatusId
      *
      * @return array
@@ -123,7 +128,7 @@ class Message
     {
         $jobStatusId = Helper::fooToArray($jobStatusId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $jobStatusId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $jobStatusId);
 
         $queues = [];
 
@@ -150,7 +155,7 @@ class Message
     /**
      * array of object
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function arrayOfObject(): V
     {

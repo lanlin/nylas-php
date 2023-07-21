@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Files;
+
+use function fopen;
+use function is_string;
+use function file_exists;
+use function str_replace;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
 use Psr\Http\Message\StreamInterface;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -14,14 +22,14 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class File
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -30,7 +38,7 @@ class File
     /**
      * File constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,13 +55,14 @@ class File
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllFiles(array $params = []): array
     {
         V::doValidate(V::keySet(
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
-            V::keyOptional('filename', V::stringType()->notEmpty()),
-            V::keyOptional('message_id', V::stringType()->notEmpty()),
+            V::keyOptional('filename', V::stringType()::notEmpty()),
+            V::keyOptional('message_id', V::stringType()::notEmpty()),
             V::keyOptional('content_type', V::in([$this->contentTypes()]))
         ), $params);
 
@@ -87,9 +96,9 @@ class File
         {
             $item['name'] ??= 'file';
 
-            if (\is_string($item['contents']) && \file_exists($item['contents']))
+            if (is_string($item['contents']) && file_exists($item['contents']))
             {
-                $item['contents'] = \fopen($item['contents'], 'rb');
+                $item['contents'] = fopen($item['contents'], 'rb');
             }
 
             $request = $this->options
@@ -123,7 +132,7 @@ class File
     {
         $fileId = Helper::fooToArray($fileId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $fileId);
 
         $queues = [];
 
@@ -160,7 +169,7 @@ class File
     {
         $fileId = Helper::fooToArray($fileId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $fileId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $fileId);
 
         $queues = [];
 
@@ -224,18 +233,18 @@ class File
     /**
      * rules for download params
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function downloadRules(): V
     {
         $path = V::oneOf(
             V::resourceType(),
-            V::stringType()->notEmpty(),
+            V::stringType()::notEmpty(),
             V::instance(StreamInterface::class)
         );
 
         return V::simpleArray(V::keySet(
-            V::key('id', V::stringType()->notEmpty()),
+            V::key('id', V::stringType()::notEmpty()),
             V::key('path', $path)
         ));
     }
@@ -245,17 +254,17 @@ class File
     /**
      * multipart upload rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function multipartRules(): V
     {
         return V::simpleArray(V::keyset(
-            V::key('name', V::stringType()->notEmpty(), false),
+            V::key('name', V::stringType()::notEmpty(), false),
             V::key('headers', V::arrayType(), false),
-            V::key('filename', V::stringType()->notEmpty(), false),
+            V::key('filename', V::stringType()::notEmpty(), false),
             V::key('contents', V::oneOf(
                 V::resourceType(),
-                V::stringType()->notEmpty(),
+                V::stringType()::notEmpty(),
                 V::instance(StreamInterface::class)
             ))
         ));
@@ -317,7 +326,7 @@ class File
                 $str = $pools[$index]['Content-Disposition'][0];
 
                 $item['size']     = $pools[$index]['Content-Length'][0];
-                $item['filename'] = \str_replace('attachment; filename=', '', $str);
+                $item['filename'] = str_replace('attachment; filename=', '', $str);
             }
 
             $data[$item['id']] = $item;

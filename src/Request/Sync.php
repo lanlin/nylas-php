@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Request;
+
+use function array_merge;
 
 use Exception;
 use Nylas\Utilities\Validator as V;
 use Nylas\Exceptions\NylasException;
 use Psr\Http\Message\StreamInterface;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,7 +18,7 @@ use Psr\Http\Message\StreamInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Sync
 {
@@ -29,9 +34,9 @@ class Sync
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return mixed
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function get(string $api): mixed
     {
@@ -57,9 +62,9 @@ class Sync
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return mixed
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function put(string $api): mixed
     {
@@ -85,9 +90,9 @@ class Sync
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return mixed
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function post(string $api): mixed
     {
@@ -113,9 +118,9 @@ class Sync
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return mixed
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function delete(string $api): mixed
     {
@@ -141,15 +146,15 @@ class Sync
      *
      * @param string $api
      *
+     * @return StreamInterface
      * @throws Exception
-     *
-     * @return \Psr\Http\Message\StreamInterface
+     * @throws GuzzleException
      */
     public function getStream(string $api): StreamInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
-        $options = \array_merge($options, ['stream' => true]);
+        $options = array_merge($options, ['stream' => true]);
 
         try
         {
@@ -166,25 +171,25 @@ class Sync
     /**
      * get request & save body to some where
      *
-     * @param string                                            $api
-     * @param \Psr\Http\Message\StreamInterface|resource|string $sink
-     *
-     * @throws Exception
+     * @param string                          $api
+     * @param resource|StreamInterface|string $sink
      *
      * @return array
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function getSink(string $api, mixed $sink): array
     {
         $rules = V::oneOf(
             V::resourceType(),
-            V::stringType()->notEmpty(),
+            V::stringType()::notEmpty(),
             V::instance(StreamInterface::class)
         );
 
         V::doValidate($rules, $sink);
 
         $options = $this->concatOptions();
-        $options = \array_merge($options, ['sink' => $sink]);
+        $options = array_merge($options, ['sink' => $sink]);
         $apiPath = $this->concatApiPath($api);
 
         try

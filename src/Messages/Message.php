@@ -1,11 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Messages;
+
+use function count;
+use function is_array;
+use function array_keys;
+use function array_values;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 use ZBateson\MailMimeParser\MailMimeParser;
 use ZBateson\MailMimeParser\Message as MSG;
 
@@ -17,14 +25,14 @@ use ZBateson\MailMimeParser\Message as MSG;
  * @info include inline image <img src="cid:file_id">
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Message
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -33,7 +41,7 @@ class Message
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -48,6 +56,7 @@ class Message
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllMessages(array $params = []): array
     {
@@ -76,7 +85,7 @@ class Message
     {
         $messageId = Helper::fooToArray($messageId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $messageId);
 
         $queues = [];
         $query  = $expanded ? ['view' => 'expanded'] : [];
@@ -110,10 +119,11 @@ class Message
      * @param string $messageId
      *
      * @return MSG
+     * @throws GuzzleException
      */
     public function returnARawMessage(string $messageId): MSG
     {
-        V::doValidate(V::stringType()->notEmpty(), $messageId);
+        V::doValidate(V::stringType()::notEmpty(), $messageId);
 
         $header = $this->options->getAuthorizationHeader();
 
@@ -141,13 +151,14 @@ class Message
      * @param array  $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateAMessage(string $messageId, array $params): array
     {
         V::doValidate(V::keySet(
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('folder_id', V::stringType()->notEmpty()),
+            V::keyOptional('folder_id', V::stringType()::notEmpty()),
             V::keyOptional('metadata', self::metadataRules()),
             V::keyOptional('label_ids', V::simpleArray(V::stringType()))
         ), $params);
@@ -165,29 +176,29 @@ class Message
     /**
      * get metadata array rules
      *
-     * @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
+     * @see https://developer.nylas.com/docs/api/metadata/#keep-in-mind
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private static function metadataRules(): V
     {
         return V::callback(static function (mixed $input): bool
         {
-            if (!\is_array($input) || \count($input) > 50)
+            if (!is_array($input) || count($input) > 50)
             {
                 return false;
             }
 
-            $keys = \array_keys($input);
-            $isOk = V::each(V::stringType()->length(1, 40))->validate($keys);
+            $keys = array_keys($input);
+            $isOk = V::each(V::stringType()::length(1, 40))->validate($keys);
 
             if (!$isOk)
             {
                 return false;
             }
 
-            // https://developer.nylas.com/docs/developer-tools/api/metadata/#delete-metadata
-            return V::each(V::stringType()->length(0, 500))->validate(\array_values($input));
+            // https://developer.nylas.com/docs/api/metadata/#delete-metadata
+            return V::each(V::stringType()::length(0, 500))->validate(array_values($input));
         });
     }
 
@@ -196,34 +207,34 @@ class Message
     /**
      * get messages list filter rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function getMessagesRules(): V
     {
         return V::keySet(
-            V::keyOptional('in', V::stringType()->notEmpty()),
+            V::keyOptional('in', V::stringType()::notEmpty()),
             V::keyOptional('to', V::email()),
             V::keyOptional('cc', V::email()),
             V::keyOptional('bcc', V::email()),
             V::keyOptional('from', V::email()),
-            V::keyOptional('subject', V::stringType()->notEmpty()),
-            V::keyOptional('any_email', V::stringType()->notEmpty()),
-            V::keyOptional('thread_id', V::stringType()->notEmpty()),
+            V::keyOptional('subject', V::stringType()::notEmpty()),
+            V::keyOptional('any_email', V::stringType()::notEmpty()),
+            V::keyOptional('thread_id', V::stringType()::notEmpty()),
             V::keyOptional('received_after', V::timestampType()),
             V::keyOptional('received_before', V::timestampType()),
             V::keyOptional('has_attachment', V::equals(true)),
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('filename', V::stringType()->notEmpty()),
+            V::keyOptional('filename', V::stringType()::notEmpty()),
 
-            // @see https://developer.nylas.com/docs/developer-tools/api/metadata/#keep-in-mind
-            V::keyOptional('metadata_key', V::stringType()->length(1, 40)),
-            V::keyOptional('metadata_value', V::stringType()->length(1, 500)),
-            V::keyOptional('metadata_paire', V::stringType()->length(3, 27100)),
-            V::keyOptional('metadata_search', V::stringType()->notEmpty()),
+            // @see https://developer.nylas.com/docs/api/metadata/#keep-in-mind
+            V::keyOptional('metadata_key', V::stringType()::length(1, 40)),
+            V::keyOptional('metadata_value', V::stringType()::length(1, 500)),
+            V::keyOptional('metadata_paire', V::stringType()::length(3, 27100)),
+            V::keyOptional('metadata_search', V::stringType()::notEmpty()),
         );
     }
 

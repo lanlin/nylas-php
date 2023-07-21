@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Neural;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class ConversationTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCleanConversation(): void
     {
         $id = $this->faker->uuid;
@@ -34,11 +42,14 @@ class ConversationTest extends AbsCase
 
         $data = $this->client->Neural->Conversation->cleanConversation($id, $params);
 
-        $this->assertArrayHasKey('conversation', $data);
+        static::assertArrayHasKey('conversation', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testCleanConversationsFeedback(): void
     {
         $id = $this->faker->uuid;
@@ -51,11 +62,14 @@ class ConversationTest extends AbsCase
 
         $data = $this->client->Neural->Conversation->cleanConversationsFeedback($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getMessageData(): array
     {
         return [

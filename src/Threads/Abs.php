@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Threads;
 
 use Nylas\Utilities\Abs as AbsTrait;
@@ -13,7 +15,7 @@ use Nylas\Utilities\Abs as AbsTrait;
  * @property Thread Thread
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Abs
 {

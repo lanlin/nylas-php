@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Threads;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,14 +15,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Search
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +31,7 @@ class Search
     /**
      * Search constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -42,17 +45,18 @@ class Search
      *
      * @see https://developer.nylas.com/docs/api/#get/threads/search
      *
-     * @param string $keyword
-     * @param int    $offset
-     * @param int    $limit
-     * @param string $view    null|expanded
+     * @param string      $keyword
+     * @param int         $offset
+     * @param int         $limit
+     * @param null|string $view    null|expanded
      *
      * @return array
+     * @throws GuzzleException
      */
     public function searchThreads(string $keyword, int $offset = 0, int $limit = 100, ?string $view = null): array
     {
         V::doValidate(V::in([null, 'expanded']), $view);
-        V::doValidate(V::stringType()->notEmpty(), $keyword);
+        V::doValidate(V::stringType()::notEmpty(), $keyword);
 
         $query = [
             'q'      => $keyword,

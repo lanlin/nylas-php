@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Neural;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class SentimentTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSentimentAnalysisText(): void
     {
         $text = $this->faker->paragraph;
@@ -32,11 +40,15 @@ class SentimentTest extends AbsCase
 
         $data = $this->client->Neural->Sentiment->sentimentAnalysisText($text);
 
-        $this->assertArrayHasKey('text', $data);
+        static::assertArrayHasKey('text', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSentimentAnalysisMessage(): void
     {
         $id = $this->faker->uuid;
@@ -50,11 +62,15 @@ class SentimentTest extends AbsCase
 
         $data = $this->client->Neural->Sentiment->sentimentAnalysisMessage($id);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSentimentAnalysisFeedback(): void
     {
         $param = [
@@ -73,7 +89,7 @@ class SentimentTest extends AbsCase
 
         $data = $this->client->Neural->Sentiment->sentimentAnalysisFeedback($param);
 
-        $this->assertArrayHasKey('id', $data);
+        static::assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------

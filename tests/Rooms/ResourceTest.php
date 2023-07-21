@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Rooms;
 
+use JsonException;
 use Tests\AbsCase;
 
 /**
@@ -10,7 +13,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +21,9 @@ class ResourceTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAllMessagesToBeSent(): void
     {
         $this->mockResponse([
@@ -34,7 +40,7 @@ class ResourceTest extends AbsCase
 
         $data = $this->client->Rooms->Resource->returnRoomResourceInformation();
 
-        $this->assertArrayHasKey('email', $data[0]);
+        static::assertArrayHasKey('email', $data[0]);
     }
 
     // ------------------------------------------------------------------------------

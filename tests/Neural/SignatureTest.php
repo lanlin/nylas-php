@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Neural;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class SignatureTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSignatureExtraction(): void
     {
         $id = $this->faker->uuid;
@@ -35,11 +43,14 @@ class SignatureTest extends AbsCase
 
         $data = $this->client->Neural->Signature->signatureExtraction($id, $params);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testSignatureExtractionFeedback(): void
     {
         $id = $this->faker->uuid;
@@ -52,11 +63,14 @@ class SignatureTest extends AbsCase
 
         $data = $this->client->Neural->Signature->signatureExtractionFeedback($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array[]
+     */
     private function getExtractionData(): array
     {
         return [

@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Threads;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Thread
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Thread
     /**
      * Thread constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -46,6 +49,7 @@ class Thread
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnsAllThreads(array $params = []): array
     {
@@ -73,7 +77,7 @@ class Thread
     {
         $threadId = Helper::fooToArray($threadId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $threadId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $threadId);
 
         $queues = [];
 
@@ -106,13 +110,14 @@ class Thread
      * @param array  $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateAThread(string $threadId, array $params): array
     {
         V::doValidate(V::keySet(
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('folder_id', V::stringType()->notEmpty()),
+            V::keyOptional('folder_id', V::stringType()::notEmpty()),
             V::keyOptional('label_ids', V::simpleArray(V::stringType()))
         ), $params);
 
@@ -131,7 +136,7 @@ class Thread
      *
      * @see https://docs.nylas.com/reference#get-threads
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function getThreadsRules(): V
     {
@@ -140,16 +145,16 @@ class Thread
             V::keyOptional('cc', V::email()),
             V::keyOptional('bcc', V::email()),
             V::keyOptional('from', V::email()),
-            V::keyOptional('in', V::stringType()->notEmpty()),
-            V::keyOptional('not_in', V::stringType()->notEmpty()),
+            V::keyOptional('in', V::stringType()::notEmpty()),
+            V::keyOptional('not_in', V::stringType()::notEmpty()),
             V::keyOptional('view', V::in(['ids', 'count', 'expanded'])),
-            V::keyOptional('limit', V::intType()->min(1)),
-            V::keyOptional('offset', V::intType()->min(0)),
+            V::keyOptional('limit', V::intType()::min(1)),
+            V::keyOptional('offset', V::intType()::min(0)),
             V::keyOptional('unread', V::boolType()),
             V::keyOptional('starred', V::boolType()),
-            V::keyOptional('subject', V::stringType()->notEmpty()),
-            V::keyOptional('filename', V::stringType()->notEmpty()),
-            V::keyOptional('any_email', V::stringType()->notEmpty()),
+            V::keyOptional('subject', V::stringType()::notEmpty()),
+            V::keyOptional('filename', V::stringType()::notEmpty()),
+            V::keyOptional('any_email', V::stringType()::notEmpty()),
             V::keyOptional('started_after', V::timestampType()),
             V::keyOptional('started_before', V::timestampType()),
             V::keyOptional('last_message_after', V::timestampType()),

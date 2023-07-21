@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Outbox;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,17 +22,25 @@ class MessageTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllMessagesToBeSent(): void
     {
         $this->mockResponse($this->getMessagesData());
 
         $data = $this->client->Outbox->Message->returnAllMessagesToBeSent();
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSendAMessage(): void
     {
         $params = [
@@ -53,11 +65,15 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Outbox->Message->sendAMessage($params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateSendTime(): void
     {
         $id = $this->faker->uuid;
@@ -75,11 +91,14 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Outbox->Message->updateSendTime($id);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteScheduledMessage(): void
     {
         $id = $this->faker->uuid;
@@ -88,11 +107,14 @@ class MessageTest extends AbsCase
 
         $data = $this->client->Outbox->Message->deleteScheduledMessage($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array[]
+     */
     private function getMessagesData(): array
     {
         return [

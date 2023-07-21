@@ -1,6 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Utilities;
+
+use function fopen;
+use function is_string;
+use function is_resource;
 
 use Nylas\Request\Sync;
 use Nylas\Request\Async;
@@ -13,7 +19,7 @@ use Nylas\Exceptions\UnauthorizedException;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Options
 {
@@ -64,20 +70,20 @@ class Options
     public function __construct(array $options)
     {
         V::doValidate(V::keySet(
-            V::key('client_id', V::stringType()->notEmpty()),
-            V::key('client_secret', V::stringType()->notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('client_secret', V::stringType()::notEmpty()),
             V::keyOptional('debug', V::boolType()),
-            V::keyOptional('region', V::in(['us', 'canada', 'ireland'])),
+            V::keyOptional('region', V::in(['oregon', 'ireland'])),
             V::keyOptional('handler', V::callableType()),
             V::keyOptional('log_file', $this->getLogFileRule()),
-            V::keyOptional('access_token', V::stringType()->notEmpty()),
+            V::keyOptional('access_token', V::stringType()::notEmpty()),
         ), $options);
 
         $this->setClientId($options['client_id']);
         $this->setClientSecret($options['client_secret']);
 
         $this->setDebug($options['debug'] ?? false);
-        $this->setServer($options['region'] ?? 'us');
+        $this->setServer($options['region'] ?? 'oregon');
         $this->setHandler($options['handler'] ?? null);
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccessToken($options['access_token'] ?? '');
@@ -114,9 +120,9 @@ class Options
      */
     public function setServer(?string $region = null): void
     {
-        $region = $region ?? 'us';
+        $region = $region ?? 'oregon';
 
-        $this->server = API::SERVER[$region] ?? API::SERVER['us'];
+        $this->server = API::SERVER[$region] ?? API::SERVER['oregon'];
     }
 
     // ------------------------------------------------------------------------------
@@ -279,7 +285,7 @@ class Options
     /**
      * get sync request instance
      *
-     * @return \Nylas\Request\Sync
+     * @return Sync
      */
     public function getSync(): Sync
     {
@@ -295,7 +301,7 @@ class Options
     /**
      * get async request instance
      *
-     * @return \Nylas\Request\Async
+     * @return Async
      */
     public function getAsync(): Async
     {
@@ -311,13 +317,13 @@ class Options
     /**
      * get log file rules
      *
-     * @return \Nylas\Utilities\Validator
+     * @return Validator
      */
     private function getLogFileRule(): V
     {
         return V::oneOf(
             V::resourceType(),
-            V::stringType()->notEmpty()
+            V::stringType()::notEmpty()
         );
     }
 
@@ -332,8 +338,8 @@ class Options
     {
         return match (true)
         {
-            \is_string($this->logFile)   => \fopen($this->logFile, 'ab'),
-            \is_resource($this->logFile) => $this->logFile,
+            is_string($this->logFile)   => fopen($this->logFile, 'ab'),
+            is_resource($this->logFile) => $this->logFile,
 
             default => $this->debug,
         };

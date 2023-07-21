@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Neural;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class CategorizeTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCategorizeAMessage(): void
     {
         $id = $this->faker->uuid;
@@ -34,11 +42,14 @@ class CategorizeTest extends AbsCase
 
         $data = $this->client->Neural->Categorize->categorizeAMessage($id);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testCategorizeMessageFeedback(): void
     {
         $id = $this->faker->uuid;
@@ -57,7 +68,7 @@ class CategorizeTest extends AbsCase
 
         $data = $this->client->Neural->Categorize->categorizeMessageFeedback($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

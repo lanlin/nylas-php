@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Request;
+
+use function array_merge;
+use function is_callable;
 
 use Exception;
 use Throwable;
@@ -17,7 +22,7 @@ use GuzzleHttp\Promise\PromiseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Async
 {
@@ -33,9 +38,8 @@ class Async
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return PromiseInterface
+     * @throws Exception
      */
     public function get(string $api): PromiseInterface
     {
@@ -52,9 +56,8 @@ class Async
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return PromiseInterface
+     * @throws Exception
      */
     public function put(string $api): PromiseInterface
     {
@@ -71,9 +74,8 @@ class Async
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return PromiseInterface
+     * @throws Exception
      */
     public function post(string $api): PromiseInterface
     {
@@ -90,9 +92,8 @@ class Async
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return PromiseInterface
+     * @throws Exception
      */
     public function delete(string $api): PromiseInterface
     {
@@ -109,15 +110,14 @@ class Async
      *
      * @param string $api
      *
-     * @throws Exception
-     *
      * @return PromiseInterface
+     * @throws Exception
      */
     public function getStream(string $api): PromiseInterface
     {
         $apiPath = $this->concatApiPath($api);
         $options = $this->concatOptions();
-        $options = \array_merge($options, ['stream' => true]);
+        $options = array_merge($options, ['stream' => true]);
 
         return $this->guzzle->getAsync($apiPath, $options);
     }
@@ -127,25 +127,24 @@ class Async
     /**
      * get request & save body to some where
      *
-     * @param string                                            $api
-     * @param \Psr\Http\Message\StreamInterface|resource|string $sink
-     *
-     * @throws Exception
+     * @param string                          $api
+     * @param resource|StreamInterface|string $sink
      *
      * @return PromiseInterface
+     * @throws Exception
      */
     public function getSink(string $api, mixed $sink): PromiseInterface
     {
         $rules = V::oneOf(
             V::resourceType(),
-            V::stringType()->notEmpty(),
+            V::stringType()::notEmpty(),
             V::instance(StreamInterface::class)
         );
 
         V::doValidate($rules, $sink);
 
         $options = $this->concatOptions();
-        $options = \array_merge($options, ['sink' => $sink]);
+        $options = array_merge($options, ['sink' => $sink]);
         $apiPath = $this->concatApiPath($api);
 
         return $this->guzzle->getAsync($apiPath, $options);
@@ -165,7 +164,7 @@ class Async
     {
         foreach ($funcs as $func)
         {
-            if (!\is_callable($func))
+            if (!is_callable($func))
             {
                 throw new NylasException(null, 'callable function required.');
             }
@@ -212,7 +211,7 @@ class Async
      * @param ResponseInterface $response
      * @param bool              $headers
      *
-     * @return array
+     * @return null|array
      */
     private function whenSuccess(ResponseInterface $response, bool $headers = false): ?array
     {

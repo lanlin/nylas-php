@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Webhooks;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,14 +15,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Webhook
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +31,7 @@ class Webhook
     /**
      * Webhook constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -43,6 +46,7 @@ class Webhook
      * @see https://developer.nylas.com/docs/api/#get/a/client_id/webhooks
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllWebhooks(): array
     {
@@ -63,6 +67,7 @@ class Webhook
      * @param array $data
      *
      * @return array
+     * @throws GuzzleException
      */
     public function createAWebhook(array $data): array
     {
@@ -90,6 +95,7 @@ class Webhook
      * @param string $webhookId
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAWebhook(string $webhookId): array
     {
@@ -110,9 +116,8 @@ class Webhook
      * @param string $webhookId
      * @param bool   $enable
      *
-     * @throws \Nylas\Exceptions\NylasException
-     *
      * @return array
+     * @throws GuzzleException
      */
     public function updateAWebhook(string $webhookId, bool $enable = true): array
     {
@@ -135,7 +140,7 @@ class Webhook
      *
      * @param string $webhookId
      *
-     * @throws \Nylas\Exceptions\NylasException
+     * @throws GuzzleException
      */
     public function deleteAWebhook(string $webhookId): void
     {

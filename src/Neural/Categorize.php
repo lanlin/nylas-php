@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Neural;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2023/07/21
  */
 class Categorize
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Categorize
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,13 +50,14 @@ class Categorize
      * @param bool  $onlyCategory
      *
      * @return array
+     * @throws GuzzleException
      */
     public function categorizeAMessage(mixed $messageId, bool $onlyCategory = false): array
     {
         $messageId = Helper::fooToArray($messageId);
 
-        V::doValidate(V::arrayType()->length(1, 5), $messageId);
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        V::doValidate(V::arrayType()::length(1, 5), $messageId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $messageId);
 
         return $this->options
             ->getSync()
@@ -70,7 +74,6 @@ class Categorize
      * @see https://developer.nylas.com/docs/api/#post/neural/categorize/feedback
      *
      * @param mixed  $messageId
-     * @param bool   $onlyCategory
      * @param string $category
      *
      * @return array
@@ -80,7 +83,7 @@ class Categorize
         $messageId = Helper::fooToArray($messageId);
 
         V::doValidate(V::in(['feed', 'conversation']), $category);
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $messageId);
 
         $queues = [];
 

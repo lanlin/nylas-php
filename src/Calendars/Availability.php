@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Calendars;
 
 use DateTimeZone;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2023/07/21
  */
 class Availability
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Availability
     /**
      * Calendar constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,6 +50,7 @@ class Availability
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function availabilityForASingleMeeting(array $params = []): array
     {
@@ -71,6 +75,7 @@ class Availability
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function availabilityForMultipleMeetings(array $params = []): array
     {
@@ -88,7 +93,7 @@ class Availability
     /**
      * @param bool $single
      *
-     * @return \Nylas\Utilities\Validator
+     * @return V
      */
     private function getMeetingRules(bool $single): V
     {
@@ -99,15 +104,15 @@ class Availability
         };
 
         $timeSlot = V::keySet(
-            V::key('object', V::stringType()->notEmpty()),
-            V::key('status', V::stringType()->notEmpty()),
+            V::key('object', V::stringType()::notEmpty()),
+            V::key('status', V::stringType()::notEmpty()),
             V::key('end_time', V::timestampType()),
             V::key('start_time', V::timestampType()),
         );
 
         $freeBusy = V::keySet(
             V::key('email', V::email()),
-            V::key('object', V::stringType()->notEmpty()),
+            V::key('object', V::stringType()::notEmpty()),
             V::key('time_slots', V::simpleArray($timeSlot)),
         );
 

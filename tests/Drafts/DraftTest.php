@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Drafts;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,17 +22,25 @@ class DraftTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllDrafts(): void
     {
         $this->mockResponse([$this->getDraftData()]);
 
         $data = $this->client->Drafts->Draft->returnAllDrafts();
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCreateADraft(): void
     {
         $params = $this->getDraftBase();
@@ -37,11 +49,14 @@ class DraftTest extends AbsCase
 
         $data = $this->client->Drafts->Draft->createADraft($params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnADraft(): void
     {
         $id = '2vgnewhaclx4iog2140bva9y8';
@@ -50,11 +65,15 @@ class DraftTest extends AbsCase
 
         $data = $this->client->Drafts->Draft->returnADraft($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateADraft(): void
     {
         $id = '2vgnewhaclx4iog2140bva9y8';
@@ -67,11 +86,14 @@ class DraftTest extends AbsCase
 
         $data = $this->client->Drafts->Draft->updateADraft($id, $mock);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteADraft(): void
     {
         $params = ['id' => '2vgnewhaclx4iog2140bva9y8', 'version' => 2];
@@ -80,11 +102,14 @@ class DraftTest extends AbsCase
 
         $data = $this->client->Drafts->Draft->deleteADraft($params);
 
-        $this->assertArrayHasKey($params['id'], $data);
+        static::assertArrayHasKey($params['id'], $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getDraftBase(): array
     {
         return [
@@ -127,6 +152,9 @@ class DraftTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getDraftData(): array
     {
         return [

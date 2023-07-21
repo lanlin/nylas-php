@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Utilities;
 
 /**
@@ -10,10 +12,10 @@ namespace Nylas\Utilities;
  * @see https://changelog.nylas.com/
  * @see https://docs.nylas.com/reference#api-changelog
  *
- * @version 2.3 (2022/01/27)
+ * @version 2.7 (2023/07/21)
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class API
 {
@@ -25,8 +27,7 @@ class API
      * @see https://developer.nylas.com/docs/api/#servers
      */
     public const SERVER = [
-        'us'      => 'https://api.nylas.com',
-        'canada'  => 'https://canada.api.nylas.com',
+        'oregon'  => 'https://api.nylas.com',
         'ireland' => 'https://ireland.api.nylas.com',
     ];
 
@@ -52,7 +53,7 @@ class API
     /**
      * nylas providers
      *
-     * @see https://developer.nylas.com/docs/developer-tools/api/supported-providers/
+     * @see https://developer.nylas.com/docs/api/supported-providers/
      * @see https://developer.nylas.com/docs/api/#post/connect/authorize
      */
     public const PROVIDERS = [

@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Authentication;
+
+use function trim;
+use function http_build_query;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,14 +18,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/11/23
+ * @change 2023/07/21
  */
 class Hosted
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +34,7 @@ class Hosted
     /**
      * Hosted constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -51,18 +57,19 @@ class Hosted
         $params['client_id'] = $this->options->getClientId();
 
         V::doValidate(V::keySet(
-            V::key('scopes', V::stringType()->notEmpty()),
-            V::key('client_id', V::stringType()->notEmpty()),
+            V::key('scopes', V::stringType()::notEmpty()),
+            V::key('client_id', V::stringType()::notEmpty()),
             V::key('redirect_uri', V::url()),
             V::key('response_type', V::in(['code', 'token'])),
-            V::keyOptional('state', V::stringType()->length(1, 255)),
-            V::keyOptional('login_hint', V::email())
+            V::keyOptional('state', V::stringType()::length(1, 255)),
+            V::keyOptional('login_hint', V::email()),
+            V::keyOptional('redirect_on_error', V::boolType()) // default false
         ), $params);
 
-        $query  = \http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-        $apiUrl = \trim($this->options->getServer(), '/').API::LIST['oAuthAuthorize'];
+        $query  = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        $apiUrl = trim($this->options->getServer(), '/').API::LIST['oAuthAuthorize'];
 
-        return \trim($apiUrl, '/').'?'.$query;
+        return trim($apiUrl, '/').'?'.$query;
     }
 
     // ------------------------------------------------------------------------------
@@ -75,10 +82,11 @@ class Hosted
      * @param string $code
      *
      * @return array
+     * @throws GuzzleException
      */
     public function sendAuthorizationCode(string $code): array
     {
-        V::doValidate(V::stringType()->notEmpty(), $code);
+        V::doValidate(V::stringType()::notEmpty(), $code);
 
         $params = [
             'code'          => $code,
@@ -101,6 +109,7 @@ class Hosted
      * @see https://developer.nylas.com/docs/api/#post/oauth/revoke
      *
      * @return array
+     * @throws GuzzleException
      */
     public function revokeAccessTokens(): array
     {

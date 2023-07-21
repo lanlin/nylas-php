@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Exceptions;
 
 /**
@@ -8,7 +10,7 @@ namespace Nylas\Exceptions;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class NotReadyException extends NylasException
 {

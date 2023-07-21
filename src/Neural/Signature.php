@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Neural;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,14 +16,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/24
+ * @change 2023/07/21
  */
 class Signature
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -29,7 +32,7 @@ class Signature
     /**
      * Message constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -47,12 +50,13 @@ class Signature
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function signatureExtraction(mixed $messageId, array $params = []): array
     {
         $messageId = Helper::fooToArray($messageId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $messageId);
 
         V::doValidate(V::keySet(
             V::keyOptional('ignore_links', V::boolType()),
@@ -87,7 +91,7 @@ class Signature
     {
         $messageId = Helper::fooToArray($messageId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $messageId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $messageId);
 
         $queues = [];
 

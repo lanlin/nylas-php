@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Threads;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,7 +16,7 @@ use Tests\AbsCase;
  * @see https://developer.nylas.com/docs/api/#post/labels
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -20,6 +24,10 @@ class ThreadTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllThreads(): void
     {
         $para = [
@@ -47,11 +55,14 @@ class ThreadTest extends AbsCase
 
         $data = $this->client->Threads->Thread->returnsAllThreads($para);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAThread(): void
     {
         $id = $this->faker->uuid;
@@ -60,11 +71,15 @@ class ThreadTest extends AbsCase
 
         $data = $this->client->Threads->Thread->returnsAThread($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateAThread(): void
     {
         $id = $this->faker->uuid;
@@ -80,11 +95,14 @@ class ThreadTest extends AbsCase
 
         $data = $this->client->Threads->Thread->updateAThread($id, $params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getThreadBaseData(): array
     {
         return [

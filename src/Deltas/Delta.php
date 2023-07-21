@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Deltas;
+
+use function implode;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,14 +17,14 @@ use Nylas\Utilities\Validator as V;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  */
 class Delta
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -28,7 +33,7 @@ class Delta
     /**
      * Delta constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -43,6 +48,7 @@ class Delta
      * @see https://developer.nylas.com/docs/api/#post/delta/latest_cursor
      *
      * @return array
+     * @throws GuzzleException
      */
     public function getADeltaCursor(): array
     {
@@ -62,6 +68,7 @@ class Delta
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function requestDeltaCursors(array $params): array
     {
@@ -84,6 +91,7 @@ class Delta
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnLongPollingDeltas(array $params): array
     {
@@ -106,6 +114,7 @@ class Delta
      * @param array $params
      *
      * @return mixed
+     * @throws GuzzleException
      */
     public function streamingDeltas(array $params): mixed
     {
@@ -130,7 +139,7 @@ class Delta
         $types = ['contact', 'event', 'file', 'message', 'draft', 'thread', 'folder', 'label'];
 
         return V::keySet(
-            V::key('cursor', V::stringType()->notEmpty()),
+            V::key('cursor', V::stringType()::notEmpty()),
             V::keyOptional('view', V::equals('expanded')),
             V::keyOptional('exclude_types', V::simpleArray(V::in($types))),
             V::keyOptional('include_types', V::simpleArray(V::in($types))),
@@ -148,12 +157,12 @@ class Delta
     {
         if (!empty($params['exclude_types']))
         {
-            $params['exclude_types'] = \implode(',', $params['exclude_types']);
+            $params['exclude_types'] = implode(',', $params['exclude_types']);
         }
 
         if (!empty($params['include_types']))
         {
-            $params['include_types'] = \implode(',', $params['include_types']);
+            $params['include_types'] = implode(',', $params['include_types']);
         }
 
         return $params;

@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Files;
 
+use function unlink;
+
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +16,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +24,10 @@ class FileTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllFiles(): void
     {
         $this->mockResponse([[
@@ -31,11 +41,14 @@ class FileTest extends AbsCase
 
         $data = $this->client->Files->File->returnAllFiles();
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testUploadAFile(): void
     {
         $file = [
@@ -54,11 +67,14 @@ class FileTest extends AbsCase
 
         $data = $this->client->Files->File->uploadAFile($file);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAFile(): void
     {
         $id = '9etjh6talp***';
@@ -74,11 +90,14 @@ class FileTest extends AbsCase
 
         $data = $this->client->Files->File->returnAFile($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteAFile(): void
     {
         $id = '9etjh6talp***';
@@ -87,11 +106,14 @@ class FileTest extends AbsCase
 
         $data = $this->client->Files->File->deleteAFile($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDownloadAFile(): void
     {
         $file = [
@@ -103,9 +125,9 @@ class FileTest extends AbsCase
 
         $data = $this->client->Files->File->downloadAFile($file);
 
-        \unlink($file['path']);
+        unlink($file['path']);
 
-        $this->assertArrayHasKey($file['id'], $data);
+        static::assertArrayHasKey($file['id'], $data);
     }
 
     // ------------------------------------------------------------------------------

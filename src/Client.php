@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas;
+
+use function ucfirst;
+use function class_exists;
 
 use Nylas\Utilities\Options;
 use Nylas\Exceptions\NylasException;
@@ -30,7 +35,7 @@ use Nylas\Exceptions\NylasException;
  * @property Webhooks\Abs       Webhooks
  *
  * @author lanlin
- * @change 2022/03/09
+ * @change 2023/07/21
  */
 class Client
 {
@@ -86,7 +91,7 @@ class Client
      */
     private function callSubClass(string $name): object
     {
-        $name = \ucfirst($name);
+        $name = ucfirst($name);
 
         if (!empty($this->objects[$name]))
         {
@@ -96,7 +101,7 @@ class Client
         $apiClass = __NAMESPACE__.'\\'.$name.'\\Abs';
 
         // check class exists
-        if (!\class_exists($apiClass))
+        if (!class_exists($apiClass))
         {
             throw new NylasException(null, "class {$apiClass} not found!");
         }

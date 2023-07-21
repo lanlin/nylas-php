@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.PAT }}
@@ -20,7 +20,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.0'
-        tools: php-cs-fixer:3.5.0
+        tools: php-cs-fixer:3.22.0
 
     - name: Code Reformatting...
       run: php-cs-fixer fix -v --allow-risky=yes --config=./.php-cs-fixer.php

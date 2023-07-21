@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests;
+
+use function array_merge;
+use function json_encode;
 
 use Mockery;
 use Nylas\Client;
 use Faker\Factory;
+use JsonException;
 use Faker\Generator;
 use ReflectionMethod;
+use ReflectionException;
 use Mockery\MockInterface;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +28,7 @@ use GuzzleHttp\Handler\MockHandler;
  * @see https://developer.nylas.com/docs/api/#overview
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -44,7 +51,7 @@ class AbsCase extends TestCase
     /**
      * init client instance
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -52,7 +59,7 @@ class AbsCase extends TestCase
 
         $options = [
             'debug'         => $this->faker->randomElement([true, false]),
-            'region'        => $this->faker->randomElement(['us', 'canada', 'ireland']),
+            'region'        => $this->faker->randomElement(['oregon', 'ireland']),
             'log_file'      => __DIR__.'/test.log',
             'client_id'     => $this->faker->uuid,
             'client_secret' => $this->faker->password,
@@ -67,7 +74,7 @@ class AbsCase extends TestCase
     /**
      * reset client
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -83,7 +90,7 @@ class AbsCase extends TestCase
      */
     protected function assertPassed(): void
     {
-        $this->assertTrue(true);
+        static::assertTrue(true);
     }
 
     // ------------------------------------------------------------------------------
@@ -138,6 +145,8 @@ class AbsCase extends TestCase
      * @param mixed  ...$params
      *
      * @return mixed
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     protected function call(object $object, string $method, mixed ...$params): mixed
     {
@@ -155,7 +164,7 @@ class AbsCase extends TestCase
      * @param string $name
      * @param array  $mock
      *
-     * @return \Mockery\MockInterface
+     * @return MockInterface
      */
     protected function mockClass(string $name, array $mock): MockInterface
     {
@@ -177,12 +186,14 @@ class AbsCase extends TestCase
      * @param array $data
      * @param array $header
      * @param int   $code
+     *
+     * @throws JsonException
      */
     protected function mockResponse(array $data, array $header = [], int $code = 200): void
     {
-        $body = \json_encode($data, JSON_THROW_ON_ERROR);
+        $body = json_encode($data, JSON_THROW_ON_ERROR);
 
-        $header = \array_merge($header, ['Content-Type' => 'application/json']);
+        $header = array_merge($header, ['Content-Type' => 'application/json']);
 
         $mock = new MockHandler([new Response($code, $header, $body)]);
 

@@ -1,6 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Utilities;
+
+use function end;
+use function key;
+use function count;
+use function reset;
+use function is_int;
+use function is_bool;
+use function is_array;
+use function array_unique;
+use function array_values;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -8,7 +20,7 @@ namespace Nylas\Utilities;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Helper
 {
@@ -23,7 +35,7 @@ class Helper
      */
     public static function arrayToMulti(array $arr): array
     {
-        if (\count($arr) === 0)
+        if (count($arr) === 0)
         {
             return $arr;
         }
@@ -47,9 +59,9 @@ class Helper
             return [];
         }
 
-        $temp = \is_array($foo) ? $foo : [$foo];
+        $temp = is_array($foo) ? $foo : [$foo];
 
-        return \array_values(\array_unique($temp));
+        return array_values(array_unique($temp));
     }
 
     // ------------------------------------------------------------------------------
@@ -65,7 +77,7 @@ class Helper
     {
         foreach ($data as $key => $val)
         {
-            if (\is_bool($val))
+            if (is_bool($val))
             {
                 $data[$key] = $val ? 'true' : 'false';
             }
@@ -88,7 +100,7 @@ class Helper
     {
         $temp = [];
 
-        if (!\count($data))
+        if (!count($data))
         {
             return $temp;
         }
@@ -148,12 +160,12 @@ class Helper
      */
     public static function loopMerge(array $arrA, array $arrB): array
     {
-        if (\count($arrA) === 0)
+        if (count($arrA) === 0)
         {
             return $arrB;
         }
 
-        if (\count($arrB) === 0)
+        if (count($arrB) === 0)
         {
             return $arrA;
         }
@@ -184,28 +196,28 @@ class Helper
      */
     public static function isAssoc(array $arr): bool
     {
-        if (\count($arr) === 0)
+        if (count($arr) === 0)
         {
             return false;
         }
 
-        if (!\is_int(\key($arr)))
+        if (!is_int(key($arr)))
         {
             return true;
         }
 
-        \end($arr);
+        end($arr);
 
-        if (!\is_int(\key($arr)))
+        if (!is_int(key($arr)))
         {
             return true;
         }
 
-        \reset($arr);
+        reset($arr);
 
         foreach ($arr as $key => $val)
         {
-            if (!\is_int($key))
+            if (!is_int($key))
             {
                 return true;
             }

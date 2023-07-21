@@ -1,6 +1,6 @@
 {
     "name": "lanlin/nylas-php",
-    "description": "Nylas PHP SDK (api version 2.3)",
+    "description": "Nylas PHP SDK (api version 2.7)",
     "license": "MIT",
     "authors" : [
         {
@@ -11,15 +11,15 @@
     "require": {
         "php": ">=8.0",
         "ext-json": "*",
-        "guzzlehttp/guzzle": ">=7.3",
-        "respect/validation": "^2.0",
-        "zbateson/mail-mime-parser": "^2.0"
+        "guzzlehttp/guzzle": ">=7.7",
+        "respect/validation": "^2.2",
+        "zbateson/mail-mime-parser": "^2.4"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.19",
-        "phpunit/phpunit": "^9.5",
-        "mockery/mockery": "^1.4",
-        "nunomaduro/collision": "^6.1",
+        "fakerphp/faker": "^1.23",
+        "phpunit/phpunit": "^10.2",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^6.4",
         "roave/security-advisories": "dev-latest"
     },
     "autoload": {

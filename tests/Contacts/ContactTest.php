@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Contacts;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class ContactTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllContacts(): void
     {
         $this->mockResponse([
@@ -54,11 +62,15 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->returnAllContacts();
 
-        $this->assertArrayHasKey('id', $data[0]);
+        static::assertArrayHasKey('id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCreateAContact(): void
     {
         $params = $this->getContactBase();
@@ -67,11 +79,14 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->createAContact($params);
 
-        $this->assertArrayHasKey('groups', $data);
+        static::assertArrayHasKey('groups', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAContact(): void
     {
         $id = 'z3z3z3z3z3z3z3z3z3z3z3';
@@ -80,11 +95,15 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->returnAContact($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateAContact(): void
     {
         $id = 'z3z3z3z3z3z3z3z3z3z3z3';
@@ -95,11 +114,14 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->updateAContact($id, $params);
 
-        $this->assertArrayHasKey('id', $data);
+        static::assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteAContact(): void
     {
         $id = 'z3z3z3z3z3z3z3z3z3z3z3';
@@ -108,11 +130,14 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->deleteAContact($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnsAContactsPicture(): void
     {
         $params = [
@@ -124,11 +149,15 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->returnsAContactsPicture($params);
 
-        $this->assertArrayHasKey($params['id'], $data);
+        static::assertArrayHasKey($params['id'], $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnContactGroups(): void
     {
         $this->mockResponse([
@@ -143,11 +172,14 @@ class ContactTest extends AbsCase
 
         $data = $this->client->Contacts->Contact->returnContactGroups();
 
-        $this->assertArrayHasKey('id', $data[0]);
+        static::assertArrayHasKey('id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getContactBase(): array
     {
         return [
@@ -203,6 +235,9 @@ class ContactTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return array
+     */
     private function getContactData(): array
     {
         return [

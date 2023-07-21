@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Folders;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,7 +16,7 @@ use Tests\AbsCase;
  * @see https://developer.nylas.com/docs/api/#tag--Folders
  *
  * @author lanlin
- * @change 2021/09/22
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -20,17 +24,25 @@ class FolderTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllFolders(): void
     {
         $this->mockResponse([$this->getFolderData()]);
 
         $data = $this->client->Folders->Folder->returnAllFolders();
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testCreateAFolder(): void
     {
         $params = ['display_name' => 'My Renamed Folder'];
@@ -39,11 +51,14 @@ class FolderTest extends AbsCase
 
         $data = $this->client->Folders->Folder->createAFolder($params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testReturnAFolder(): void
     {
         $id = 'ajs4ef7xu74vns6o5ufsu69m7';
@@ -52,11 +67,15 @@ class FolderTest extends AbsCase
 
         $data = $this->client->Folders->Folder->returnAFolder($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testUpdateAFolder(): void
     {
         $id     = 'ajs4ef7xu74vns6o5ufsu69m7';
@@ -66,11 +85,14 @@ class FolderTest extends AbsCase
 
         $data = $this->client->Folders->Folder->updateAFolder($id, $params);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testDeleteAFolder(): void
     {
         $id = 'ajs4ef7xu74vns6o5ufsu69m7';
@@ -79,11 +101,14 @@ class FolderTest extends AbsCase
 
         $data = $this->client->Folders->Folder->deleteAFolder($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @return string[]
+     */
     private function getFolderData(): array
     {
         return [

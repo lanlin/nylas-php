@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Management;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class AccountTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAccountDetails(): void
     {
         $this->mockResponse([
@@ -34,11 +42,15 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->returnAccountDetails();
 
-        $this->assertArrayHasKey('id', $data);
+        static::assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAllAccounts(): void
     {
         $params = [
@@ -47,51 +59,62 @@ class AccountTest extends AbsCase
         ];
 
         $this->mockResponse([[
-            'account_id'    => '622x1k5v1ujh55t6ucel7av4',
-            'billing_state' => 'free',
-            'email'         => 'example@example.com',
-            'id'            => '622x1k5v1ujh55t6ucel7av4',
-            'provider'      => 'yahoo',
-            'sync_state'    => 'running',
-            'trial'         => false,
+            'account_id'          => '622x1k5v1ujh55t6ucel7av4',
+            'billing_state'       => 'free',
+            'email'               => 'example@example.com',
+            'id'                  => '622x1k5v1ujh55t6ucel7av4',
+            'provider'            => 'yahoo',
+            'sync_state'          => 'running',
+            'trial'               => false,
+            'authentication_type' => '',
         ], [
-            'account_id'    => '123rvgm1iccsgnjj7nn6jwu1',
-            'billing_state' => 'paid',
-            'email'         => 'example@example.com',
-            'id'            => '123rvgm1iccsgnjj7nn6jwu1',
-            'provider'      => 'gmail',
-            'sync_state'    => 'running',
-            'trial'         => false,
+            'account_id'          => '123rvgm1iccsgnjj7nn6jwu1',
+            'billing_state'       => 'paid',
+            'email'               => 'example@example.com',
+            'id'                  => '123rvgm1iccsgnjj7nn6jwu1',
+            'provider'            => 'gmail',
+            'sync_state'          => 'running',
+            'trial'               => false,
+            'authentication_type' => '',
         ]]);
 
         $data = $this->client->Management->Account->returnAllAccounts($params);
 
-        $this->assertArrayHasKey('account_id', $data[0]);
+        static::assertArrayHasKey('account_id', $data[0]);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnAnAccount(): void
     {
         $id = $this->faker->uuid;
 
         $this->mockResponse([
-            'account_id'    => '123rvgm1iccsgnjj7nn6jwu1',
-            'billing_state' => 'paid',
-            'email'         => 'example@example.com',
-            'id'            => '123rvgm1iccsgnjj7nn6jwu1',
-            'provider'      => 'gmail',
-            'sync_state'    => 'running',
-            'trial'         => false,
+            'account_id'          => '123rvgm1iccsgnjj7nn6jwu1',
+            'billing_state'       => 'paid',
+            'email'               => 'example@example.com',
+            'id'                  => '123rvgm1iccsgnjj7nn6jwu1',
+            'provider'            => 'gmail',
+            'sync_state'          => 'running',
+            'trial'               => false,
+            'authentication_type' => '',
         ]);
 
         $data = $this->client->Management->Account->returnAnAccount($id);
 
-        $this->assertArrayHasKey('id', $data);
+        static::assertArrayHasKey('id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testDeleteAnAccount(): void
     {
         $this->mockResponse([]);
@@ -105,6 +128,10 @@ class AccountTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReactiveAnAccount(): void
     {
         $this->mockResponse(['success' => 'true']);
@@ -113,11 +140,15 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->reactiveAnAccount($id);
 
-        $this->assertArrayHasKey('success', $data);
+        static::assertArrayHasKey('success', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testRevokeAllTokens(): void
     {
         $this->mockResponse(['success' => 'true']);
@@ -126,11 +157,15 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->revokeAllTokens($id);
 
-        $this->assertArrayHasKey('success', $data);
+        static::assertArrayHasKey('success', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testReturnTokenInformation(): void
     {
         $this->mockResponse([
@@ -144,7 +179,7 @@ class AccountTest extends AbsCase
 
         $data = $this->client->Management->Account->returnTokenInformation($id);
 
-        $this->assertArrayHasKey('state', $data);
+        static::assertArrayHasKey('state', $data);
     }
 
     // ------------------------------------------------------------------------------

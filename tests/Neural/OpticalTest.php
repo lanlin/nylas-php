@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Neural;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -10,7 +14,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2021/09/28
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -18,6 +22,10 @@ class OpticalTest extends AbsCase
 {
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSendMessage(): void
     {
         $id = $this->faker->uuid;
@@ -36,11 +44,14 @@ class OpticalTest extends AbsCase
 
         $data = $this->client->Neural->Optical->opticalCharacterRecognition($id);
 
-        $this->assertArrayHasKey('account_id', $data);
+        static::assertArrayHasKey('account_id', $data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testOpticalCharacterRecognitionFeedback(): void
     {
         $id = $this->faker->uuid;
@@ -49,7 +60,7 @@ class OpticalTest extends AbsCase
 
         $data = $this->client->Neural->Optical->opticalCharacterRecognitionFeedback($id);
 
-        $this->assertArrayHasKey($id, $data);
+        static::assertArrayHasKey($id, $data);
     }
 
     // ------------------------------------------------------------------------------

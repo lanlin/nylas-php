@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Webhooks;
 
+use function json_encode;
+
 use Exception;
+use JsonException;
 use Tests\AbsCase;
 
 /**
@@ -11,7 +16,7 @@ use Tests\AbsCase;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -37,13 +42,16 @@ class SignatureTest extends AbsCase
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws JsonException
+     */
     public function testParseNotification(): void
     {
-        $params = \json_encode(['deltas' => ['aaa' => 'bbb']], JSON_THROW_ON_ERROR);
+        $params = json_encode(['deltas' => ['aaa' => 'bbb']], JSON_THROW_ON_ERROR);
 
         $data = $this->client->Webhooks->Signature->parseNotification($params);
 
-        $this->assertArrayHasKey('aaa', $data);
+        static::assertArrayHasKey('aaa', $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -55,7 +63,7 @@ class SignatureTest extends AbsCase
 
         $data = $this->client->Webhooks->Signature->xSignatureVerification($code, $para);
 
-        $this->assertFalse($data);
+        static::assertFalse($data);
     }
 
     // ------------------------------------------------------------------------------

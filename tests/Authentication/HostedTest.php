@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Authentication;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,7 +16,7 @@ use Tests\AbsCase;
  * @see https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -32,11 +36,15 @@ class HostedTest extends AbsCase
 
         $data = $this->client->Authentication->Hosted->authenticateUser($params);
 
-        $this->assertIsString($data);
+        static::assertIsString($data);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testSendAuthorizationCode(): void
     {
         $code = $this->faker->postcode;
@@ -51,18 +59,22 @@ class HostedTest extends AbsCase
 
         $data = $this->client->Authentication->Hosted->sendAuthorizationCode($code);
 
-        $this->assertNotEmpty($data['access_token']);
+        static::assertNotEmpty($data['access_token']);
     }
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
     public function testRevokeAccessTokens(): void
     {
         $this->mockResponse(['success' => 'true']);
 
         $data = $this->client->Authentication->Hosted->revokeAccessTokens();
 
-        $this->assertNotEmpty($data['success']);
+        static::assertNotEmpty($data['success']);
     }
 
     // ------------------------------------------------------------------------------

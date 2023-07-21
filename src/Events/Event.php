@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Nylas\Events;
 
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -15,14 +18,14 @@ use Nylas\Utilities\Validator as V;
  * @see https://docs.nylas.com/reference#event-limitations
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  */
 class Event
 {
     // ------------------------------------------------------------------------------
 
     /**
-     * @var \Nylas\Utilities\Options
+     * @var Options
      */
     private Options $options;
 
@@ -36,7 +39,7 @@ class Event
     /**
      * Event constructor.
      *
-     * @param \Nylas\Utilities\Options $options
+     * @param Options $options
      */
     public function __construct(Options $options)
     {
@@ -51,6 +54,7 @@ class Event
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function returnAllEvents(array $params = []): array
     {
@@ -77,6 +81,7 @@ class Event
      * @param bool  $notifyParticipants
      *
      * @return array
+     * @throws GuzzleException
      */
     public function createAnEvent(array $params, ?bool $notifyParticipants = null): array
     {
@@ -107,7 +112,7 @@ class Event
     {
         $eventId = Helper::fooToArray($eventId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $eventId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $eventId);
 
         $queues = [];
 
@@ -141,11 +146,12 @@ class Event
      * @param bool   $notifyParticipants
      *
      * @return array
+     * @throws GuzzleException
      */
     public function updateAnEvent(string $eventId, array $params, ?bool $notifyParticipants = null): array
     {
         V::doValidate(Validation::getEventRules(), $params);
-        V::doValidate(V::stringType()->notEmpty(), $eventId);
+        V::doValidate(V::stringType()::notEmpty(), $eventId);
 
         $query = $notifyParticipants === null ? [] : [$this->notify => $notifyParticipants];
 
@@ -174,7 +180,7 @@ class Event
     {
         $eventId = Helper::fooToArray($eventId);
 
-        V::doValidate(V::simpleArray(V::stringType()->notEmpty()), $eventId);
+        V::doValidate(V::simpleArray(V::stringType()::notEmpty()), $eventId);
 
         $queues = [];
         $query  = $notifyParticipants === null ? [] : [$this->notify => $notifyParticipants];
@@ -208,13 +214,14 @@ class Event
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function sendRSVP(array $params): array
     {
         V::doValidate(V::keySet(
             V::key('status', V::in(['yes', 'no', 'maybe'])),
-            V::key('event_id', V::stringType()->notEmpty()),
-            V::key('account_id', V::stringType()->notEmpty()),
+            V::key('event_id', V::stringType()::notEmpty()),
+            V::key('account_id', V::stringType()::notEmpty()),
         ), $params);
 
         return $this->options
@@ -235,6 +242,7 @@ class Event
      * @param array $params
      *
      * @return array
+     * @throws GuzzleException
      */
     public function generateICSFile(array $params): array
     {

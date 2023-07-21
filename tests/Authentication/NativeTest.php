@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Authentication;
 
+use JsonException;
 use Tests\AbsCase;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,7 +16,7 @@ use Tests\AbsCase;
  * @see   https://developer.nylas.com/docs/api/#tag--Hosted-Authentication
  *
  * @author lanlin
- * @change 2022/01/27
+ * @change 2023/07/21
  *
  * @internal
  */
@@ -24,6 +28,9 @@ class NativeTest extends AbsCase
      * @dataProvider dataParams
      *
      * @param array $para
+     *
+     * @throws GuzzleException
+     * @throws JsonException
      */
     public function testSendAuthorization(array $para): void
     {
@@ -31,13 +38,16 @@ class NativeTest extends AbsCase
 
         $data = $this->client->Authentication->Native->sendAuthorization($para);
 
-        $this->assertNotEmpty($data['code']);
+        static::assertNotEmpty($data['code']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
      * test exchange the token
+     *
+     * @throws GuzzleException
+     * @throws JsonException
      */
     public function testExchangeTheToken(): void
     {
@@ -59,13 +69,16 @@ class NativeTest extends AbsCase
 
         $data = $this->client->Authentication->Native->exchangeTheToken($code);
 
-        $this->assertNotEmpty($data['email_address']);
+        static::assertNotEmpty($data['email_address']);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
      * test detect provider
+     *
+     * @throws GuzzleException
+     * @throws JsonException
      */
     public function testDetectProvider(): void
     {
@@ -81,12 +94,15 @@ class NativeTest extends AbsCase
 
         $data = $this->client->Authentication->Native->detectProvider($email);
 
-        $this->assertNotEmpty($data['email_address']);
+        static::assertNotEmpty($data['email_address']);
     }
 
     // ------------------------------------------------------------------------------
 
-    public function dataParams(): array
+    /**
+     * @return array[]
+     */
+    public static function dataParams(): array
     {
         return [
             'Authenticate Google Accounts' => [[
