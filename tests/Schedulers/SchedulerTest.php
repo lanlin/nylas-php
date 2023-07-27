@@ -138,7 +138,7 @@ class SchedulerTest extends AbsCase
     {
         return [[
             'access_tokens' => [$this->faker->uuid],
-            'config'         => [
+            'config'        => [
                 'appearance' => [
                     'color'                    => 'string',
                     'company_name'             => 'string',
