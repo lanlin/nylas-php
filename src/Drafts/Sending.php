@@ -43,7 +43,7 @@ class Sending
     /**
      * Send an email draft
      *
-     * @see https://developer.nylas.com/docs/api/#post/send
+     * @see https://developer.nylas.com/docs/api/v2/#post-/send
      *
      * @param array $params
      *

@@ -44,7 +44,7 @@ class Thread
     /**
      * Returns one or more threads that match the filter specified by the query parameters
      *
-     * @see https://developer.nylas.com/docs/api/#get/threads
+     * @see https://developer.nylas.com/docs/api/v2/#get-/threads
      *
      * @param array $params
      *
@@ -67,7 +67,7 @@ class Thread
     /**
      * Returns the thread by the specified thread ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/threads/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/threads/id
      *
      * @param mixed $threadId string|string[]
      *
@@ -104,7 +104,7 @@ class Thread
     /**
      * When you update a thread, all message in a thread are updated.
      *
-     * @see https://developer.nylas.com/docs/api/#put/threads/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/threads/id
      *
      * @param string $threadId
      * @param array  $params

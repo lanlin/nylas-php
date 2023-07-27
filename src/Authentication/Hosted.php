@@ -46,7 +46,8 @@ class Hosted
     /**
      * Authenticate your user using Hosted Authentication
      *
-     * @see https://developer.nylas.com/docs/api/#get/oauth/authorize
+     * @see https://developer.nylas.com/docs/api/v2/#get-/oauth/authorize
+     * @see https://developer.nylas.com/docs/developer-guide/authentication/authentication-scopes/#nylas-scopes
      *
      * @param array $params
      *
@@ -62,8 +63,10 @@ class Hosted
             V::key('redirect_uri', V::url()),
             V::key('response_type', V::in(['code', 'token'])),
             V::keyOptional('state', V::stringType()::length(1, 255)),
+            V::keyOptional('provicer', V::in(['iCloud', 'gmail', 'office365', 'exchange', 'IMAP'])),
             V::keyOptional('login_hint', V::email()),
-            V::keyOptional('redirect_on_error', V::boolType()) // default false
+            V::keyOptional('redirect_on_error', V::boolType()),         // default false
+            V::keyOptional('disable_provider_selection', V::boolType()) // default false
         ), $params);
 
         $query  = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
@@ -77,7 +80,7 @@ class Hosted
     /**
      * Send authorization code. An access token will return as part of the response.
      *
-     * @see https://developer.nylas.com/docs/api/#post/oauth/token
+     * @see https://developer.nylas.com/docs/api/v2/#post-/oauth/token
      *
      * @param string $code
      *
@@ -106,7 +109,7 @@ class Hosted
     /**
      * Revoke access tokens.
      *
-     * @see https://developer.nylas.com/docs/api/#post/oauth/revoke
+     * @see https://developer.nylas.com/docs/api/v2/#post-/oauth/revoke
      *
      * @return array
      * @throws GuzzleException

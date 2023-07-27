@@ -43,7 +43,7 @@ class Webhook
     /**
      * Returns all webhooks.
      *
-     * @see https://developer.nylas.com/docs/api/#get/a/client_id/webhooks
+     * @see https://developer.nylas.com/docs/api/v2/#get-/a/client_id/webhooks
      *
      * @return array
      * @throws GuzzleException
@@ -62,7 +62,7 @@ class Webhook
     /**
      * Creates a webhook.
      *
-     * @see https://developer.nylas.com/docs/api/#post/a/client_id/webhooks
+     * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id/webhooks
      *
      * @param array $data
      *
@@ -90,7 +90,7 @@ class Webhook
     /**
      * Returns a webhook by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/a/client_id/webhooks/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/a/client_id/webhooks/id
      *
      * @param string $webhookId
      *
@@ -111,7 +111,7 @@ class Webhook
     /**
      * Updates a webhook by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#put/a/client_id/webhooks/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/a/client_id/webhooks/id
      *
      * @param string $webhookId
      * @param bool   $enable
@@ -136,7 +136,7 @@ class Webhook
     /**
      * Deletes a webhook by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/a/client_id/webhooks/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/a/client_id/webhooks/id
      *
      * @param string $webhookId
      *

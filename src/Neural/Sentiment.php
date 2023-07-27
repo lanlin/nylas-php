@@ -44,7 +44,7 @@ class Sentiment
     /**
      * Sentiment analysis will analyze provided text
      *
-     * @see https://developer.nylas.com/docs/api/#put/neural/sentiment
+     * @see https://developer.nylas.com/docs/api/v2/#put-/neural/sentiment
      *
      * @param string $text
      *
@@ -67,7 +67,7 @@ class Sentiment
     /**
      * Sentiment analysis will analyze provided emails
      *
-     * @see https://developer.nylas.com/docs/api/#put/neural/sentiment
+     * @see https://developer.nylas.com/docs/api/v2/#put-/neural/sentiment
      *
      * @param mixed $messageId
      *
@@ -92,7 +92,7 @@ class Sentiment
     /**
      * Send feedback about sentiment analysis.
      *
-     * @see https://developer.nylas.com/docs/api/#post/neural/sentiment/feedback
+     * @see https://developer.nylas.com/docs/api/v2/#post-/neural/sentiment/feedback
      *
      * @param array $params
      *

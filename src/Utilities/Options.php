@@ -48,6 +48,11 @@ class Options
     /**
      * @var string
      */
+    private string $region;
+
+    /**
+     * @var string
+     */
     private string $clientId;
 
     /**
@@ -79,11 +84,13 @@ class Options
             V::keyOptional('access_token', V::stringType()::notEmpty()),
         ), $options);
 
+        $this->region = $options['region'] ?? 'oregon';
+
         $this->setClientId($options['client_id']);
         $this->setClientSecret($options['client_secret']);
 
         $this->setDebug($options['debug'] ?? false);
-        $this->setServer($options['region'] ?? 'oregon');
+        $this->setServer($this->region);
         $this->setHandler($options['handler'] ?? null);
         $this->setLogFile($options['log_file'] ?? null);
         $this->setAccessToken($options['access_token'] ?? '');
@@ -128,6 +135,18 @@ class Options
     // ------------------------------------------------------------------------------
 
     /**
+     * @param null|string $region
+     */
+    public function setSchedulerServer(?string $region = null): void
+    {
+        $region = $region ?? 'oregon';
+
+        $this->server = API::SERVER_SCHEDULER[$region] ?? API::SERVER_SCHEDULER['oregon'];
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * get server
      *
      * @return string
@@ -164,6 +183,16 @@ class Options
         }
 
         $this->logFile = $logFile;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return string
+     */
+    public function getRegion(): string
+    {
+        return $this->region;
     }
 
     // ------------------------------------------------------------------------------

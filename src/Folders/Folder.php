@@ -44,7 +44,7 @@ class Folder
     /**
      * Returns all folders.
      *
-     * @see https://developer.nylas.com/docs/api/#get/folders
+     * @see https://developer.nylas.com/docs/api/v2/#get-/folders
      *
      * @param array $params
      *
@@ -71,7 +71,7 @@ class Folder
     /**
      * Creates a new folder.
      *
-     * @see https://developer.nylas.com/docs/api/#post/folders
+     * @see https://developer.nylas.com/docs/api/v2/#post-/folders
      *
      * @param array $params
      *
@@ -97,7 +97,7 @@ class Folder
     /**
      * Returns a folder by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/folders/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/folders/id
      *
      * @param mixed $folderId string|string[]
      *
@@ -134,7 +134,7 @@ class Folder
     /**
      * Updates a folder by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#put/folders/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/folders/id
      *
      * @param string $folderId
      * @param array  $params
@@ -164,7 +164,7 @@ class Folder
     /**
      * Deletes a folder.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/folders/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/folders/id
      *
      * @param mixed $folderId string|string[]
      *

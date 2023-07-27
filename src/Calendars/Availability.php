@@ -45,7 +45,7 @@ class Availability
      * Check multiple calendars to find available time slots for a single meeting.
      * It checks the provider's primary calendar.
      *
-     * @see https://developer.nylas.com/docs/api/#post/calendars/availability
+     * @see https://developer.nylas.com/docs/api/v2/#post-/calendars/availability
      *
      * @param array $params
      *
@@ -70,7 +70,7 @@ class Availability
      * Use this endpoint to build itineraries where participants with the same availability are combined.
      * It checks the provider's primary calendar.
      *
-     * @see https://developer.nylas.com/docs/api/#post/calendars/availability/consecutive
+     * @see https://developer.nylas.com/docs/api/v2/#post-/calendars/availability/consecutive
      *
      * @param array $params
      *

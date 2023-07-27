@@ -44,7 +44,7 @@ class Categorize
     /**
      * Returns the message category as part of the Message object. Messages are either conversation or feed.
      *
-     * @see https://developer.nylas.com/docs/api/#put/neural/categorize
+     * @see https://developer.nylas.com/docs/api/v2/#put-/neural/categorize
      *
      * @param mixed $messageId
      * @param bool  $onlyCategory
@@ -71,7 +71,7 @@ class Categorize
     /**
      * Send feedback on categorized messages.
      *
-     * @see https://developer.nylas.com/docs/api/#post/neural/categorize/feedback
+     * @see https://developer.nylas.com/docs/api/v2/#post-/neural/categorize/feedback
      *
      * @param mixed  $messageId
      * @param string $category

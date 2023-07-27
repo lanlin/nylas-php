@@ -44,7 +44,7 @@ class Conversation
     /**
      * Parse email messages by removing extra HTML.
      *
-     * @see https://developer.nylas.com/docs/api/#put/neural/conversation
+     * @see https://developer.nylas.com/docs/api/v2/#put-/neural/conversation
      *
      * @param string $messageId
      * @param array  $params
@@ -77,7 +77,7 @@ class Conversation
     /**
      * Send feedback on the conversation endpoint.
      *
-     * @see https://developer.nylas.com/docs/api/#post/neural/conversation/feedback
+     * @see https://developer.nylas.com/docs/api/v2/#post-/neural/conversation/feedback
      *
      * @param mixed $messageId
      *

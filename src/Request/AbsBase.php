@@ -11,9 +11,9 @@ use function strtolower;
 use function array_merge;
 use function is_callable;
 use function json_decode;
-use function utf8_encode;
 use function str_contains;
 use function base64_encode;
+use function mb_convert_encoding;
 
 use Throwable;
 use GuzzleHttp\Client;
@@ -30,7 +30,7 @@ use Psr\Http\Message\ResponseInterface;
  * ----------------------------------------------------------------------------------
  *
  * @author lanlin
- * @change 2023/07/21
+ * @change 2023/07/24
  */
 trait AbsBase
 {
@@ -328,17 +328,18 @@ trait AbsBase
         // when not json type
         if (!str_contains(strtolower(current($type)), $expc))
         {
-            return $this->concatForInvalidJsonData($type, $code, $data);
+            return $this->concatForInvalidJsonData($type, (string) $code, $data);
         }
 
         try
         {
             // decode json data
-            $temp = json_decode(trim(utf8_encode($data)), true, 512, JSON_THROW_ON_ERROR);
+            $temp = trim(mb_convert_encoding($data, 'UTF-8'));
+            $temp = json_decode($temp, true, 512, JSON_THROW_ON_ERROR);
         }
         catch (Throwable)
         {
-            return $this->concatForInvalidJsonData($type, $code, $data);
+            return $this->concatForInvalidJsonData($type, (string) $code, $data);
         }
 
         return $temp ?? [];

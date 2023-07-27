@@ -43,7 +43,7 @@ class Search
     /**
      * Searches threads.
      *
-     * @see https://developer.nylas.com/docs/api/#get/threads/search
+     * @see https://developer.nylas.com/docs/api/v2/#get-/threads/search
      *
      * @param string      $keyword
      * @param int         $offset

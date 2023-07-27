@@ -50,7 +50,7 @@ class Sending
     /**
      * Send an email directly
      *
-     * @see https://developer.nylas.com/docs/api/#post/send
+     * @see https://developer.nylas.com/docs/api/v2/#post-/send
      *
      * @param array $params
      *
@@ -88,7 +88,7 @@ class Sending
      * Suggest: use zend-mail for raw message
      *
      * @see https://docs.zendframework.com/zend-mail/
-     * @see https://developer.nylas.com/docs/api/#post/send
+     * @see https://developer.nylas.com/docs/api/v2/#post-/send
      *
      * @param resource|StreamInterface|string $content
      *

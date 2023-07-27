@@ -27,6 +27,8 @@ class Errors
 
     /**
      * http status code to exceptions
+     *
+     * @see https://developer.nylas.com/docs/api/errors/#status-codes
      */
     public const StatusExceptions = [
         202 => Exceptions\NotReadyException::class,

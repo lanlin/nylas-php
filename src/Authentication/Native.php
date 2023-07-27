@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Nylas\Authentication;
 
+use function is_array;
+
 use Nylas\Utilities\API;
 use Nylas\Utilities\Options;
 use Nylas\Utilities\Validator as V;
@@ -43,7 +45,7 @@ class Native
     /**
      * Send Authorization
      *
-     * @see https://developer.nylas.com/docs/api/#post/connect/authorize
+     * @see https://developer.nylas.com/docs/api/v2/#post-/connect/authorize
      *
      * @param array $params
      *
@@ -54,17 +56,7 @@ class Native
     {
         $params['client_id'] = $this->options->getClientId();
 
-        V::doValidate(V::keySet(
-            V::key('name', V::stringType()::notEmpty()),
-            V::key('provider', V::in(API::PROVIDERS)),
-            V::key('settings', $this->settingsRules($params)),
-            V::key('client_id', V::stringType()::notEmpty()),
-            V::key('email_address', V::email()),
-            V::keyOptional('scopes', V::stringType()::notEmpty()),
-
-            // re-authenticate existing account id
-            V::keyOptional('reauth_account_id', V::stringType()::notEmpty())
-        ), $params);
+        V::doValidate($this->getAuthRules($params), $params);
 
         return $this->options
             ->getSync()
@@ -77,7 +69,7 @@ class Native
     /**
      * Exchange the Token
      *
-     * @see https://developer.nylas.com/docs/api/#post/connect/token
+     * @see https://developer.nylas.com/docs/api/v2/#post-/connect/token
      *
      * @param string $code
      *
@@ -105,7 +97,7 @@ class Native
     /**
      * Detect Provider
      *
-     * @see https://developer.nylas.com/docs/api/#post/connect/detect-provider
+     * @see https://developer.nylas.com/docs/api/v2/#post-/connect/detect-provider
      *
      * @param string $email
      *
@@ -131,13 +123,13 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * validate settings params
+     * get auth validate rules
      *
      * @param array $params
      *
      * @return V
      */
-    private function settingsRules(array $params): V
+    private function getAuthRules(array $params): V
     {
         $provider = $params['provider'] ?? 'imap';
 
@@ -145,6 +137,7 @@ class Native
         {
             'nylas'     => $this->nylasProviderRule(),
             'gmail'     => $this->gmailProviderRule(),
+            'graph'     => $this->graphProviderRule(),
             'outlook'   => $this->outlookProviderRule(),
             'exchange'  => $this->exchangeProviderRule(),
             'office365' => $this->office365ProviderRule(),
@@ -158,21 +151,15 @@ class Native
     // ------------------------------------------------------------------------------
 
     /**
-     * @return V
-     */
-    private function nylasProviderRule(): V
-    {
-        return V::equals([]);
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
+     * some known providers rules
+     *
      * @return V
      */
     private function knownProviderRule(): V
     {
-        return V::keySet(V::key('password', V::stringType()::notEmpty()));
+        $settings = V::keySet(V::key('password', V::stringType()::notEmpty()));
+
+        return $this->getBaseRules(['aol', 'yahoo', 'icloud', 'hotmail'], $settings);
     }
 
     // ------------------------------------------------------------------------------
@@ -184,11 +171,32 @@ class Native
      */
     private function outlookProviderRule(): V
     {
-        return V::keySet(
+        $settings = V::keySet(
             V::key('username', V::stringType()::notEmpty()),
             V::key('password', V::stringType()::notEmpty()),
             V::key('exchange_server_host', V::domain())
         );
+
+        return $this->getBaseRules('outlook', $settings);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * graph provider rule
+     *
+     * @return V
+     */
+    private function graphProviderRule(): V
+    {
+        $settings = V::keySet(
+            V::key('redirect_uri', V::url()),
+            V::key('microsoft_client_id', V::stringType()::notEmpty()),
+            V::key('microsoft_client_secret', V::stringType()::notEmpty()),
+            V::key('microsoft_refresh_token', V::stringType()::notEmpty()),
+        );
+
+        return $this->getBaseRules('graph', $settings);
     }
 
     // ------------------------------------------------------------------------------
@@ -200,12 +208,14 @@ class Native
      */
     private function office365ProviderRule(): V
     {
-        return V::keySet(
+        $settings = V::keySet(
+            V::key('redirect_uri', V::url()),
             V::key('microsoft_client_id', V::stringType()::notEmpty()),
             V::key('microsoft_client_secret', V::stringType()::notEmpty()),
             V::key('microsoft_refresh_token', V::stringType()::notEmpty()),
-            V::key('redirect_uri', V::url())
         );
+
+        return $this->getBaseRules('office365', $settings);
     }
 
     // ------------------------------------------------------------------------------
@@ -217,7 +227,7 @@ class Native
      */
     private function imapProviderRule(): V
     {
-        return V::keySet(
+        $settings = V::keySet(
             V::key('imap_host', V::domain()),
             V::key('imap_port', V::intType()),
             V::key('imap_username', V::stringType()::notEmpty()),
@@ -228,6 +238,8 @@ class Native
             V::key('smtp_password', V::stringType()::notEmpty()),
             V::key('ssl_required', V::boolType())
         );
+
+        return $this->getBaseRules('imap', $settings);
     }
 
     // ------------------------------------------------------------------------------
@@ -239,7 +251,7 @@ class Native
      */
     private function gmailProviderRule(): V
     {
-        return V::oneOf(
+        $settings = V::oneOf(
             V::keySet(
                 V::key('google_client_id', V::stringType()::notEmpty()),
                 V::key('google_client_secret', V::stringType()::notEmpty()),
@@ -248,16 +260,18 @@ class Native
             V::keySet(V::key('service_account_json', V::keySet(
                 V::key('type', V::stringType()::notEmpty()),
                 V::key('project_id', V::stringType()::notEmpty()),
-                V::key('private_key_id', V::stringType()::notEmpty()),
                 V::key('private_key', V::stringType()::notEmpty()),
-                V::key('client_email', V::email()),
+                V::key('private_key_id', V::stringType()::notEmpty()),
                 V::key('client_id', V::stringType()::notEmpty()),
+                V::key('client_email', V::email()),
                 V::key('auth_uri', V::url()),
                 V::key('token_uri', V::url()),
-                V::key('auth_provider_x509_cert_url', V::url()),
                 V::key('client_x509_cert_url', V::url()),
+                V::key('auth_provider_x509_cert_url', V::url()),
             )))
         );
+
+        return $this->getBaseRules('gmail', $settings);
     }
 
     // ------------------------------------------------------------------------------
@@ -269,7 +283,7 @@ class Native
      */
     private function exchangeProviderRule(): V
     {
-        return V::oneOf(
+        $settings = V::oneOf(
             V::keySet(
                 V::key('username', V::stringType()::notEmpty()),
                 V::key('password', V::stringType()::notEmpty()),
@@ -281,12 +295,99 @@ class Native
                 V::key('service_account', V::boolType())
             ),
             V::keySet(
+                V::key('username', V::stringType()::notEmpty()),
+                V::key('password', V::stringType()::notEmpty()),
+                V::keyOptional('eas_server_host', V::domain())
+            ),
+            V::keySet(
+                V::key('redirect_uri', V::url()),
+                V::key('service_account', V::boolType()),
                 V::key('microsoft_client_id', V::stringType()::notEmpty()),
                 V::key('microsoft_client_secret', V::stringType()::notEmpty()),
                 V::key('microsoft_refresh_token', V::stringType()::notEmpty()),
-                V::key('redirect_uri', V::url()),
-                V::key('service_account', V::boolType())
             ),
+        );
+
+        return $this->getBaseRules('exchange', $settings);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return V
+     */
+    private function nylasProviderRule(): V
+    {
+        $scopes = V::oneOf(
+            V::stringType()::notEmpty(),
+            V::simpleArray(V::in([
+                'email',
+                'email.send',
+                'email.drafts',
+                'email.modify',
+                'email.metadata',
+                'email.read_only',
+                'email.folders_and_labels',
+                'calendar',
+                'calendar.read_only',
+                'calendar.free_busy',
+                'room_resources.read_only',
+                'contacts',
+                'contacts.read_only',
+            ]))
+        );
+
+        return V::keySet(
+            V::key('name', V::stringType()::notEmpty()),
+            V::key('email', V::stringType()),
+            V::key('provider', V::equals('nylas')),
+            V::key('settings', V::equals([])),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::keyOptional('scopes', $scopes),
+            V::keyOptional('reauth_account_id', V::stringType()::notEmpty())
+        );
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get base rules
+     *
+     * @param array|string $provider
+     * @param V            $settings
+     *
+     * @return V
+     */
+    private function getBaseRules(string|array $provider, V $settings): V
+    {
+        $scopes = V::oneOf(
+            V::stringType()::notEmpty(),
+            V::simpleArray(V::in([
+                'graph',
+                'email',
+                'email.send',
+                'email.drafts',
+                'email.modify',
+                'email.metadata',
+                'email.read_only',
+                'email.folders_and_labels',
+                'calendar',
+                'calendar.read_only',
+                'calendar.free_busy',
+                'room_resources.read_only',
+                'contacts',
+                'contacts.read_only',
+            ]))
+        );
+
+        return V::keySet(
+            V::key('name', V::stringType()::notEmpty()),
+            V::key('provider', is_array($provider) ? V::in($provider) : V::equals($provider)),
+            V::key('settings', $settings),
+            V::key('client_id', V::stringType()::notEmpty()),
+            V::key('email_address', V::email()),
+            V::keyOptional('scopes', $scopes),
+            V::keyOptional('reauth_account_id', V::stringType()::notEmpty())
         );
     }
 

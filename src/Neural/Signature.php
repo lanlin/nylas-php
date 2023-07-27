@@ -44,7 +44,7 @@ class Signature
     /**
      * The Signature endpoint will extract email signatures by removing extra images and HTML.
      *
-     * @see https://developer.nylas.com/docs/api/#put/neural/signature
+     * @see https://developer.nylas.com/docs/api/v2/#put-/neural/signature
      *
      * @param mixed $messageId
      * @param array $params
@@ -81,7 +81,7 @@ class Signature
     /**
      * Send feedback about signature extraction.
      *
-     * @see https://developer.nylas.com/docs/api/#post/neural/signature/feedback
+     * @see https://developer.nylas.com/docs/api/v2/#post-/neural/signature/feedback
      *
      * @param mixed $messageId
      *

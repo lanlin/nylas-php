@@ -44,7 +44,7 @@ class Message
     /**
      * Get a list of all messages scheduled to be sent.
      *
-     * @see https://developer.nylas.com/docs/api/#get/outbox
+     * @see https://developer.nylas.com/docs/api/v2/#get-/outbox
      *
      * @return array
      * @throws GuzzleException
@@ -62,7 +62,7 @@ class Message
     /**
      * Send a message or schedule messages to be sent.
      *
-     * @see https://developer.nylas.com/docs/api/#post/outbox
+     * @see https://developer.nylas.com/docs/api/v2/#post-/outbox
      *
      * @param array $params
      *
@@ -90,7 +90,7 @@ class Message
     /**
      * Update a message by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#put/messages/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/messages/id
      *
      * @param string   $jobStatusId
      * @param null|int $sendAt
@@ -118,7 +118,7 @@ class Message
     /**
      * Deletes a draft by ID. The draft version must be specified otherwise it will return an error.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/drafts/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/drafts/id
      *
      * @param mixed $jobStatusId
      *

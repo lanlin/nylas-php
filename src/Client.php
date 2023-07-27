@@ -31,6 +31,7 @@ use Nylas\Exceptions\NylasException;
  * @property Neural\Abs         Neural
  * @property Outbox\Abs         Outbox
  * @property Rooms\Abs          Rooms
+ * @property Schedulers\Abs     Schedulers
  * @property Threads\Abs        Threads
  * @property Webhooks\Abs       Webhooks
  *

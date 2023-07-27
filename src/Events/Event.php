@@ -75,7 +75,7 @@ class Event
     /**
      * Creates an event, conference or add metadata.
      *
-     * @see https://developer.nylas.com/docs/api/#post/events
+     * @see https://developer.nylas.com/docs/api/v2/#post-/events
      *
      * @param array $params
      * @param bool  $notifyParticipants
@@ -102,7 +102,7 @@ class Event
     /**
      * Returns an event by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/events/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/events/id
      *
      * @param mixed $eventId
      *
@@ -139,7 +139,7 @@ class Event
     /**
      * Updates an event, conference, or metadata.
      *
-     * @see https://developer.nylas.com/docs/api/#put/events/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/events/id
      *
      * @param string $eventId
      * @param array  $params
@@ -169,7 +169,7 @@ class Event
     /**
      * Deletes an event.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/events/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/events/id
      *
      * @param string $eventId
      * @param bool   $notifyParticipants
@@ -209,7 +209,7 @@ class Event
     /**
      * The RSVP endpoint allows you to send attendance status updates to event organizers.
      *
-     * @see https://developer.nylas.com/docs/api/#post/send-rsvp
+     * @see https://developer.nylas.com/docs/api/v2/#post-/send-rsvp
      *
      * @param array $params
      *
@@ -237,7 +237,7 @@ class Event
      * Use this endpoint to generate an ICS file for events, including virtual calendars.
      * This endpoint does not create an event.
      *
-     * @see https://developer.nylas.com/docs/api/#post/events/to-ics
+     * @see https://developer.nylas.com/docs/api/v2/#post-/events/to-ics
      *
      * @param array $params
      *

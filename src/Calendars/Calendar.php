@@ -50,7 +50,7 @@ class Calendar
     /**
      * Returns all calendars.
      *
-     * @see https://developer.nylas.com/docs/api/#get/calendars
+     * @see https://developer.nylas.com/docs/api/v2/#get-/calendars
      *
      * @param array $params
      *
@@ -83,7 +83,7 @@ class Calendar
     /**
      * Create a calendar.
      *
-     * @see https://developer.nylas.com/docs/api/#post/calendars
+     * @see https://developer.nylas.com/docs/api/v2/#post-/calendars
      *
      * @param array $params
      *
@@ -112,7 +112,7 @@ class Calendar
     /**
      * Returns a calendar by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/calendars/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/calendars/id
      *
      * @param mixed $calendarId string|string[]
      *
@@ -149,7 +149,7 @@ class Calendar
     /**
      * Updates a calendar.
      *
-     * @see https://developer.nylas.com/docs/api/#put/calendars/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/calendars/id
      *
      * @param string $calendarId
      * @param array  $params
@@ -180,7 +180,7 @@ class Calendar
     /**
      * Deletes an existing calendar identified by the specific calendar ID.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/calendars/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/calendars/id
      *
      * @param mixed $calendarId
      *
@@ -217,7 +217,7 @@ class Calendar
     /**
      * Check calendar free or busy status.
      *
-     * @see https://developer.nylas.com/docs/api/#post/calendars/free-busy
+     * @see https://developer.nylas.com/docs/api/v2/#post-/calendars/free-busy
      *
      * @param array $params
      *

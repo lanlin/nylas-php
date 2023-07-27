@@ -4,11 +4,14 @@ declare(strict_types = 1);
 
 namespace Nylas\Files;
 
+use function count;
 use function fopen;
 use function is_string;
 use function file_exists;
+
 use function str_replace;
 
+use RuntimeException;
 use Nylas\Utilities\API;
 use Nylas\Utilities\Helper;
 use Nylas\Utilities\Options;
@@ -50,7 +53,7 @@ class File
     /**
      * Returns information about each files metadata.
      *
-     * @see https://developer.nylas.com/docs/api/#get/files
+     * @see https://developer.nylas.com/docs/api/v2/#get-/files
      *
      * @param array $params
      *
@@ -78,16 +81,27 @@ class File
     /**
      * Uploads a new file. Uploaded files are valid for 7 days.
      *
-     * @see https://developer.nylas.com/docs/api/#post/files
+     * @see https://developer.nylas.com/docs/api/v2/#post-/files
      *
-     * @param array $file
+     * @param array $file when empty, means upload from $_FILES['file']
+     *
+     * tips: when $file is empty, use $_FILES['file']
+     * <form action="upload.php" method="post" enctype="multipart/form-data">
+     *     <input name="file[]" type="file" />
+     *     <input name="file[]" type="file" />
+     *     <input type="submit" value="Send files" />
+     * </form>
      *
      * @return array
      */
-    public function uploadAFile(array $file): array
+    public function uploadAFile(array $file = []): array
     {
-        $fileUploads = Helper::arrayToMulti($file);
+        if (empty($file))
+        {
+            $file = $this->concatUploadFiles();
+        }
 
+        $fileUploads = Helper::arrayToMulti($file);
         V::doValidate($this->multipartRules(), $fileUploads);
 
         $upload = [];
@@ -122,7 +136,7 @@ class File
     /**
      * Returns file metadata by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/files/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/files/id
      *
      * @param mixed $fileId string|string[]
      *
@@ -159,7 +173,7 @@ class File
     /**
      * Deletes a file by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/files/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/files/id
      *
      * @param mixed $fileId string|string[]
      *
@@ -196,7 +210,7 @@ class File
     /**
      * Download a file.
      *
-     * @see https://developer.nylas.com/docs/api/#get/files/id/download
+     * @see https://developer.nylas.com/docs/api/v2/#get-/files/id/download
      *
      * @param array $params
      *
@@ -258,7 +272,7 @@ class File
      */
     private function multipartRules(): V
     {
-        return V::simpleArray(V::keyset(
+        return V::simpleArray(V::keySet(
             V::key('name', V::stringType()::notEmpty(), false),
             V::key('headers', V::arrayType(), false),
             V::key('filename', V::stringType()::notEmpty(), false),
@@ -268,6 +282,33 @@ class File
                 V::instance(StreamInterface::class)
             ))
         ));
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return array
+     */
+    private function concatUploadFiles(): array
+    {
+        if (empty($_FILES['file']) || count($_FILES['file']['tmp_name']) < 1)
+        {
+            throw new RuntimeException('None upload file found');
+        }
+
+        $files = [];
+
+        foreach ($_FILES['file']['tmp_name'] as $key => $tmp)
+        {
+            $files[] = [
+                'name'     => 'file',
+                'headers'  => [],
+                'filename' => $_FILES['file']['name'][$key],
+                'contents' => $tmp,
+            ];
+        }
+
+        return $files;
     }
 
     // ------------------------------------------------------------------------------

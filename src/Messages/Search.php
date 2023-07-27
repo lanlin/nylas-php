@@ -43,7 +43,7 @@ class Search
     /**
      * Searches messages.
      *
-     * @see https://developer.nylas.com/docs/api/#get/messages/search
+     * @see https://developer.nylas.com/docs/api/v2/#get-/messages/search
      *
      * @param string $keyword
      * @param int    $offset

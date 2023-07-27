@@ -72,7 +72,7 @@ class Account
     /**
      * Return Account Details
      *
-     * @see https://developer.nylas.com/docs/api/#get/account
+     * @see https://developer.nylas.com/docs/api/v2/#get-/account
      *
      * @return array
      * @throws GuzzleException
@@ -90,7 +90,7 @@ class Account
     /**
      * Return All Accounts
      *
-     * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts
+     * @see https://developer.nylas.com/docs/api/v2/#get-/a/client_id/accounts
      *
      * @param array $params
      *
@@ -117,7 +117,7 @@ class Account
     /**
      * Returns details from a single account.
      *
-     * @see https://developer.nylas.com/docs/api/#get/a/client_id/accounts/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/a/client_id/accounts/id
      *
      * @param string $accountId
      *
@@ -138,7 +138,7 @@ class Account
     /**
      * Deletes an account. Accounts deleted using this method are immediately unavailable.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/a/client_id/accounts/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/a/client_id/accounts/id
      *
      * @param string $accountId
      *
@@ -159,7 +159,7 @@ class Account
     /**
      * Cancels a paid Nylas account. Accounts that are cancelled instead of deleted, can be recovered within 3 days.
      *
-     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/downgrade
+     * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id/accounts/id/downgrade
      *
      * @param string $accountId
      *
@@ -180,7 +180,7 @@ class Account
     /**
      * Reactivate a cancelled account.
      *
-     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/upgrade
+     * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id/accounts/id/upgrade
      *
      * @param string $accountId
      *
@@ -201,7 +201,7 @@ class Account
     /**
      * Revoke all access tokens for an account.
      *
-     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/revoke-all
+     * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id/accounts/id/revoke-all
      *
      * @param string  $accountId
      * @param ?string $keepAccessToken
@@ -226,7 +226,7 @@ class Account
     /**
      * Return information about an accounts access token.
      *
-     * @see https://developer.nylas.com/docs/api/#post/a/client_id/accounts/id/token-info
+     * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id/accounts/id/token-info
      *
      * @param string $accountId
      *

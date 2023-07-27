@@ -74,7 +74,7 @@ class Message
     /**
      * Returns a message by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/messages/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/messages/id
      *
      * @param mixed $messageId string|string[]
      * @param bool  $expanded  true|false
@@ -114,7 +114,7 @@ class Message
     /**
      * This will return the message in RFC 2822 format, including all MIME body subtypes and attachments.
      *
-     * @see https://developer.nylas.com/docs/api/#get/messages/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/messages/id
      *
      * @param string $messageId
      *
@@ -145,7 +145,7 @@ class Message
     /**
      * Update a message by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#put/messages/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/messages/id
      *
      * @param string $messageId
      * @param array  $params

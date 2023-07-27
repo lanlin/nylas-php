@@ -43,7 +43,7 @@ class Application
     /**
      * Return application IP addresses.
      *
-     * @see https://developer.nylas.com/docs/api/#get/a/client_id/ip_addresses
+     * @see https://developer.nylas.com/docs/api/v2/#get-/a/client_id/ip_addresses
      *
      * @return array
      * @throws GuzzleException
@@ -62,7 +62,7 @@ class Application
     /**
      * Return information about a Nylas application.
      *
-     * @see https://developer.nylas.com/docs/api/#get/a/client_id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/a/client_id
      *
      * @return array
      * @throws GuzzleException
@@ -81,7 +81,7 @@ class Application
     /**
      * Update application details.
      *
-     * @see https://developer.nylas.com/docs/api/#post/a/client_id
+     * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id
      *
      * @param array $params
      *

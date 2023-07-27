@@ -229,12 +229,12 @@ class NativeTest extends AbsCase
                 'scopes' => 'email.read_only,calendar.read_only,contacts.read_only',
             ]],
             'Virtual Calendars' => [[
-                'client_id'     => '9df4ff17888f4729ad4e1463d2547d',
-                'provider'      => 'nylas',
-                'scopes'        => 'calendar',
-                'name'          => 'Virtual Calendar',
-                'email_address' => 'nylas@nylas.com',
-                'settings'      => [],
+                'client_id' => '9df4ff17888f4729ad4e1463d2547d',
+                'provider'  => 'nylas',
+                'scopes'    => 'calendar',
+                'name'      => 'Virtual Calendar',
+                'email'     => 'nylas@nylas.com',
+                'settings'  => [],
             ]],
         ];
     }

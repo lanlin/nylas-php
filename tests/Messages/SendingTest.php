@@ -64,7 +64,7 @@ class SendingTest extends AbsCase
 
         $this->mockResponse($this->getEmailData());
 
-        $data = $this->client->Messages->Sending->sendRawMimeMessage($content);
+        $data = $this->client->Messages->Sending->sendRawMiMeMessage($content);
 
         static::assertArrayHasKey('account_id', $data);
     }

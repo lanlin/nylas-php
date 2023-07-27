@@ -46,7 +46,7 @@ class JobStatus
     /**
      * Return all job statuses.
      *
-     * @see https://developer.nylas.com/docs/api/#get/job-statuses
+     * @see https://developer.nylas.com/docs/api/v2/#get-/job-statuses
      *
      * @return array
      * @throws GuzzleException
@@ -64,7 +64,7 @@ class JobStatus
     /**
      * Return a job status by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/job-statuses/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/job-statuses/id
      *
      * @param mixed $jobStatusId
      *

@@ -44,7 +44,7 @@ class Label
     /**
      * Returns all labels.
      *
-     * @see https://developer.nylas.com/docs/api/#get/labels
+     * @see https://developer.nylas.com/docs/api/v2/#get-/labels
      *
      * @param array $params
      *
@@ -71,7 +71,7 @@ class Label
     /**
      * Creates a new label.
      *
-     * @see https://developer.nylas.com/docs/api/#post/labels
+     * @see https://developer.nylas.com/docs/api/v2/#post-/labels
      *
      * @param null|string $displayName
      *
@@ -94,7 +94,7 @@ class Label
     /**
      * Return a label by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/labels/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/labels/id
      *
      * @param mixed $labelId string|string[]
      *
@@ -131,7 +131,7 @@ class Label
     /**
      * Updates an existing label.
      *
-     * @see https://developer.nylas.com/docs/api/#put/labels/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/labels/id
      *
      * @param string      $labelId
      * @param null|string $displayName
@@ -158,7 +158,7 @@ class Label
     /**
      * Deletes a label. A label can be deleted even if there are messages associated with the label.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/labels/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/labels/id
      *
      * @param mixed $labelId
      *

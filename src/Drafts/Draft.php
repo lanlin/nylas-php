@@ -52,7 +52,7 @@ class Draft
     /**
      * Returns all drafts.
      *
-     * @see https://developer.nylas.com/docs/api/#get/drafts
+     * @see https://developer.nylas.com/docs/api/v2/#get-/drafts
      *
      * @param array $params
      *
@@ -80,7 +80,7 @@ class Draft
     /**
      * Creates a new draft.
      *
-     * @see https://developer.nylas.com/docs/api/#post/drafts
+     * @see https://developer.nylas.com/docs/api/v2/#post-/drafts
      *
      * @param array $params
      *
@@ -103,7 +103,7 @@ class Draft
     /**
      * Returns a draft by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/drafts/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/drafts/id
      *
      * @param mixed $draftId string|string[]
      *
@@ -140,7 +140,7 @@ class Draft
     /**
      * Updates an existing draft by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#put/drafts/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/drafts/id
      *
      * @param string $draftId
      * @param array  $params
@@ -170,7 +170,7 @@ class Draft
     /**
      * Deletes a draft by ID. The draft version must be specified otherwise it will return an error.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/drafts/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/drafts/id
      *
      * @param array $params
      *

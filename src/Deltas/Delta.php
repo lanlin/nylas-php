@@ -45,7 +45,7 @@ class Delta
     /**
      * Return a delta cursor. The delta cursor is used to return data using the other deltas endpoints.
      *
-     * @see https://developer.nylas.com/docs/api/#post/delta/latest_cursor
+     * @see https://developer.nylas.com/docs/api/v2/#post-/delta/latest_cursor
      *
      * @return array
      * @throws GuzzleException
@@ -63,7 +63,7 @@ class Delta
     /**
      * Returns a set of delta cursors.
      *
-     * @see https://developer.nylas.com/docs/api/#get/delta
+     * @see https://developer.nylas.com/docs/api/v2/#get-/delta
      *
      * @param array $params
      *
@@ -86,7 +86,7 @@ class Delta
     /**
      * Long Polling deltas will instruct the server to keep the connection open until a change comes through or it times out.
      *
-     * @see https://developer.nylas.com/docs/api/#get/delta/longpoll
+     * @see https://developer.nylas.com/docs/api/v2/#get-/delta/longpoll
      *
      * @param array $params
      *
@@ -109,7 +109,7 @@ class Delta
     /**
      * Streaming deltas process real-time updates.
      *
-     * @see https://developer.nylas.com/docs/api/#get/delta/streaming
+     * @see https://developer.nylas.com/docs/api/v2/#get-/delta/streaming
      *
      * @param array $params
      *

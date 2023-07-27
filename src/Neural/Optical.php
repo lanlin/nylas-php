@@ -46,7 +46,7 @@ class Optical
     /**
      * Use Optical character recognition(OCR) to parse message file attachments. Supports PDF and TIFF.
      *
-     * @see https://developer.nylas.com/docs/api/#put/neural/ocr
+     * @see https://developer.nylas.com/docs/api/v2/#put-/neural/ocr
      *
      * @param mixed $fileId
      * @param array $pages  [1, 2, 3]
@@ -73,7 +73,7 @@ class Optical
     /**
      * Send feedback about optical character recognition.
      *
-     * @see https://developer.nylas.com/docs/api/#post/neural/ocr/feedback
+     * @see https://developer.nylas.com/docs/api/v2/#post-/neural/ocr/feedback
      *
      * @param mixed $fileId
      *

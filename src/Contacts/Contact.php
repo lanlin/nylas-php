@@ -15,7 +15,7 @@ use GuzzleHttp\Exception\GuzzleException;
  * Nylas Contacts
  * ----------------------------------------------------------------------------------
  *
- * @see https://developer.nylas.com/docs/api/#contact-limitations
+ * @see https://developer.nylas.com/docs/contacts/contacts-api-guide/#parsed-vs-synced-contacts
  *
  * @author lanlin
  * @change 2023/07/21
@@ -46,7 +46,7 @@ class Contact
     /**
      * Returns all contacts.
      *
-     * @see https://developer.nylas.com/docs/api/#get/contacts
+     * @see https://developer.nylas.com/docs/api/v2/#get-/contacts
      *
      * @param array $params
      *
@@ -69,7 +69,7 @@ class Contact
     /**
      * Creates a contact.
      *
-     * @see https://developer.nylas.com/docs/api/#post/contacts
+     * @see https://developer.nylas.com/docs/api/v2/#post-/contacts
      *
      * @param array $params
      *
@@ -92,7 +92,7 @@ class Contact
     /**
      * Returns a contact by ID.
      *
-     * @see https://developer.nylas.com/docs/api/#get/contacts/id
+     * @see https://developer.nylas.com/docs/api/v2/#get-/contacts/id
      *
      * @param mixed $contactId string|string[]
      *
@@ -129,7 +129,7 @@ class Contact
     /**
      * Updates a contact.
      *
-     * @see https://developer.nylas.com/docs/api/#put/contacts/id
+     * @see https://developer.nylas.com/docs/api/v2/#put-/contacts/id
      *
      * @param string $contactId
      * @param array  $params
@@ -155,7 +155,7 @@ class Contact
     /**
      * Deletes a contact.
      *
-     * @see https://developer.nylas.com/docs/api/#delete/contacts/id
+     * @see https://developer.nylas.com/docs/api/v2/#delete-/contacts/id
      *
      * @param mixed $contactId string|string[]
      *
@@ -192,7 +192,7 @@ class Contact
     /**
      * Download contact picture file (support multiple download)
      *
-     * @see https://developer.nylas.com/docs/api/#get/contacts/id/picture
+     * @see https://developer.nylas.com/docs/api/v2/#get-/contacts/id/picture
      *
      * @param array $params
      *
@@ -230,7 +230,7 @@ class Contact
     /**
      * Returns contact groups. Contact groups provide a way for users to organize their contacts.
      *
-     * @see https://developer.nylas.com/docs/api/#get/contacts/groups
+     * @see https://developer.nylas.com/docs/api/v2/#get-/contacts/groups
      *
      * @return array
      * @throws GuzzleException

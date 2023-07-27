@@ -42,7 +42,7 @@ class Resource
     /**
      * Which rooms a user can book within their GSuite or Office365 organization
      *
-     * @see https://developer.nylas.com/docs/api/#get/resources
+     * @see https://developer.nylas.com/docs/api/v2/#get-/resources
      *
      * @param int $limit
      *
