@@ -2,7 +2,7 @@
   <img width="635" height="217" src="media/nylas-php.png" />
 </div>
 
-# Nylas PHP SDK
+# Nylas PHP SDK (latest 5.3.0, see [change-log](https://github.com/lanlin/nylas-php/releases))
 
 [![Build](https://github.com/lanlin/nylas-php/workflows/Testing/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
 [![Code Quality](https://github.com/lanlin/nylas-php/workflows/CodeQuality/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
