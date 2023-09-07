@@ -127,7 +127,7 @@ class Availability
 
         $calendars = V::keySet(
             V::key('account_id', V::stringType()),
-            V::key('calendar_ids', V::simpleArray()),
+            V::key('calendar_ids', V::simpleArray(V::stringType())),
         );
 
         return V::keySet(
