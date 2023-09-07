@@ -125,6 +125,11 @@ class Availability
             V::key('object_type', V::equals('open_hours')),
         );
 
+        $calendars = V::keySet(
+            V::key('account_id', V::stringType()),
+            V::key('calendar_ids', V::simpleArray()),
+        );
+
         return V::keySet(
             V::key('emails', $emailsRules),
             V::key('end_time', V::timestampType()),
@@ -132,7 +137,10 @@ class Availability
             V::key('free_busy', V::simpleArray($freeBusy)),
             V::key('interval_minutes', V::intType()),
             V::key('duration_minutes', V::intType()),
+            V::keyOptional('round_robin', V::stringType()),
+            V::keyOptional('buffer', V::intType()),
             V::keyOptional('open_hours', V::simpleArray($openHours)),
+            V::keyOptional('calendars', V::simpleArray($calendars)),
         );
     }
 
