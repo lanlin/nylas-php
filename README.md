@@ -2,6 +2,17 @@
   <img width="635" height="217" src="media/nylas-php.png" />
 </div>
 
+# Fork from the excellent Lanlin/nylas-php
+
+Since Nylas has decided not to update their own PHP SDK it is up to us users to keep it improved and the [Lanlin/nylas-php-fork](https://github.com/lanlin/nylas-php) has been a really good alternative offering up to date API-support. There are a few options missing for some of the end-points and this fork was created to add those for our integration work. The plan of course is to send any changes back as PR's to lanlin/nylas-php. 
+
+Latest updates:
+
+**2023-09-04:** Added support for buffer, round_robin and calendars-options when checking for Availability (singe/multiple). 
+
+Below is the main documentation for lanlin/nylas-php
+
+
 # Nylas PHP SDK (latest 5.3.0, see [change-log](https://github.com/lanlin/nylas-php/releases))
 
 [![Build](https://github.com/lanlin/nylas-php/workflows/Testing/badge.svg?branch=master)](https://github.com/lanlin/nylas-php/actions)
