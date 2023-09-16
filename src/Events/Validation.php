@@ -249,7 +249,7 @@ class Validation
     {
         $autocreate = V::keySet(
             V::key('provider', V::in(['Google Meet', 'Zoom Meeting', 'Microsoft Teams'])),
-            V::key('autocreate', V::arrayType()),
+            V::key('autocreate', V::objectType()),
         );
 
         $webEx = V::keySet(
