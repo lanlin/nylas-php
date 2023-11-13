@@ -170,7 +170,7 @@ class Validation
             V::key('min_cancellation_notice', V::intType()),
             V::key('opening_hours', $openingHours),
             V::key('additional_fields', $additionalFields),
-            V::key('scheduling_method', V::in(['round-robin-maximize-fairness', 'round-robin-maximize-availability'])),
+            V::key('scheduling_method', V::in(['round-robin-maximize-fairness', 'round-robin-maximize-availability', 'collective'])),
             V::key('confirmation_method', V::in(['automatic', 'manual', 'external'])),
             V::key('available_days_in_future', V::intType()),
             V::keyOptional('interval_minutes', V::intType()),
