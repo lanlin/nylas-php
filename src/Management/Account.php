@@ -239,7 +239,7 @@ class Account
             ->getSync()
             ->setPath($this->options->getClientId(), $accountId)
             ->setHeaderParams($this->options->getAuthorizationHeader(false))
-            ->get(API::LIST['tokenInfo']);
+            ->post(API::LIST['tokenInfo']);
     }
 
     // ------------------------------------------------------------------------------
