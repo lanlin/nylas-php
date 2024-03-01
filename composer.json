@@ -1,5 +1,5 @@
 {
-    "name": "lanlin/nylas-php",
+    "name": "eriksaulnier/nylas-php",
     "description": "Nylas PHP SDK (api version 2.7)",
     "license": "MIT",
     "authors" : [
