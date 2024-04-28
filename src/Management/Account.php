@@ -228,15 +228,16 @@ class Account
      *
      * @see https://developer.nylas.com/docs/api/v2/#post-/a/client_id/accounts/id/token-info
      *
-     * @param string $accountId
+     * @param string  $accountId
      * @param ?string $accessToken
      *
      * @return array
      * @throws GuzzleException
      */
-    public function returnTokenInformation(string $accountId, string $accessToken = null): array
+    public function returnTokenInformation(string $accountId, ?string $accessToken = null): array
     {
         $params = empty($accessToken) ? [] : ['access_token' => $accessToken];
+
         return $this->options
             ->getSync()
             ->setPath($this->options->getClientId(), $accountId)
